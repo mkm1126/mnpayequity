@@ -432,15 +432,16 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
         </div>
         <div className="space-y-3 text-sm text-gray-700">
           <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium mb-1">For Hourly Part-Time Employees:</p>
-            <p className="text-gray-600">Hourly wage × 173.3 = Monthly FTE salary</p>
-            <p className="text-xs text-gray-500 mt-1">Example: $15/hr × 173.3 = $2,599.50/month</p>
+            <p className="font-medium mb-1">For Hourly Full and Part-Time Employees (one rate, no salary range/steps):</p>
+            <p className="text-gray-600">Hourly wage × 173.3 = Monthly Salary</p>
+            <p className="text-xs text-gray-500 mt-1">Example: $20.00 × 173.3 = $3,466.00/month (same number entered for min/max)</p>
           </div>
           <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium mb-1">For Part-Time with Single Rate:</p>
-            <p className="text-gray-600">1. Monthly salary ÷ hours worked per month = hourly rate</p>
-            <p className="text-gray-600">2. Hourly rate × 173.3 = Monthly FTE salary</p>
-            <p className="text-xs text-gray-500 mt-1">Example: $700/mo ÷ 60 hrs = $11.67/hr → $11.67 × 173.3 = $2,022/month</p>
+            <p className="font-medium mb-1">For Hourly Full and Part-Time Employees with a salary range:</p>
+            <p className="text-gray-600">1. Lowest rate/minimum step × 173.3 = Monthly Salary</p>
+            <p className="text-gray-600">2. Highest rate/max step × 173.3 = Monthly Salary</p>
+            <p className="text-xs text-gray-500 mt-1">Example: Min step $15.00 × 173.3 = $2,599.50/month on Min</p>
+            <p className="text-xs text-gray-500">Max step $36.00 × 173.3 = $6,238.80/month on Max</p>
           </div>
           <div className="p-3 bg-gray-50 rounded">
             <p className="font-medium mb-1">For Annual Salary:</p>
