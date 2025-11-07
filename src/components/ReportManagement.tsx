@@ -582,6 +582,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               reportYear={currentReport.report_year}
               showBackButton={false}
               onProceedToImplementation={handleProceedToImplementation}
+              jobs={jobs}
             />
           )}
 
