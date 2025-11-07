@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ComprehensiveHelpGuide } from './ComprehensiveHelpGuide';
 
 type HeaderProps = {
-  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes';
-  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes') => void;
+  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance';
+  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance') => void;
   hasActiveReport?: boolean;
   hasActiveJurisdiction?: boolean;
   onShowHelp?: () => void;
@@ -70,7 +70,7 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
     onNavigate?.(view);
   };
 
-  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard' | 'caseNotes') => {
+  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance') => {
     setIsAdminOpen(false);
     onNavigate?.(view);
   };
@@ -309,8 +309,14 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                       Case Notes
                     </button>
                     <button
-                      onClick={() => handleAdminNavigation('userManagement')}
+                      onClick={() => handleAdminNavigation('jurisdictionMaintenance')}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors border-t border-gray-100"
+                    >
+                      Jurisdiction Maintenance
+                    </button>
+                    <button
+                      onClick={() => handleAdminNavigation('userManagement')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       User Account Management
                     </button>
