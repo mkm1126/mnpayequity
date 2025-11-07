@@ -141,6 +141,34 @@ const helpContentMap: Record<string, HelpContent> = {
       },
     ],
   },
+  'what-if-calculator': {
+    title: 'What-If Scenario Calculator',
+    content: 'This tool allows you to model potential changes to any job field and immediately see the impact on your compliance status. Use it to plan strategic salary adjustments, test different scenarios, and understand the cost implications before making actual changes.',
+    tips: [
+      'Start with bulk adjustments using Quick Adjustments to see broad impacts',
+      'Use Simple mode to focus on salary changes; Advanced mode for all fields',
+      'Monitor the "Annual Cost Impact" to stay within budget constraints',
+      'Test multiple scenarios - changes are not saved to your actual data',
+      'Focus adjustments on female-dominated classes if underpayment exists',
+    ],
+    commonMistakes: [
+      'Thinking changes are automatically saved (they\'re not - this is planning only)',
+      'Adjusting only one job when systemic changes across multiple jobs are needed',
+      'Ignoring the cost impact when planning adjustments',
+      'Not considering multi-year implementation for large cost increases',
+      'Adjusting male-dominated classes when female classes need increases',
+    ],
+    relatedResources: [
+      {
+        title: 'Guide to Understanding Compliance',
+        url: 'https://mn.gov/mmb-stat/pay-equity/guide-understand-compl.pdf',
+      },
+      {
+        title: 'How to Interpret Results',
+        url: 'https://mn.gov/mmb-stat/pay-equity/interpret-results-pay%20equity.pdf',
+      },
+    ],
+  },
 };
 
 export function ContextualHelp({ context, children }: ContextualHelpProps) {

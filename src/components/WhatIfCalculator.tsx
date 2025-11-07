@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw, ChevronDown, ChevronUp, Eye, EyeOff, Users, Award, Clock, Gift, ArrowLeft } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
+import { ContextualHelp } from './ContextualHelp';
 
 type WhatIfCalculatorProps = {
   jobs: JobClassification[];
@@ -185,6 +186,8 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
           Back to Results
         </button>
       </div>
+
+      <ContextualHelp context="what-if-calculator" />
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="border-b border-gray-200 p-6">
