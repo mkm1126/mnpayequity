@@ -1,4 +1,4 @@
-import { LogOut, ChevronDown, HelpCircle, Book } from 'lucide-react';
+import { LogOut, ChevronDown, HelpCircle, Book, Play } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import { ComprehensiveHelpGuide } from './ComprehensiveHelpGuide';
@@ -9,10 +9,11 @@ type HeaderProps = {
   hasActiveReport?: boolean;
   hasActiveJurisdiction?: boolean;
   onShowHelp?: () => void;
+  onShowTutorial?: () => void;
   isAdmin?: boolean;
 };
 
-export function Header({ currentView = 'home', onNavigate, hasActiveReport = false, hasActiveJurisdiction = false, onShowHelp, isAdmin = false }: HeaderProps = {}) {
+export function Header({ currentView = 'home', onNavigate, hasActiveReport = false, hasActiveJurisdiction = false, onShowHelp, onShowTutorial, isAdmin = false }: HeaderProps = {}) {
   const { signOut } = useAuth();
   const [isUtilitiesOpen, setIsUtilitiesOpen] = useState(false);
   const [isGoToOpen, setIsGoToOpen] = useState(false);
@@ -107,6 +108,21 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
               </button>
               {isHelpOpen && (
                 <div className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded border border-gray-200 min-w-[240px] z-50">
+                  {onShowTutorial && (
+                    <button
+                      onClick={() => {
+                        setIsHelpOpen(false);
+                        onShowTutorial();
+                      }}
+                      className="flex items-center gap-3 w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors border-b border-gray-100"
+                    >
+                      <Play className="w-5 h-5 text-[#003865]" />
+                      <div>
+                        <div className="font-medium">Getting Started Tutorial</div>
+                        <div className="text-xs text-gray-500">5-step walkthrough</div>
+                      </div>
+                    </button>
+                  )}
                   <button
                     onClick={() => {
                       setIsHelpOpen(false);

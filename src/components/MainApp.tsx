@@ -439,6 +439,7 @@ export function MainApp() {
         hasActiveReport={!!selectedReport}
         hasActiveJurisdiction={!!currentJurisdiction}
         onShowHelp={() => setShowHelpCenter(true)}
+        onShowTutorial={() => setShowTutorial(true)}
         isAdmin={isAdmin}
       />
 
