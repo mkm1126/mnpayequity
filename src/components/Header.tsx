@@ -285,18 +285,6 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                 {isAdminOpen && (
                   <div className="absolute left-0 top-full mt-0 bg-white shadow-lg rounded-b border border-gray-200 min-w-[200px] z-50">
                     <button
-                      onClick={() => handleAdminNavigation('caseNotes')}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      Case Notes
-                    </button>
-                    <button
-                      onClick={handleSendEmail}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      Send Email
-                    </button>
-                    <button
                       onClick={() => handleAdminNavigation('jurisdictionLookup')}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
@@ -307,6 +295,18 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       Case Approvals
+                    </button>
+                    <button
+                      onClick={handleSendEmail}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Send Email
+                    </button>
+                    <button
+                      onClick={() => handleAdminNavigation('caseNotes')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Case Notes
                     </button>
                     <button
                       onClick={() => handleAdminNavigation('userManagement')}
