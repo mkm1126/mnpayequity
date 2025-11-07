@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { CheckCircle, XCircle, AlertCircle, ArrowLeft, HelpCircle, Calculator, Target, ExternalLink } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, ArrowLeft, HelpCircle, Calculator, Target, Eye } from 'lucide-react';
 import { ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceTroubleshooting } from './ComplianceTroubleshooting';
 import { GapAnalysisTool } from './GapAnalysisTool';
 import { JobClassification } from '../lib/supabase';
+import TTestCriticalValuesModal from './TTestCriticalValuesModal';
 
 type ComplianceResultsProps = {
   results: ComplianceResult;
@@ -18,6 +19,7 @@ type ComplianceResultsProps = {
 export function ComplianceResults({ results: result, onBack, reportYear, showBackButton = true, onProceedToImplementation, onNavigateToWhatIf, jobs = [] }: ComplianceResultsProps) {
   const [showTroubleshooting, setShowTroubleshooting] = useState(false);
   const [showGapAnalysis, setShowGapAnalysis] = useState(false);
+  const [showTTestModal, setShowTTestModal] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -199,16 +201,14 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
                 <div className="text-gray-700">
                   b. Avg.diff.in pay from predicted pay for female jobs = <span className="font-medium text-gray-900">${result.statisticalTest.avgDiffFemale.toFixed(2)}</span>
                 </div>
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <a
-                    href="https://mn.gov/mmb-stat/pay-equity/t-table.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] transition-colors font-medium"
+                <div className="mt-4">
+                  <button
+                    onClick={() => setShowTTestModal(true)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 text-[#003865] hover:bg-blue-100 hover:border-blue-300 rounded-lg transition-colors font-medium text-sm"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <Eye className="w-4 h-4" />
                     View T-Test Critical Values Table
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -328,6 +328,14 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
           jobs={jobs}
           complianceResult={result}
           onClose={() => setShowGapAnalysis(false)}
+        />
+      )}
+
+      {result.statisticalTest && (
+        <TTestCriticalValuesModal
+          isOpen={showTTestModal}
+          onClose={() => setShowTTestModal(false)}
+          currentDF={result.statisticalTest.tTestDF}
         />
       )}
     </div>
