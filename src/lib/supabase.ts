@@ -222,3 +222,54 @@ export type SystemConfig = {
   created_at: string;
   updated_at: string;
 };
+
+export type NoteCategory = 'general' | 'compliance' | 'follow-up' | 'issue' | 'data-quality' | 'communication' | 'approval' | 'other';
+export type NotePriority = 'low' | 'medium' | 'high' | 'urgent';
+export type NoteType = 'jurisdiction' | 'case';
+
+export type AdminCaseNote = {
+  id: string;
+  note_type: NoteType;
+  jurisdiction_id: string;
+  report_id: string | null;
+  title: string;
+  content: string;
+  category: NoteCategory;
+  tags: string[];
+  priority: NotePriority;
+  is_pinned: boolean;
+  created_by: string | null;
+  created_by_email: string;
+  created_at: string;
+  updated_at: string;
+  attachment_metadata: Record<string, any>;
+};
+
+export type NoteFilter = {
+  searchTerm: string;
+  noteType: NoteType | 'all';
+  categories: NoteCategory[];
+  priorities: NotePriority[];
+  jurisdictionId: string | null;
+  reportId: string | null;
+  authorEmail: string | null;
+  tags: string[];
+  dateFrom: string | null;
+  dateTo: string | null;
+  showPinnedOnly: boolean;
+};
+
+export type NoteSortOption = 'updated_desc' | 'updated_asc' | 'created_desc' | 'created_asc' | 'priority' | 'title_asc' | 'title_desc';
+
+export type NoteStats = {
+  totalNotes: number;
+  jurisdictionNotes: number;
+  caseNotes: number;
+  byCategory: Record<NoteCategory, number>;
+  byPriority: Record<NotePriority, number>;
+  pinnedNotes: number;
+  recentActivity: Array<{
+    date: string;
+    count: number;
+  }>;
+};

@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ComprehensiveHelpGuide } from './ComprehensiveHelpGuide';
 
 type HeaderProps = {
-  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard';
-  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard') => void;
+  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes';
+  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes') => void;
   hasActiveReport?: boolean;
   hasActiveJurisdiction?: boolean;
   onShowHelp?: () => void;
@@ -70,7 +70,7 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
     onNavigate?.(view);
   };
 
-  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard') => {
+  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard' | 'caseNotes') => {
     setIsAdminOpen(false);
     onNavigate?.(view);
   };
@@ -284,6 +284,12 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                 </button>
                 {isAdminOpen && (
                   <div className="absolute left-0 top-full mt-0 bg-white shadow-lg rounded-b border border-gray-200 min-w-[200px] z-50">
+                    <button
+                      onClick={() => handleAdminNavigation('caseNotes')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Case Notes
+                    </button>
                     <button
                       onClick={handleSendEmail}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"

@@ -26,6 +26,7 @@ import { DataGatheringGuide } from './DataGatheringGuide';
 import { UserAccountManagement } from './UserAccountManagement';
 import { MNPayEquity } from './MNPayEquity';
 import { ApprovalDashboard } from './ApprovalDashboard';
+import { AdminCaseNotes } from './AdminCaseNotes';
 import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport } from '../lib/supabase';
 import { analyzeCompliance, type ComplianceResult } from '../lib/complianceAnalysis';
 
@@ -36,7 +37,7 @@ export function MainApp() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard'>('dashboard');
+  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseNotes'>('dashboard');
   const [reportViewType, setReportViewType] = useState<'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation' | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -387,7 +388,7 @@ export function MainApp() {
     );
   }
 
-  function handleNavigate(view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity') {
+  function handleNavigate(view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'caseNotes' | 'approvalDashboard') {
     if (view === 'jobs') {
       if (!currentJurisdiction) {
         alert('Please select a jurisdiction first.');
@@ -444,7 +445,9 @@ export function MainApp() {
       />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
-        {currentView === 'approvalDashboard' ? (
+        {currentView === 'caseNotes' ? (
+          <AdminCaseNotes onBack={() => setCurrentView('dashboard')} />
+        ) : currentView === 'approvalDashboard' ? (
           <ApprovalDashboard />
         ) : currentView === 'changePassword' ? (
           <ChangePassword onBack={() => setCurrentView('dashboard')} />
