@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw } from 'lucide-react';
+import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw, ChevronDown, ChevronUp, Eye, EyeOff, Users, Award, Clock, Gift } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 
@@ -9,18 +9,42 @@ type WhatIfCalculatorProps = {
   onClose: () => void;
 };
 
-type JobAdjustment = {
+type FieldAdjustment = {
   jobId: string;
-  originalMaxSalary: number;
-  adjustedMaxSalary: number;
-  adjustment: number;
-  adjustmentPercent: number;
+  originalJob: JobClassification;
+  adjustedJob: Partial<JobClassification>;
+};
+
+type ViewMode = 'simple' | 'advanced';
+type VisibleColumns = {
+  minSalary: boolean;
+  maxSalary: boolean;
+  employees: boolean;
+  points: boolean;
+  yearsToMax: boolean;
+  yearsServicePay: boolean;
+  exceptionalCategory: boolean;
+  benefits: boolean;
+  additionalComp: boolean;
 };
 
 export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalculatorProps) {
-  const [adjustments, setAdjustments] = useState<Map<string, JobAdjustment>>(new Map());
+  const [adjustments, setAdjustments] = useState<Map<string, FieldAdjustment>>(new Map());
   const [scenarioResult, setScenarioResult] = useState<ComplianceResult | null>(null);
   const [totalCost, setTotalCost] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>('simple');
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<VisibleColumns>({
+    minSalary: true,
+    maxSalary: true,
+    employees: false,
+    points: false,
+    yearsToMax: false,
+    yearsServicePay: false,
+    exceptionalCategory: false,
+    benefits: false,
+    additionalComp: false,
+  });
 
   const femaleJobs = jobs.filter(job => job.females > 0 && job.males === 0);
   const maleJobs = jobs.filter(job => job.males > 0 && job.females === 0);
@@ -35,7 +59,7 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
       if (adjustment) {
         return {
           ...job,
-          max_salary: adjustment.adjustedMaxSalary
+          ...adjustment.adjustedJob
         };
       }
       return job;
@@ -45,56 +69,100 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
     setScenarioResult(result);
 
     const cost = Array.from(adjustments.values()).reduce((sum, adj) => {
-      const job = jobs.find(j => j.id === adj.jobId);
-      if (job) {
-        const employeeCount = job.males + job.females;
-        return sum + (adj.adjustment * employeeCount * 12);
-      }
-      return sum;
+      const original = adj.originalJob;
+      const adjusted = { ...original, ...adj.adjustedJob };
+
+      const originalMaxAnnual = original.max_salary * (original.males + original.females) * 12;
+      const adjustedMaxAnnual = (adjusted.max_salary || original.max_salary) *
+        ((adjusted.males ?? original.males) + (adjusted.females ?? original.females)) * 12;
+
+      return sum + (adjustedMaxAnnual - originalMaxAnnual);
     }, 0);
     setTotalCost(cost);
   };
 
-  const handleAdjustSalary = (jobId: string, newMaxSalary: number) => {
+  const handleAdjustField = (jobId: string, field: keyof JobClassification, value: any) => {
     const job = jobs.find(j => j.id === jobId);
     if (!job) return;
 
-    const adjustment = newMaxSalary - job.max_salary;
-    const adjustmentPercent = (adjustment / job.max_salary) * 100;
+    const currentAdjustment = adjustments.get(jobId);
+    const adjustedJob = currentAdjustment?.adjustedJob || {};
 
-    const newAdjustment: JobAdjustment = {
-      jobId,
-      originalMaxSalary: job.max_salary,
-      adjustedMaxSalary: newMaxSalary,
-      adjustment,
-      adjustmentPercent
+    const newAdjustedJob = {
+      ...adjustedJob,
+      [field]: value
     };
 
+    const hasChanges = Object.keys(newAdjustedJob).some(
+      key => newAdjustedJob[key as keyof JobClassification] !== job[key as keyof JobClassification]
+    );
+
     const newAdjustments = new Map(adjustments);
-    if (adjustment === 0) {
-      newAdjustments.delete(jobId);
+    if (hasChanges) {
+      newAdjustments.set(jobId, {
+        jobId,
+        originalJob: job,
+        adjustedJob: newAdjustedJob
+      });
     } else {
-      newAdjustments.set(jobId, newAdjustment);
+      newAdjustments.delete(jobId);
     }
     setAdjustments(newAdjustments);
   };
 
-  const handlePercentageAdjustment = (jobId: string, percent: number) => {
+  const handlePercentageAdjustment = (jobId: string, field: 'min_salary' | 'max_salary', percent: number) => {
     const job = jobs.find(j => j.id === jobId);
     if (!job) return;
 
-    const newMaxSalary = job.max_salary * (1 + percent / 100);
-    handleAdjustSalary(jobId, newMaxSalary);
+    const currentAdjustment = adjustments.get(jobId);
+    const currentValue = currentAdjustment?.adjustedJob[field] ?? job[field];
+    const newValue = currentValue * (1 + percent / 100);
+    handleAdjustField(jobId, field, newValue);
   };
 
-  const handleApplyToAll = (jobIds: string[], percent: number) => {
+  const handleApplyToAll = (jobIds: string[], field: 'min_salary' | 'max_salary', percent: number) => {
     jobIds.forEach(jobId => {
-      handlePercentageAdjustment(jobId, percent);
+      handlePercentageAdjustment(jobId, field, percent);
     });
   };
 
   const handleReset = () => {
     setAdjustments(new Map());
+    setExpandedJobId(null);
+  };
+
+  const toggleColumn = (column: keyof VisibleColumns) => {
+    setVisibleColumns(prev => ({ ...prev, [column]: !prev[column] }));
+  };
+
+  const getAdjustedValue = (jobId: string, field: keyof JobClassification) => {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return null;
+
+    const adjustment = adjustments.get(jobId);
+    return adjustment?.adjustedJob[field] ?? job[field];
+  };
+
+  const hasAnyChanges = (jobId: string) => {
+    return adjustments.has(jobId);
+  };
+
+  const getChangeSummary = () => {
+    const changes: { type: string; count: number }[] = [];
+    const fieldCounts = new Map<string, number>();
+
+    adjustments.forEach((adj) => {
+      Object.keys(adj.adjustedJob).forEach(field => {
+        fieldCounts.set(field, (fieldCounts.get(field) || 0) + 1);
+      });
+    });
+
+    fieldCounts.forEach((count, field) => {
+      const label = field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      changes.push({ type: label, count });
+    });
+
+    return changes;
   };
 
   const complianceImproved = scenarioResult && currentResult && (
@@ -103,9 +171,12 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
     (scenarioResult.exceptionalServiceTest?.passed && !currentResult.exceptionalServiceTest?.passed)
   );
 
+  const changeSummary = getChangeSummary();
+  const totalJobsModified = adjustments.size;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full my-8">
+      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full my-8">
         <div className="border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -114,7 +185,7 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">What-If Scenario Calculator</h2>
-                <p className="text-sm text-gray-600">Test compensation adjustments to see their impact on compliance</p>
+                <p className="text-sm text-gray-600">Model changes to any job field to analyze compliance impact</p>
               </div>
             </div>
             <button
@@ -127,7 +198,7 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
         </div>
 
         <div className="p-6 space-y-6">
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-4 gap-4">
             <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-600">Current Status</h3>
@@ -169,6 +240,16 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
                 ${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
+
+            <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-600">Jobs Modified</h3>
+                <Calculator className="w-5 h-5 text-gray-400" />
+              </div>
+              <p className="text-lg font-bold text-gray-900">
+                {totalJobsModified} of {jobs.length}
+              </p>
+            </div>
           </div>
 
           {complianceImproved && (
@@ -185,64 +266,198 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
             </div>
           )}
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Quick Adjustments</h3>
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Reset All
-              </button>
+          {changeSummary.length > 0 && (
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-semibold text-blue-900 mb-2">Change Summary</h4>
+              <div className="flex flex-wrap gap-3 text-sm">
+                {changeSummary.map(change => (
+                  <span key={change.type} className="px-3 py-1 bg-white border border-blue-300 text-blue-900 rounded-full">
+                    {change.type}: {change.count} {change.count === 1 ? 'job' : 'jobs'}
+                  </span>
+                ))}
+              </div>
             </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h3 className="text-lg font-semibold text-gray-900">View Mode</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('simple')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === 'simple'
+                      ? 'bg-[#003865] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Simple
+                </button>
+                <button
+                  onClick={() => setViewMode('advanced')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === 'advanced'
+                      ? 'bg-[#003865] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Advanced
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset All
+            </button>
+          </div>
+
+          {viewMode === 'advanced' && (
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                Column Visibility
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries({
+                  minSalary: 'Min Salary',
+                  maxSalary: 'Max Salary',
+                  employees: 'Employee Counts',
+                  points: 'Job Points',
+                  yearsToMax: 'Years to Max',
+                  yearsServicePay: 'Service Pay Years',
+                  exceptionalCategory: 'Exceptional Category',
+                  benefits: 'Benefits in Salary',
+                  additionalComp: 'Additional Compensation'
+                }).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => toggleColumn(key as keyof VisibleColumns)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                      visibleColumns[key as keyof VisibleColumns]
+                        ? 'bg-[#003865] text-white'
+                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {visibleColumns[key as keyof VisibleColumns] ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Quick Adjustments</h3>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div className="p-4 bg-pink-50 border border-pink-200 rounded-lg">
                 <h4 className="font-semibold text-pink-900 mb-3">Female-Dominated Classes ({femaleJobs.length})</h4>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 2)}
-                    className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                  >
-                    +2% All
-                  </button>
-                  <button
-                    onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 5)}
-                    className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                  >
-                    +5% All
-                  </button>
-                  <button
-                    onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 10)}
-                    className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                  >
-                    +10% All
-                  </button>
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-xs text-pink-800 mb-1">Max Salary Adjustments:</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 2)}
+                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                      >
+                        +2% All
+                      </button>
+                      <button
+                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 5)}
+                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                      >
+                        +5% All
+                      </button>
+                      <button
+                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 10)}
+                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                      >
+                        +10% All
+                      </button>
+                    </div>
+                  </div>
+                  {viewMode === 'advanced' && (
+                    <div>
+                      <p className="text-xs text-pink-800 mb-1">Min Salary Adjustments:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 2)}
+                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                        >
+                          +2% All
+                        </button>
+                        <button
+                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 5)}
+                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                        >
+                          +5% All
+                        </button>
+                        <button
+                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 10)}
+                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
+                        >
+                          +10% All
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="font-semibold text-blue-900 mb-3">Male-Dominated Classes ({maleJobs.length})</h4>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 2)}
-                    className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    +2% All
-                  </button>
-                  <button
-                    onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 5)}
-                    className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    +5% All
-                  </button>
-                  <button
-                    onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 10)}
-                    className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    +10% All
-                  </button>
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-xs text-blue-800 mb-1">Max Salary Adjustments:</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 2)}
+                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        +2% All
+                      </button>
+                      <button
+                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 5)}
+                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        +5% All
+                      </button>
+                      <button
+                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 10)}
+                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        +10% All
+                      </button>
+                    </div>
+                  </div>
+                  {viewMode === 'advanced' && (
+                    <div>
+                      <p className="text-xs text-blue-800 mb-1">Min Salary Adjustments:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 2)}
+                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                        >
+                          +2% All
+                        </button>
+                        <button
+                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 5)}
+                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                        >
+                          +5% All
+                        </button>
+                        <button
+                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 10)}
+                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
+                        >
+                          +10% All
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -250,64 +465,272 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
 
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Job Adjustments</h3>
-            <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
-              <table className="w-full">
-                <thead className="bg-gray-50 sticky top-0">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Job Title</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Gender</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Current Max</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Adjusted Max</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Change</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {jobs.map(job => {
-                    const adjustment = adjustments.get(job.id);
-                    const isFemale = job.females > 0 && job.males === 0;
-                    const isMale = job.males > 0 && job.females === 0;
-                    const genderLabel = isFemale ? 'Female' : isMale ? 'Male' : 'Balanced';
+            <div className="space-y-2 max-h-[500px] overflow-y-auto">
+              {jobs.map(job => {
+                const isExpanded = expandedJobId === job.id;
+                const hasChanges = hasAnyChanges(job.id);
+                const isFemale = job.females > 0 && job.males === 0;
+                const isMale = job.males > 0 && job.females === 0;
+                const genderLabel = isFemale ? 'Female' : isMale ? 'Male' : 'Balanced';
 
-                    return (
-                      <tr key={job.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900">{job.title}</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            isFemale ? 'bg-pink-100 text-pink-800' :
-                            isMale ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {genderLabel}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-right text-gray-900">
-                          ${job.max_salary.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={adjustment?.adjustedMaxSalary.toFixed(2) || job.max_salary.toFixed(2)}
-                            onChange={(e) => handleAdjustSalary(job.id, parseFloat(e.target.value) || job.max_salary)}
-                            className="w-full px-2 py-1 text-sm text-right border border-gray-300 rounded focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-sm text-right">
-                          {adjustment ? (
-                            <span className={`font-medium ${
-                              adjustment.adjustment > 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {adjustment.adjustment > 0 ? '+' : ''}{adjustment.adjustmentPercent.toFixed(1)}%
-                            </span>
-                          ) : (
-                            <span className="text-gray-400">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                return (
+                  <div key={job.id} className={`border rounded-lg ${hasChanges ? 'border-[#003865] bg-blue-50' : 'border-gray-200 bg-white'}`}>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <button
+                            onClick={() => setExpandedJobId(isExpanded ? null : job.id)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                          </button>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{job.title}</h4>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                isFemale ? 'bg-pink-100 text-pink-800' :
+                                isMale ? 'bg-blue-100 text-blue-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {genderLabel}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {job.males}M / {job.females}F
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                Points: {job.points}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-600">Current Range</p>
+                          <p className="font-medium text-gray-900">
+                            ${job.min_salary.toFixed(2)} - ${job.max_salary.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="mt-4 pt-4 border-t border-gray-200 space-y-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {visibleColumns.minSalary && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <DollarSign className="w-4 h-4 inline mr-1" />
+                                  Minimum Salary
+                                </label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={getAdjustedValue(job.id, 'min_salary') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'min_salary', parseFloat(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.min_salary !== getAdjustedValue(job.id, 'min_salary') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: ${job.min_salary.toFixed(2)}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.maxSalary && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <DollarSign className="w-4 h-4 inline mr-1" />
+                                  Maximum Salary
+                                </label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={getAdjustedValue(job.id, 'max_salary') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'max_salary', parseFloat(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.max_salary !== getAdjustedValue(job.id, 'max_salary') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: ${job.max_salary.toFixed(2)}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.employees && (
+                              <>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <Users className="w-4 h-4 inline mr-1" />
+                                    Male Employees
+                                  </label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={getAdjustedValue(job.id, 'males') as number}
+                                    onChange={(e) => handleAdjustField(job.id, 'males', parseInt(e.target.value) || 0)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                  />
+                                  {job.males !== getAdjustedValue(job.id, 'males') && (
+                                    <p className="text-xs text-blue-600 mt-1">
+                                      Original: {job.males}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <Users className="w-4 h-4 inline mr-1" />
+                                    Female Employees
+                                  </label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={getAdjustedValue(job.id, 'females') as number}
+                                    onChange={(e) => handleAdjustField(job.id, 'females', parseInt(e.target.value) || 0)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                  />
+                                  {job.females !== getAdjustedValue(job.id, 'females') && (
+                                    <p className="text-xs text-blue-600 mt-1">
+                                      Original: {job.females}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            )}
+
+                            {visibleColumns.points && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <Award className="w-4 h-4 inline mr-1" />
+                                  Job Evaluation Points
+                                </label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={getAdjustedValue(job.id, 'points') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'points', parseInt(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.points !== getAdjustedValue(job.id, 'points') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: {job.points}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.yearsToMax && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <Clock className="w-4 h-4 inline mr-1" />
+                                  Years to Maximum
+                                </label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={getAdjustedValue(job.id, 'years_to_max') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'years_to_max', parseInt(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.years_to_max !== getAdjustedValue(job.id, 'years_to_max') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: {job.years_to_max}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.yearsServicePay && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <Clock className="w-4 h-4 inline mr-1" />
+                                  Years Service Pay
+                                </label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={getAdjustedValue(job.id, 'years_service_pay') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'years_service_pay', parseInt(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.years_service_pay !== getAdjustedValue(job.id, 'years_service_pay') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: {job.years_service_pay}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.exceptionalCategory && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <Award className="w-4 h-4 inline mr-1" />
+                                  Exceptional Service Category
+                                </label>
+                                <input
+                                  type="text"
+                                  value={getAdjustedValue(job.id, 'exceptional_service_category') as string}
+                                  onChange={(e) => handleAdjustField(job.id, 'exceptional_service_category', e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.exceptional_service_category !== getAdjustedValue(job.id, 'exceptional_service_category') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: {job.exceptional_service_category || '(empty)'}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.benefits && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <Gift className="w-4 h-4 inline mr-1" />
+                                  Benefits Included in Salary
+                                </label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={getAdjustedValue(job.id, 'benefits_included_in_salary') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'benefits_included_in_salary', parseFloat(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.benefits_included_in_salary !== getAdjustedValue(job.id, 'benefits_included_in_salary') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: ${job.benefits_included_in_salary.toFixed(2)}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {visibleColumns.additionalComp && (
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <DollarSign className="w-4 h-4 inline mr-1" />
+                                  Additional Cash Compensation
+                                </label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={getAdjustedValue(job.id, 'additional_cash_compensation') as number}
+                                  onChange={(e) => handleAdjustField(job.id, 'additional_cash_compensation', parseFloat(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                                />
+                                {job.additional_cash_compensation !== getAdjustedValue(job.id, 'additional_cash_compensation') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    Original: ${job.additional_cash_compensation.toFixed(2)}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
