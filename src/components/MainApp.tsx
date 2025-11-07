@@ -570,6 +570,11 @@ export function MainApp() {
               onJurisdictionChange={handleJurisdictionChange}
             />
 
+            <ActionButtons
+              onEnterJobs={() => setCurrentView('reports')}
+              hasJurisdiction={!!currentJurisdiction}
+            />
+
             <JurisdictionForm
               jurisdiction={currentJurisdiction}
               onChange={handleJurisdictionFieldChange}
@@ -580,11 +585,6 @@ export function MainApp() {
               onAddContact={handleAddContact}
               onEditContact={handleEditContact}
               onDeleteContact={handleDeleteContact}
-            />
-
-            <ActionButtons
-              onEnterJobs={() => setCurrentView('reports')}
-              hasJurisdiction={!!currentJurisdiction}
             />
           </>
         )}
