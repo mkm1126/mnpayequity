@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Plus, Save, Download, AlertCircle } from 'lucide-react';
 import { supabase, type Jurisdiction, type Contact } from '../lib/supabase';
 import { AddJurisdictionModal } from './AddJurisdictionModal';
@@ -20,9 +20,26 @@ export function JurisdictionMaintenance({
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedJurisdictionForModify, setSelectedJurisdictionForModify] = useState<Jurisdiction | null>(null);
-  const [selectedJurisdictionForExport, setSelectedJurisdictionForExport] = useState<string>('');
+  const [selectedJurisdictionsForExport, setSelectedJurisdictionsForExport] = useState<string[]>([]);
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [exportMessage, setExportMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsExportDropdownOpen(false);
+      }
+    }
+
+    if (isExportDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isExportDropdownOpen]);
 
   async function handleSaveJurisdiction(jurisdictionData: Partial<Jurisdiction>) {
     try {
@@ -106,45 +123,76 @@ export function JurisdictionMaintenance({
     });
   }
 
+  function handleToggleJurisdiction(jurisdictionId: string) {
+    setSelectedJurisdictionsForExport(prev => {
+      if (prev.includes(jurisdictionId)) {
+        return prev.filter(id => id !== jurisdictionId);
+      } else {
+        return [...prev, jurisdictionId];
+      }
+    });
+  }
+
+  function handleSelectAll() {
+    if (selectedJurisdictionsForExport.length === jurisdictions.length) {
+      setSelectedJurisdictionsForExport([]);
+    } else {
+      setSelectedJurisdictionsForExport(jurisdictions.map(j => j.id));
+    }
+  }
+
+  function handleClearAll() {
+    setSelectedJurisdictionsForExport([]);
+  }
+
   async function handleExportContacts() {
-    if (!selectedJurisdictionForExport) {
-      setExportMessage({ type: 'error', text: 'Please select a jurisdiction first' });
+    if (selectedJurisdictionsForExport.length === 0) {
+      setExportMessage({ type: 'error', text: 'Please select at least one jurisdiction' });
       setTimeout(() => setExportMessage(null), 3000);
       return;
     }
 
     try {
-      const jurisdiction = jurisdictions.find(j => j.id === selectedJurisdictionForExport);
-      if (!jurisdiction) {
-        setExportMessage({ type: 'error', text: 'Jurisdiction not found' });
-        setTimeout(() => setExportMessage(null), 3000);
-        return;
-      }
-
-      const { data: contacts, error } = await supabase
+      const { data: allContacts, error } = await supabase
         .from('contacts')
         .select('*')
-        .eq('jurisdiction_id', selectedJurisdictionForExport)
+        .in('jurisdiction_id', selectedJurisdictionsForExport)
+        .order('jurisdiction_id')
         .order('is_primary', { ascending: false })
         .order('name');
 
       if (error) throw error;
 
-      if (!contacts || contacts.length === 0) {
-        setExportMessage({ type: 'error', text: 'No contacts found for this jurisdiction' });
+      if (!allContacts || allContacts.length === 0) {
+        setExportMessage({ type: 'error', text: 'No contacts found for selected jurisdictions' });
         setTimeout(() => setExportMessage(null), 3000);
         return;
       }
 
-      const csv = [
-        ['Name', 'Title', 'Primary', 'Email', 'Phone'],
-        ...contacts.map((c: Contact) => [
+      const jurisdictionMap = new Map(jurisdictions.map(j => [j.id, j]));
+      const contactsByJurisdiction = new Map<string, number>();
+
+      const csvRows = allContacts.map((c: Contact) => {
+        const jurisdiction = jurisdictionMap.get(c.jurisdiction_id);
+        const jurisdictionName = jurisdiction?.name || 'Unknown';
+        const jurisdictionId = jurisdiction?.jurisdiction_id || '';
+
+        contactsByJurisdiction.set(c.jurisdiction_id, (contactsByJurisdiction.get(c.jurisdiction_id) || 0) + 1);
+
+        return [
+          jurisdictionName,
+          jurisdictionId,
           c.name,
           c.title,
           c.is_primary ? 'Yes' : 'No',
           c.email,
           c.phone,
-        ]),
+        ];
+      });
+
+      const csv = [
+        ['Jurisdiction Name', 'Jurisdiction ID', 'Contact Name', 'Title', 'Primary', 'Email', 'Phone'],
+        ...csvRows,
       ]
         .map((row) => row.map((cell) => `"${cell}"`).join(','))
         .join('\n');
@@ -153,12 +201,26 @@ export function JurisdictionMaintenance({
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${jurisdiction.name}_contacts.csv`;
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = selectedJurisdictionsForExport.length === 1
+        ? `${jurisdictionMap.get(selectedJurisdictionsForExport[0])?.name || 'Jurisdiction'}_contacts.csv`
+        : `Multiple_Jurisdictions_contacts_${timestamp}.csv`;
+
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
 
-      setExportMessage({ type: 'success', text: `Exported ${contacts.length} contacts successfully` });
-      setTimeout(() => setExportMessage(null), 3000);
+      const jurisdictionCount = selectedJurisdictionsForExport.length;
+      const contactBreakdown = Array.from(contactsByJurisdiction.entries())
+        .map(([jId, count]) => `${jurisdictionMap.get(jId)?.name}: ${count}`)
+        .join(', ');
+
+      setExportMessage({
+        type: 'success',
+        text: `Exported ${allContacts.length} contacts from ${jurisdictionCount} jurisdiction${jurisdictionCount > 1 ? 's' : ''} (${contactBreakdown})`
+      });
+      setTimeout(() => setExportMessage(null), 5000);
     } catch (error) {
       console.error('Error exporting contacts:', error);
       setExportMessage({ type: 'error', text: 'Error exporting contacts. Please try again.' });
@@ -271,20 +333,67 @@ export function JurisdictionMaintenance({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Jurisdiction
+            Select Jurisdictions ({selectedJurisdictionsForExport.length} selected)
           </label>
-          <select
-            value={selectedJurisdictionForExport}
-            onChange={(e) => setSelectedJurisdictionForExport(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-          >
-            <option value="">Select a jurisdiction...</option>
-            {jurisdictions.map((jurisdiction) => (
-              <option key={jurisdiction.id} value={jurisdiction.id}>
-                {jurisdiction.name} ({jurisdiction.jurisdiction_id})
-              </option>
-            ))}
-          </select>
+
+          <div className="flex gap-2 mb-2">
+            <button
+              type="button"
+              onClick={handleSelectAll}
+              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+            >
+              {selectedJurisdictionsForExport.length === jurisdictions.length ? 'Deselect All' : 'Select All'}
+            </button>
+            {selectedJurisdictionsForExport.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClearAll}
+                className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003865] focus:border-transparent text-left bg-white flex items-center justify-between"
+            >
+              <span className="text-gray-700">
+                {selectedJurisdictionsForExport.length === 0
+                  ? 'Select jurisdictions...'
+                  : selectedJurisdictionsForExport.length === jurisdictions.length
+                  ? 'All jurisdictions selected'
+                  : `${selectedJurisdictionsForExport.length} jurisdiction${selectedJurisdictionsForExport.length > 1 ? 's' : ''} selected`}
+              </span>
+              <svg className={`w-5 h-5 transition-transform ${isExportDropdownOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {isExportDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                {jurisdictions.map((jurisdiction) => (
+                  <label
+                    key={jurisdiction.id}
+                    className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedJurisdictionsForExport.includes(jurisdiction.id)}
+                      onChange={() => handleToggleJurisdiction(jurisdiction.id)}
+                      className="mr-3 h-4 w-4 text-[#003865] focus:ring-[#003865] border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-700">
+                      {jurisdiction.name} ({jurisdiction.jurisdiction_id})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {exportMessage && (
@@ -297,7 +406,7 @@ export function JurisdictionMaintenance({
 
         <button
           onClick={handleExportContacts}
-          disabled={!selectedJurisdictionForExport}
+          disabled={selectedJurisdictionsForExport.length === 0}
           className="flex items-center gap-2 px-6 py-3 bg-[#008EAA] text-white rounded hover:bg-[#007a95] transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           <Download size={18} />
