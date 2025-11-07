@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { CheckCircle, XCircle, AlertCircle, ArrowLeft, HelpCircle, Calculator, Target } from 'lucide-react';
 import { ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceTroubleshooting } from './ComplianceTroubleshooting';
-import { WhatIfCalculator } from './WhatIfCalculator';
 import { GapAnalysisTool } from './GapAnalysisTool';
 import { JobClassification } from '../lib/supabase';
 
@@ -12,12 +11,12 @@ type ComplianceResultsProps = {
   reportYear: number;
   showBackButton?: boolean;
   onProceedToImplementation?: () => void;
+  onNavigateToWhatIf?: () => void;
   jobs?: JobClassification[];
 };
 
-export function ComplianceResults({ results: result, onBack, reportYear, showBackButton = true, onProceedToImplementation, jobs = [] }: ComplianceResultsProps) {
+export function ComplianceResults({ results: result, onBack, reportYear, showBackButton = true, onProceedToImplementation, onNavigateToWhatIf, jobs = [] }: ComplianceResultsProps) {
   const [showTroubleshooting, setShowTroubleshooting] = useState(false);
-  const [showWhatIfCalculator, setShowWhatIfCalculator] = useState(false);
   const [showGapAnalysis, setShowGapAnalysis] = useState(false);
 
   return (
@@ -243,13 +242,15 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
             <Target className="w-5 h-5" />
             Gap Analysis
           </button>
-          <button
-            onClick={() => setShowWhatIfCalculator(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-[#78BE21] text-white rounded-lg hover:bg-[#6ba51c] transition-colors font-medium"
-          >
-            <Calculator className="w-5 h-5" />
-            What-If Calculator
-          </button>
+          {onNavigateToWhatIf && (
+            <button
+              onClick={onNavigateToWhatIf}
+              className="flex items-center gap-2 px-6 py-3 bg-[#78BE21] text-white rounded-lg hover:bg-[#6ba51c] transition-colors font-medium"
+            >
+              <Calculator className="w-5 h-5" />
+              What-If Calculator
+            </button>
+          )}
           {!result.isCompliant && (
             <button
               onClick={() => setShowTroubleshooting(true)}
@@ -279,14 +280,6 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
         <ComplianceTroubleshooting
           complianceResult={result}
           onClose={() => setShowTroubleshooting(false)}
-        />
-      )}
-
-      {showWhatIfCalculator && jobs.length > 0 && (
-        <WhatIfCalculator
-          jobs={jobs}
-          currentResult={result}
-          onClose={() => setShowWhatIfCalculator(false)}
         />
       )}
 

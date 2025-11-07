@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw, ChevronDown, ChevronUp, Eye, EyeOff, Users, Award, Clock, Gift } from 'lucide-react';
+import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw, ChevronDown, ChevronUp, Eye, EyeOff, Users, Award, Clock, Gift, ArrowLeft } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 
@@ -175,25 +175,27 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
   const totalJobsModified = adjustments.size;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full my-8">
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={onClose}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft size={20} />
+          Back to Results
+        </button>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="border-b border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#003865] rounded-lg flex items-center justify-center">
-                <Calculator className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">What-If Scenario Calculator</h2>
-                <p className="text-sm text-gray-600">Model changes to any job field to analyze compliance impact</p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#003865] rounded-lg flex items-center justify-center">
+              <Calculator className="w-6 h-6 text-white" />
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors text-2xl"
-            >
-              ×
-            </button>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">What-If Scenario Calculator</h2>
+              <p className="text-sm text-gray-600">Model changes to any job field to analyze compliance impact</p>
+            </div>
           </div>
         </div>
 
@@ -764,17 +766,9 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
         </div>
 
         <div className="border-t border-gray-200 p-6 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Changes are not saved. This is for planning purposes only.
-            </p>
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
-            >
-              Close Calculator
-            </button>
-          </div>
+          <p className="text-sm text-gray-600">
+            Changes are not saved. This is for planning purposes only.
+          </p>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { ImplementationForm } from './ImplementationForm';
 import { ReportExportMenu } from './ReportExportMenu';
 import { SuccessModal } from './SuccessModal';
 import { ReportNotes } from './ReportNotes';
+import { WhatIfCalculator } from './WhatIfCalculator';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 
 type ReportManagementProps = {
@@ -31,7 +32,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
   const [jobs, setJobs] = useState<JobClassification[]>([]);
   const [implementationData, setImplementationData] = useState<ImplementationReport | null>(null);
   const [complianceResult, setComplianceResult] = useState<ComplianceResult | null>(null);
-  const [currentView, setCurrentView] = useState<'jobs' | 'compliance' | 'implementation' | 'notes'>('jobs');
+  const [currentView, setCurrentView] = useState<'jobs' | 'compliance' | 'whatif' | 'implementation' | 'notes'>('jobs');
   const [isAddReportModalOpen, setIsAddReportModalOpen] = useState(false);
 
   useEffect(() => {
@@ -508,6 +509,26 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
                 Compliance Results
               </button>
               <button
+                onClick={() => {
+                  if (jobs.length === 0) {
+                    alert('Please add job classifications first');
+                    return;
+                  }
+                  if (!complianceResult) {
+                    const result = analyzeCompliance(jobs);
+                    setComplianceResult(result);
+                  }
+                  setCurrentView('whatif');
+                }}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
+                  currentView === 'whatif'
+                    ? 'bg-[#003865] text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                What-If Scenarios
+              </button>
+              <button
                 onClick={() => setCurrentView('implementation')}
                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
                   currentView === 'implementation'
@@ -582,7 +603,16 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               reportYear={currentReport.report_year}
               showBackButton={false}
               onProceedToImplementation={handleProceedToImplementation}
+              onNavigateToWhatIf={() => setCurrentView('whatif')}
               jobs={jobs}
+            />
+          )}
+
+          {currentView === 'whatif' && complianceResult && jobs.length > 0 && (
+            <WhatIfCalculator
+              jobs={jobs}
+              currentResult={complianceResult}
+              onClose={() => setCurrentView('compliance')}
             />
           )}
 
