@@ -24,17 +24,17 @@ const steps = [
   },
   {
     title: 'Step 3: Run Compliance Tests',
-    content: 'The system automatically analyzes your data using three statistical tests to determine if your jurisdiction is in compliance with pay equity requirements. We\'ll show you exactly what each test measures and help you understand your results.',
+    content: 'The system automatically analyzes your data using tests to determine if your jurisdiction is in compliance with pay equity requirements. We\'ll show you exactly what each test measures and help you understand your results.',
     icon: '📊',
   },
   {
     title: 'Step 4: Complete Implementation Form',
-    content: 'Fill out the official implementation form with information about your job evaluation system, health benefits, and approval details. The form guides you through each required field.',
+    content: 'Fill out the implementation form with the information requested and approved details. The form guides you through each field.',
     icon: '📝',
   },
   {
     title: 'Step 5: Submit and Post Notice',
-    content: 'Review your submission checklist, submit your report, and download the official compliance certificate to post in your building for 90 days. We\'ll provide detailed posting instructions.',
+    content: 'Review and submission checklist, submit your report. After you receive the official compliance certificate post in your building for 90 days. We\'ll provide detailed posting instructions.',
     icon: '✅',
   },
 ];
