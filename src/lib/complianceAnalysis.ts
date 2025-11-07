@@ -19,6 +19,7 @@ export type ComplianceResult = {
   };
   statisticalTest: {
     underpaymentRatio: number;
+    underpaymentRatioPassed: boolean;
     maleClassesBelowPredicted: number;
     femaleClassesBelowPredicted: number;
     maleTotalClasses: number;
@@ -27,6 +28,8 @@ export type ComplianceResult = {
     femalePercentBelowPredicted: number;
     tTestDF: number;
     tTestValue: number;
+    tTestPassed: boolean;
+    tTestCriticalValue: number;
     avgDiffMale: number;
     avgDiffFemale: number;
   } | null;
@@ -288,6 +291,7 @@ function performStatisticalTest(
   if (maleJobs.length === 0 || femaleJobs.length === 0) {
     return {
       underpaymentRatio: 0,
+      underpaymentRatioPassed: true,
       maleClassesBelowPredicted: 0,
       femaleClassesBelowPredicted: 0,
       maleTotalClasses: maleJobs.length,
@@ -296,6 +300,8 @@ function performStatisticalTest(
       femalePercentBelowPredicted: 0,
       tTestDF: 0,
       tTestValue: 0,
+      tTestPassed: true,
+      tTestCriticalValue: 0,
       avgDiffMale: 0,
       avgDiffFemale: 0,
     };
@@ -336,8 +342,14 @@ function performStatisticalTest(
   const tTestValue = pooledSE > 0 ? (avgDiffMale - avgDiffFemale) / pooledSE : 0;
   const tTestDF = maleDiffs.length + femaleDiffs.length - 2;
 
+  const tTestCriticalValue = getCriticalTValue(tTestDF);
+  const tTestPassed = Math.abs(tTestValue) <= tTestCriticalValue;
+
+  const underpaymentRatioPassed = underpaymentRatio >= 80;
+
   return {
     underpaymentRatio,
+    underpaymentRatioPassed,
     maleClassesBelowPredicted,
     femaleClassesBelowPredicted,
     maleTotalClasses: maleJobs.length,
@@ -346,7 +358,42 @@ function performStatisticalTest(
     femalePercentBelowPredicted,
     tTestDF,
     tTestValue,
+    tTestPassed,
+    tTestCriticalValue,
     avgDiffMale,
     avgDiffFemale,
   };
+}
+
+function getCriticalTValue(df: number): number {
+  const tTable: { [key: number]: number } = {
+    1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+    6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+    11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
+    16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+    21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060,
+    26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042,
+    40: 2.021, 50: 2.009, 60: 2.000, 80: 1.990, 100: 1.984,
+    120: 1.980,
+  };
+
+  if (df in tTable) {
+    return tTable[df];
+  }
+
+  if (df > 120) {
+    return 1.960;
+  }
+
+  const keys = Object.keys(tTable).map(Number).sort((a, b) => a - b);
+  for (let i = 0; i < keys.length - 1; i++) {
+    if (df >= keys[i] && df < keys[i + 1]) {
+      const lower = keys[i];
+      const upper = keys[i + 1];
+      const ratio = (df - lower) / (upper - lower);
+      return tTable[lower] - ratio * (tTable[lower] - tTable[upper]);
+    }
+  }
+
+  return 1.960;
 }

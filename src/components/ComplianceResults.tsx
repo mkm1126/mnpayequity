@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle, XCircle, AlertCircle, ArrowLeft, HelpCircle, Calculator, Target } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, ArrowLeft, HelpCircle, Calculator, Target, ExternalLink } from 'lucide-react';
 import { ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceTroubleshooting } from './ComplianceTroubleshooting';
 import { GapAnalysisTool } from './GapAnalysisTool';
@@ -122,7 +122,20 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
             <h4 className="text-lg font-bold text-gray-900 mb-6">II. STATISTICAL ANALYSIS TEST</h4>
 
             <div className="mb-6">
-              <h5 className="font-bold text-gray-800 mb-3">A. UNDERPAYMENT RATIO = {result.statisticalTest.underpaymentRatio.toFixed(2)}% *</h5>
+              <div className="flex items-center justify-between mb-3">
+                <h5 className="font-bold text-gray-800">A. UNDERPAYMENT RATIO = {result.statisticalTest.underpaymentRatio.toFixed(2)}% *</h5>
+                {result.statisticalTest.underpaymentRatioPassed ? (
+                  <span className="flex items-center gap-2 text-emerald-600 text-sm font-bold px-3 py-1.5 bg-emerald-50 rounded-lg">
+                    <CheckCircle className="w-5 h-5" />
+                    Passed
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 text-rose-600 text-sm font-bold px-3 py-1.5 bg-rose-50 rounded-lg">
+                    <XCircle className="w-5 h-5" />
+                    Failed
+                  </span>
+                )}
+              </div>
               <div className="ml-6 space-y-2 text-sm">
                 <div className="grid grid-cols-3 gap-6">
                   <div></div>
@@ -156,12 +169,28 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
             </div>
 
             <div>
-              <h5 className="font-bold text-gray-800 mb-3">B. T-test Results</h5>
+              <div className="flex items-center justify-between mb-3">
+                <h5 className="font-bold text-gray-800">B. T-test Results</h5>
+                {result.statisticalTest.tTestPassed ? (
+                  <span className="flex items-center gap-2 text-emerald-600 text-sm font-bold px-3 py-1.5 bg-emerald-50 rounded-lg">
+                    <CheckCircle className="w-5 h-5" />
+                    Passed
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 text-rose-600 text-sm font-bold px-3 py-1.5 bg-rose-50 rounded-lg">
+                    <XCircle className="w-5 h-5" />
+                    Failed
+                  </span>
+                )}
+              </div>
               <div className="ml-6 space-y-3 text-sm">
                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="grid grid-cols-2 gap-4 text-gray-900">
                     <div><span className="font-medium">Degrees of Freedom (DF)</span> = {result.statisticalTest.tTestDF}</div>
                     <div><span className="font-medium">Value of T</span> = {result.statisticalTest.tTestValue.toFixed(3)}</div>
+                  </div>
+                  <div className="mt-2 text-gray-700">
+                    <span className="font-medium">Critical Value</span> = {result.statisticalTest.tTestCriticalValue.toFixed(3)}
                   </div>
                 </div>
                 <div className="text-gray-700">
@@ -169,6 +198,17 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
                 </div>
                 <div className="text-gray-700">
                   b. Avg.diff.in pay from predicted pay for female jobs = <span className="font-medium text-gray-900">${result.statisticalTest.avgDiffFemale.toFixed(2)}</span>
+                </div>
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <a
+                    href="https://mn.gov/mmb-stat/pay-equity/t-table.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] transition-colors font-medium"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    View T-Test Critical Values Table
+                  </a>
                 </div>
               </div>
             </div>
