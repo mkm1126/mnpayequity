@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { HelpCircle } from 'lucide-react';
 
 export function StatusHelpIcon() {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -32,7 +33,7 @@ export function StatusHelpIcon() {
       <button
         ref={buttonRef}
         type="button"
-        className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#78BE20] text-white hover:bg-[#6ba91c] transition-colors cursor-help flex-shrink-0"
+        className="ml-2 text-[#78BE21] hover:text-[#5a8f19] transition-colors cursor-help flex-shrink-0 focus:outline-none"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={(e) => {
@@ -41,7 +42,7 @@ export function StatusHelpIcon() {
           setShowTooltip(!showTooltip);
         }}
       >
-        <span className="text-xs font-bold">?</span>
+        <HelpCircle size={18} />
       </button>
 
       {showTooltip && (
