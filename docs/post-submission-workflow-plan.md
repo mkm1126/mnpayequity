@@ -15,12 +15,25 @@ Users frequently submit their pay equity reports but then realize they need to m
 - Support tickets are required to revert the submission status
 - This creates friction and delays in the reporting process
 
+### Understanding Report Status Values
+
+**Draft Statuses:**
+- **Private**: Only the jurisdiction can view the jobs (default for new reports)
+- **Shared**: Both jurisdiction AND State Pay Equity Coordinator can view the jobs
+
+**Submission & Compliance Statuses:**
+- **Submitted**: Report officially submitted for review (all forms locked)
+- **In Compliance**: Report meets pay equity requirements
+- **Out of Compliance**: Report does not meet requirements
+
 ### Current Status Flow
 ```
-Draft (Private/Shared) → Submitted → Approved/Rejected
-                           ↑
+Private/Shared (Draft) → Submitted → In Compliance/Out of Compliance
+                            ↑
                       (Currently requires support ticket)
 ```
+
+**Key Point:** Both "Private" and "Shared" are draft/working statuses. The main difference is visibility - Private keeps work hidden from state coordinators, while Shared allows collaboration. When reports are reopened after submission, they typically revert to "Private" status.
 
 ---
 
@@ -570,8 +583,20 @@ async function handleResubmitReport(reportId: string, revisionNotes: string) {
 ## Appendix: Current System Analysis
 
 ### Current Status Values
-- `case_status`: 'Private' | 'Shared' | 'Submitted' | 'In Compliance' | 'Out of Compliance'
-- `approval_status`: 'draft' | 'pending' | 'approved' | 'rejected' | 'auto_approved'
+
+**case_status** values:
+- **'Private'**: Draft mode - only jurisdiction can view jobs
+- **'Shared'**: Draft mode - both jurisdiction and State Pay Equity Coordinator can view jobs
+- **'Submitted'**: Report officially submitted, all forms locked for editing
+- **'In Compliance'**: Final status - report meets pay equity requirements
+- **'Out of Compliance'**: Final status - report does not meet requirements
+
+**approval_status** values:
+- **'draft'**: Not yet submitted or being worked on
+- **'pending'**: Awaiting MMB approval review
+- **'approved'**: Approved by MMB administrator
+- **'rejected'**: Rejected by MMB administrator
+- **'auto_approved'**: Automatically approved by system (compliant cases)
 
 ### Key Files in Current System
 - **ReportManagement.tsx**: Main report workflow (682 lines)
