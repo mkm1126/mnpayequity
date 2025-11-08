@@ -1,15 +1,40 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export function StatusHelpIcon() {
   const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<number>();
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setShowTooltip(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = window.setTimeout(() => {
+      setShowTooltip(false);
+    }, 100);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="relative inline-flex items-center">
       <button
+        ref={buttonRef}
         type="button"
-        className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#78BE20] text-white hover:bg-[#6ba91c] transition-colors cursor-help"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
+        className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#78BE20] text-white hover:bg-[#6ba91c] transition-colors cursor-help flex-shrink-0"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -21,9 +46,14 @@ export function StatusHelpIcon() {
 
       {showTooltip && (
         <div
-          className="absolute left-0 top-full mt-2 z-50 w-80 p-4 bg-white rounded-lg shadow-xl border-2 border-[#78BE20]"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
+          ref={tooltipRef}
+          className="fixed z-[9999] w-80 p-4 bg-white rounded-lg shadow-2xl border-2 border-[#78BE20] pointer-events-auto"
+          style={{
+            left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left}px` : '0',
+            top: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().bottom + 8}px` : '0',
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <div className="space-y-3">
             <h4 className="font-semibold text-[#003865] text-sm">Report Status Guide</h4>
@@ -72,7 +102,13 @@ export function StatusHelpIcon() {
             </div>
           </div>
 
-          <div className="absolute left-3 bottom-full mb-[-2px] w-0 h-0 border-8 border-transparent border-b-[#78BE20]"></div>
+          <div
+            className="absolute w-0 h-0 border-8 border-transparent border-b-[#78BE20]"
+            style={{
+              left: '12px',
+              top: '-16px'
+            }}
+          ></div>
         </div>
       )}
     </div>
