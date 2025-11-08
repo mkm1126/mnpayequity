@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-import { ArrowLeft, Share2, Lock } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { supabase, Report, JobClassification, Jurisdiction, ImplementationReport } from '../lib/supabase';
 import { ReportList } from './ReportList';
 import { AddReportModal } from './AddReportModal';
@@ -15,6 +15,7 @@ import { SuccessModal } from './SuccessModal';
 import { ReportNotes } from './ReportNotes';
 import { WhatIfCalculator } from './WhatIfCalculator';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
+import { PrivateSharedToggle } from './PrivateSharedToggle';
 
 type ReportManagementProps = {
   jurisdiction: Jurisdiction;
@@ -505,28 +506,11 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
           </div>
         </div>
         {currentReport && (currentReport.case_status === 'Private' || currentReport.case_status === 'Shared') && (
-          <div className="flex items-center gap-3">
-            <span
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                currentReport.case_status === 'Private'
-                  ? 'bg-gray-100 text-gray-700'
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}
-            >
-              {currentReport.case_status === 'Private' ? <Lock className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-              {currentReport.case_status}
-            </span>
-            <button
-              onClick={() => handleToggleShareStatus(currentReport.id, currentReport.case_status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                currentReport.case_status === 'Private'
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-orange-600 text-white hover:bg-orange-700'
-              }`}
-            >
-              {currentReport.case_status === 'Private' ? 'Share Report' : 'Make Private'}
-            </button>
-          </div>
+          <PrivateSharedToggle
+            isShared={currentReport.case_status === 'Shared'}
+            onToggle={() => handleToggleShareStatus(currentReport.id, currentReport.case_status)}
+            size="lg"
+          />
         )}
       </div>
 

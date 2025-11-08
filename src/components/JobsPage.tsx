@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-import { ArrowLeft, Edit, Trash2, Plus, Download, Eye, FileEdit, RotateCcw, Share2, Lock } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Download, Eye, FileEdit, RotateCcw } from 'lucide-react';
 import { supabase, type Jurisdiction, type Report, type JobClassification } from '../lib/supabase';
 import { EditCaseDescriptionModal } from './EditCaseDescriptionModal';
 import { AddJobModal } from './AddJobModal';
@@ -8,6 +8,7 @@ import { JobEntryMethodModal } from './JobEntryMethodModal';
 import { CopyJobsModal } from './CopyJobsModal';
 import { ImportJobsModal } from './ImportJobsModal';
 import { AddReportModal } from './AddReportModal';
+import { PrivateSharedToggle } from './PrivateSharedToggle';
 
 type JobsPageProps = {
   jurisdiction: Jurisdiction;
@@ -1012,7 +1013,14 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
+                        <PrivateSharedToggle
+                          isShared={report.case_status === 'Shared'}
+                          onToggle={() => handleToggleShareStatus(report)}
+                          size="sm"
+                        />
+                      )}
                       <button
                         onClick={() => handleEditCaseDesc(report)}
                         className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
@@ -1020,23 +1028,6 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                       >
                         <FileEdit size={16} />
                       </button>
-                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
-                        <button
-                          onClick={() => handleToggleShareStatus(report)}
-                          className={`flex items-center gap-1 text-sm ${
-                            report.case_status === 'Private'
-                              ? 'text-blue-600 hover:text-blue-800'
-                              : 'text-orange-600 hover:text-orange-800'
-                          }`}
-                          title={report.case_status === 'Private' ? 'Share with State Coordinators' : 'Change to Private'}
-                        >
-                          {report.case_status === 'Private' ? (
-                            <Share2 size={16} />
-                          ) : (
-                            <Lock size={16} />
-                          )}
-                        </button>
-                      )}
                       <button
                         onClick={() => handleDeleteCase(report)}
                         className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm"

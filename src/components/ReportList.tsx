@@ -1,5 +1,6 @@
-import { FileText, Eye, Trash2, Plus, Share2, Lock } from 'lucide-react';
+import { FileText, Eye, Trash2, Plus } from 'lucide-react';
 import { Report } from '../lib/supabase';
+import { PrivateSharedToggle } from './PrivateSharedToggle';
 
 type ReportListProps = {
   reports: Report[];
@@ -82,7 +83,16 @@ export function ReportList({
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <PrivateSharedToggle
+                            isShared={report.case_status === 'Shared'}
+                            onToggle={() => onToggleShareStatus(report.id, report.case_status)}
+                            size="sm"
+                          />
+                        </div>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -93,26 +103,6 @@ export function ReportList({
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleShareStatus(report.id, report.case_status);
-                          }}
-                          className={`p-1.5 rounded transition-colors ${
-                            report.case_status === 'Private'
-                              ? 'text-blue-600 hover:bg-blue-50'
-                              : 'text-orange-600 hover:bg-orange-50'
-                          }`}
-                          title={report.case_status === 'Private' ? 'Share with State Coordinators' : 'Change to Private'}
-                        >
-                          {report.case_status === 'Private' ? (
-                            <Share2 className="w-4 h-4" />
-                          ) : (
-                            <Lock className="w-4 h-4" />
-                          )}
-                        </button>
-                      )}
                       {report.case_status === 'Private' && (
                         <button
                           onClick={(e) => {
