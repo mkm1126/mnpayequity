@@ -7,25 +7,32 @@ type InlineStatusToggleProps = {
 
 export function InlineStatusToggle({ isShared, onToggle }: InlineStatusToggleProps) {
   return (
-    <button
-      onClick={onToggle}
-      className="relative inline-flex items-center rounded-full transition-colors cursor-pointer group border-2 border-gray-300 hover:border-gray-400"
-      type="button"
-    >
-      <div className={`flex items-center transition-all duration-300 ${isShared ? 'bg-yellow-500' : 'bg-gray-500'} rounded-full`}>
-        <div className={`flex items-center gap-2 px-3 py-1.5 transition-opacity duration-300 ${!isShared ? 'opacity-100' : 'opacity-40'}`}>
-          <Lock size={14} className="text-white" />
-          <span className="text-xs font-medium text-white whitespace-nowrap">Private</span>
-        </div>
-        <div className={`flex items-center gap-2 px-3 py-1.5 transition-opacity duration-300 ${isShared ? 'opacity-100' : 'opacity-40'}`}>
-          <Share2 size={14} className="text-white" />
-          <span className="text-xs font-medium text-white whitespace-nowrap">Shared</span>
-        </div>
-      </div>
-
-      <div className={`absolute top-0 bottom-0 w-[50%] bg-white rounded-full shadow-md transition-all duration-300 pointer-events-none border border-gray-300 ${
-        isShared ? 'left-[50%]' : 'left-0'
-      }`} />
-    </button>
+    <div className="flex items-center gap-3">
+      <span className="text-xs font-medium text-gray-600 whitespace-nowrap">Private</span>
+      <button
+        onClick={onToggle}
+        className={`relative inline-flex items-center h-7 w-14 rounded-full transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          isShared
+            ? 'bg-green-500 focus:ring-green-500'
+            : 'bg-gray-300 focus:ring-gray-400'
+        }`}
+        type="button"
+        aria-checked={isShared}
+        role="switch"
+      >
+        <span
+          className={`inline-flex items-center justify-center h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-300 ${
+            isShared ? 'translate-x-[2rem]' : 'translate-x-0.5'
+          }`}
+        >
+          {isShared ? (
+            <Share2 size={12} className="text-green-600" />
+          ) : (
+            <Lock size={12} className="text-gray-600" />
+          )}
+        </span>
+      </button>
+      <span className="text-xs font-medium text-gray-600 whitespace-nowrap">Shared</span>
+    </div>
   );
 }
