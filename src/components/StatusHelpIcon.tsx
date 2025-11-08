@@ -1,4 +1,3 @@
-import { HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export function StatusHelpIcon() {
@@ -8,19 +7,24 @@ export function StatusHelpIcon() {
     <div className="relative inline-flex items-center">
       <button
         type="button"
-        className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#003865] text-white hover:bg-[#004a7f] transition-colors cursor-help"
+        className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#78BE20] text-white hover:bg-[#6ba91c] transition-colors cursor-help"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           setShowTooltip(!showTooltip);
         }}
       >
-        <HelpCircle size={14} />
+        <span className="text-xs font-bold">?</span>
       </button>
 
       {showTooltip && (
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 w-80 p-4 bg-white rounded-lg shadow-xl border-2 border-[#003865] animate-fadeIn">
+        <div
+          className="absolute left-0 top-full mt-2 z-50 w-80 p-4 bg-white rounded-lg shadow-xl border-2 border-[#78BE20]"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
           <div className="space-y-3">
             <h4 className="font-semibold text-[#003865] text-sm">Report Status Guide</h4>
 
@@ -68,7 +72,7 @@ export function StatusHelpIcon() {
             </div>
           </div>
 
-          <div className="absolute right-full mr-1 top-1/2 -translate-y-1/2 w-0 h-0 border-8 border-transparent border-r-[#003865]"></div>
+          <div className="absolute left-3 bottom-full mb-[-2px] w-0 h-0 border-8 border-transparent border-b-[#78BE20]"></div>
         </div>
       )}
     </div>
