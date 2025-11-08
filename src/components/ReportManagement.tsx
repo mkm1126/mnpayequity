@@ -17,6 +17,7 @@ import { WhatIfCalculator } from './WhatIfCalculator';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { PrivateSharedToggle } from './PrivateSharedToggle';
 import { ShareConfirmationModal } from './ShareConfirmationModal';
+import { NotificationModal } from './NotificationModal';
 
 type ReportManagementProps = {
   jurisdiction: Jurisdiction;
@@ -48,6 +49,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [notification, setNotification] = useState<{ message: string; type: 'info' | 'success' | 'warning' | 'error'; title?: string } | null>(null);
   const [reportToToggle, setReportToToggle] = useState<Report | null>(null);
 
   useEffect(() => {
@@ -180,7 +182,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
       }
     } catch (error) {
       console.error('Error deleting report:', error);
-      alert('Error deleting report. Please try again.');
+      setNotification({ message: 'Error deleting report. Please try again.', type: 'error', title: 'Error' });
     }
   }
 
@@ -223,7 +225,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
       setReportToToggle(null);
     } catch (error) {
       console.error('Error updating report status:', error);
-      alert('Error updating report status. Please try again.');
+      setNotification({ message: 'Error updating report status. Please try again.', type: 'error', title: 'Error' });
     }
   }
 
@@ -393,7 +395,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
       if (error) throw error;
 
       await loadJobs(currentReport.id);
-      alert(`Successfully imported ${jobs.length} job classifications`);
+      setNotification({ message: `Successfully imported ${jobs.length} job classifications`, type: 'success', title: 'Import Successful' });
     } catch (error) {
       console.error('Error importing jobs:', error);
       throw error;
@@ -402,7 +404,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
 
   function handleSeeResults() {
     if (jobs.length === 0) {
-      alert('Please add job classifications before viewing results');
+      setNotification({ message: 'Please add job classifications before viewing results', type: 'warning', title: 'No Job Data' });
       return;
     }
 
@@ -548,7 +550,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               <button
                 onClick={() => {
                   if (jobs.length === 0) {
-                    alert('Please add job classifications first');
+                    setNotification({ message: 'Please add job classifications first', type: 'warning', title: 'No Job Data' });
                     return;
                   }
                   if (!complianceResult) {
@@ -568,7 +570,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               <button
                 onClick={() => {
                   if (jobs.length === 0) {
-                    alert('Please add job classifications first');
+                    setNotification({ message: 'Please add job classifications first', type: 'warning', title: 'No Job Data' });
                     return;
                   }
                   if (!complianceResult) {
@@ -679,8 +681,10 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               jurisdiction={jurisdiction}
               jobs={jobs}
               implementationData={implementationData}
+              complianceResult={complianceResult}
               onSave={handleSaveImplementation}
               onSubmit={handleSubmitReport}
+              onNavigateToWhatIf={() => setCurrentView('whatif')}
             />
           )}
 
@@ -744,6 +748,16 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
         onConfirm={confirmToggleShareStatus}
         currentStatus={reportToToggle?.case_status as 'Private' | 'Shared' || 'Private'}
       />
+
+      {notification && (
+        <NotificationModal
+          isOpen={true}
+          title={notification.title}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
     </div>
   );
 }
