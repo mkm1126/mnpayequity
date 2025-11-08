@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Lock, Share2 } from 'lucide-react';
+import { Lock, Share2, HelpCircle } from 'lucide-react';
 
 type PrivateSharedToggleProps = {
   isShared: boolean;
@@ -16,6 +16,7 @@ export function PrivateSharedToggle({
 }: PrivateSharedToggleProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const helpRef = useRef<HTMLButtonElement>(null);
   const timeoutRef = useRef<number>();
 
   const handleMouseEnter = () => {
@@ -38,7 +39,8 @@ export function PrivateSharedToggle({
       translate: 'translate-x-6',
       icon: 11,
       label: 'text-xs',
-      gap: 'gap-2'
+      gap: 'gap-2',
+      helpIcon: 14
     },
     md: {
       container: 'h-7 w-14',
@@ -46,7 +48,8 @@ export function PrivateSharedToggle({
       translate: 'translate-x-[2rem]',
       icon: 12,
       label: 'text-xs',
-      gap: 'gap-3'
+      gap: 'gap-3',
+      helpIcon: 16
     },
     lg: {
       container: 'h-8 w-16',
@@ -54,7 +57,8 @@ export function PrivateSharedToggle({
       translate: 'translate-x-[2.25rem]',
       icon: 14,
       label: 'text-sm',
-      gap: 'gap-3'
+      gap: 'gap-3',
+      helpIcon: 18
     }
   };
 
@@ -66,8 +70,6 @@ export function PrivateSharedToggle({
       <button
         ref={buttonRef}
         onClick={onToggle}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         disabled={disabled}
         className={`relative inline-flex items-center ${config.container} rounded-full transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -94,6 +96,16 @@ export function PrivateSharedToggle({
         </span>
       </button>
       <span className={`${config.label} font-medium text-gray-600 whitespace-nowrap`}>Shared</span>
+      <button
+        ref={helpRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+        type="button"
+        aria-label="Help"
+      >
+        <HelpCircle size={config.helpIcon} />
+      </button>
 
       {showTooltip && (
         <div
