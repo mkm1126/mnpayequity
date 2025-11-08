@@ -1,10 +1,11 @@
-import { FileText, Eye, Trash2, Plus } from 'lucide-react';
+import { FileText, Eye, Trash2, Plus, Share2, Lock } from 'lucide-react';
 import { Report } from '../lib/supabase';
 
 type ReportListProps = {
   reports: Report[];
   onViewReport: (report: Report) => void;
   onDeleteReport: (reportId: string) => void;
+  onToggleShareStatus: (reportId: string, currentStatus: string) => void;
   onAddReport: () => void;
 };
 
@@ -12,6 +13,7 @@ export function ReportList({
   reports,
   onViewReport,
   onDeleteReport,
+  onToggleShareStatus,
   onAddReport,
 }: ReportListProps) {
   const getStatusColor = (status: string) => {
@@ -91,6 +93,26 @@ export function ReportList({
                       >
                         <Eye className="w-4 h-4" />
                       </button>
+                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleShareStatus(report.id, report.case_status);
+                          }}
+                          className={`p-1.5 rounded transition-colors ${
+                            report.case_status === 'Private'
+                              ? 'text-blue-600 hover:bg-blue-50'
+                              : 'text-orange-600 hover:bg-orange-50'
+                          }`}
+                          title={report.case_status === 'Private' ? 'Share with State Coordinators' : 'Change to Private'}
+                        >
+                          {report.case_status === 'Private' ? (
+                            <Share2 className="w-4 h-4" />
+                          ) : (
+                            <Lock className="w-4 h-4" />
+                          )}
+                        </button>
+                      )}
                       {report.case_status === 'Private' && (
                         <button
                           onClick={(e) => {

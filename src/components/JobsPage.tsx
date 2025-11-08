@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-import { ArrowLeft, Edit, Trash2, Plus, Download, Eye, FileEdit, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Download, Eye, FileEdit, RotateCcw, Share2, Lock } from 'lucide-react';
 import { supabase, type Jurisdiction, type Report, type JobClassification } from '../lib/supabase';
 import { EditCaseDescriptionModal } from './EditCaseDescriptionModal';
 import { AddJobModal } from './AddJobModal';
@@ -224,6 +224,33 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
     } catch (error) {
       console.error('Error reverting case:', error);
       alert('Error reverting case. Please try again.');
+    }
+  }
+
+  async function handleToggleShareStatus(report: Report) {
+    const newStatus = report.case_status === 'Private' ? 'Shared' : 'Private';
+    const confirmMessage = newStatus === 'Shared'
+      ? 'Share this report with State Pay Equity Coordinators?\n\nThey will be able to view all job classifications and report data.'
+      : 'Change this report back to Private?\n\nOnly your jurisdiction will be able to view the data.';
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .update({
+          case_status: newStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', report.id);
+
+      if (error) throw error;
+
+      alert(`Case ${newStatus === 'Shared' ? 'shared' : 'changed to private'} successfully!`);
+      await loadReports();
+    } catch (error) {
+      console.error('Error updating case status:', error);
+      alert('Error updating case status. Please try again.');
     }
   }
 
@@ -992,6 +1019,23 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                       >
                         <FileEdit size={16} />
                       </button>
+                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
+                        <button
+                          onClick={() => handleToggleShareStatus(report)}
+                          className={`flex items-center gap-1 text-sm ${
+                            report.case_status === 'Private'
+                              ? 'text-blue-600 hover:text-blue-800'
+                              : 'text-orange-600 hover:text-orange-800'
+                          }`}
+                          title={report.case_status === 'Private' ? 'Share with State Coordinators' : 'Change to Private'}
+                        >
+                          {report.case_status === 'Private' ? (
+                            <Share2 size={16} />
+                          ) : (
+                            <Lock size={16} />
+                          )}
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDeleteCase(report)}
                         className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm"
@@ -999,7 +1043,7 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                       >
                         <Trash2 size={16} />
                       </button>
-                      {report.case_status !== 'Private' && (
+                      {report.case_status !== 'Private' && report.case_status !== 'Shared' && (
                         <button
                           onClick={() => handleRevertToPrivate(report)}
                           className="flex items-center gap-1 text-gray-600 hover:text-gray-800 text-sm"

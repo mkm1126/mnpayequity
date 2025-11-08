@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Share2, Lock } from 'lucide-react';
 import { supabase, Report, JobClassification, Jurisdiction, ImplementationReport } from '../lib/supabase';
 import { ReportList } from './ReportList';
 import { AddReportModal } from './AddReportModal';
@@ -177,6 +177,43 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
     } catch (error) {
       console.error('Error deleting report:', error);
       alert('Error deleting report. Please try again.');
+    }
+  }
+
+  async function handleToggleShareStatus(reportId: string, currentStatus: string) {
+    const newStatus = currentStatus === 'Private' ? 'Shared' : 'Private';
+    const confirmMessage = newStatus === 'Shared'
+      ? 'Share this report with State Pay Equity Coordinators?\n\nThey will be able to view all job classifications and report data.'
+      : 'Change this report back to Private?\n\nOnly your jurisdiction will be able to view the data.';
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .update({
+          case_status: newStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      await loadReports();
+      if (currentReport?.id === reportId) {
+        const { data } = await supabase
+          .from('reports')
+          .select('*')
+          .eq('id', reportId)
+          .single();
+        if (data) setCurrentReport(data);
+      }
+
+      setSuccessMessage(`Report ${newStatus === 'Shared' ? 'shared' : 'changed to private'} successfully`);
+      setShowSuccessModal(true);
+    } catch (error) {
+      console.error('Error updating report status:', error);
+      alert('Error updating report status. Please try again.');
     }
   }
 
@@ -449,22 +486,48 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={currentReport ? handleBackToList : onBack}
-          className="flex items-center gap-2 text-[#003865] hover:text-[#004d7a] transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          {currentReport ? 'Back to Reports' : 'Back to Jurisdiction'}
-        </button>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">{jurisdiction.name}</h2>
-          {currentReport && (
-            <p className="text-sm text-gray-600">
-              {currentReport.report_year} - Case {currentReport.case_number}: {currentReport.case_description}
-            </p>
-          )}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={currentReport ? handleBackToList : onBack}
+            className="flex items-center gap-2 text-[#003865] hover:text-[#004d7a] transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            {currentReport ? 'Back to Reports' : 'Back to Jurisdiction'}
+          </button>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">{jurisdiction.name}</h2>
+            {currentReport && (
+              <p className="text-sm text-gray-600">
+                {currentReport.report_year} - Case {currentReport.case_number}: {currentReport.case_description}
+              </p>
+            )}
+          </div>
         </div>
+        {currentReport && (currentReport.case_status === 'Private' || currentReport.case_status === 'Shared') && (
+          <div className="flex items-center gap-3">
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
+                currentReport.case_status === 'Private'
+                  ? 'bg-gray-100 text-gray-700'
+                  : 'bg-yellow-100 text-yellow-800'
+              }`}
+            >
+              {currentReport.case_status === 'Private' ? <Lock className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+              {currentReport.case_status}
+            </span>
+            <button
+              onClick={() => handleToggleShareStatus(currentReport.id, currentReport.case_status)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                currentReport.case_status === 'Private'
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-orange-600 text-white hover:bg-orange-700'
+              }`}
+            >
+              {currentReport.case_status === 'Private' ? 'Share Report' : 'Make Private'}
+            </button>
+          </div>
+        )}
       </div>
 
       {!currentReport ? (
@@ -472,6 +535,7 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
           reports={reports}
           onViewReport={handleViewReport}
           onDeleteReport={handleDeleteReport}
+          onToggleShareStatus={handleToggleShareStatus}
           onAddReport={() => setIsAddReportModalOpen(true)}
         />
       ) : (
