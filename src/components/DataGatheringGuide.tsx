@@ -238,6 +238,104 @@ export function DataGatheringGuide({ onBack }: DataGatheringGuideProps) {
           </div>
         </div>
 
+        <div className="mt-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-300">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <CheckSquare className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-green-900 text-lg mb-1">Best Practice Tip: Annual Data Maintenance</h3>
+              <p className="text-green-800 font-semibold text-sm">Refresh your data every year, even if you don't need to file a report</p>
+            </div>
+          </div>
+
+          <div className="space-y-4 text-sm text-green-900 bg-white bg-opacity-60 rounded-lg p-4">
+            <div>
+              <h4 className="font-semibold mb-2">Why maintain data annually?</h4>
+              <ul className="space-y-1 ml-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Job classifications and salary information remain current and accurate</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>You can quickly respond if reporting requirements change</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Data quality issues are caught early, not at deadline time</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Staff turnover doesn't result in lost institutional knowledge</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Historical data is preserved for trend analysis and planning</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-3 border-t border-green-200">
+              <h4 className="font-semibold mb-2">When to update your data:</h4>
+              <ul className="space-y-1 ml-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span><strong>Annually in November/December:</strong> Gather year-end data even if not filing</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span><strong>After union negotiations:</strong> Update salary ranges when contracts are ratified</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span><strong>When positions change:</strong> Update job evaluations when duties significantly change</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span><strong>During budget cycles:</strong> Align pay equity reviews with budget planning</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span><strong>Quarterly reviews:</strong> Check for new positions, retirements, or major changes</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-3 border-t border-green-200">
+              <h4 className="font-semibold mb-2">Annual audit recommendations:</h4>
+              <ul className="space-y-1 ml-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Verify all employee counts and gender composition are accurate</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Confirm salary ranges match current pay scales and contracts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Review point values for consistency across all classifications</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Identify new positions that need evaluation and remove eliminated ones</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600 mt-1">•</span>
+                  <span>Run compliance tests periodically to spot emerging issues early</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-lg">
+              <p className="text-xs text-green-900 italic">
+                <strong>Pro Tip:</strong> This system is available year-round for data maintenance. Keep reports in "Private" draft status for ongoing updates, and run compliance tests periodically. The small investment in ongoing maintenance pays significant dividends when reporting season arrives.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-3">Additional Resources</h3>
           <div className="space-y-2">

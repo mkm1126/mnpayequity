@@ -315,6 +315,46 @@ const helpSections: HelpSection[] = [
     ]
   },
   {
+    id: 'data-maintenance',
+    title: 'Annual Data Maintenance Best Practices',
+    icon: CheckCircle,
+    content: 'Maintaining accurate, up-to-date pay equity data is crucial for efficient reporting and compliance. Following these best practices will save time and ensure data quality year after year.',
+    subsections: [
+      {
+        title: 'Best Practice Tip: Refresh Your Data Every Year',
+        content: 'Even if you are not required to file a pay equity report in a given year, you should still refresh your data annually. This practice ensures:\n\n• Your job classifications remain current and accurate\n• Salary information reflects actual compensation\n• You can quickly respond if reporting requirements change\n• Historical data is preserved for trend analysis\n• Data quality issues are caught early, not at deadline time\n• Staff turnover doesn\'t result in lost institutional knowledge\n\nThink of annual data maintenance as preventive care for your pay equity program.'
+      },
+      {
+        title: 'When to Update Your Data',
+        content: 'Establish a regular schedule for updating pay equity data:\n\n• Annually in November/December: Gather current year-end data even if not filing\n• After union negotiations: Update salary ranges when new contracts are ratified\n• When positions change: Update job evaluations when duties significantly change\n• After organizational restructuring: Review and update all affected classifications\n• During budget cycles: Align pay equity reviews with budget planning\n• Quarterly reviews: Check for new positions, retirements, or major changes\n\nSet calendar reminders to ensure data maintenance doesn\'t get overlooked.'
+      },
+      {
+        title: 'Maintaining Job Classification Data',
+        content: 'Keep your job classifications current and accurate:\n\n• Review all job descriptions annually for accuracy\n• Update classifications when duties or responsibilities change significantly\n• Re-evaluate points if job requirements have evolved\n• Document reasons for any classification or point changes\n• Maintain consistency in evaluation methodology across years\n• Archive old job descriptions when positions are eliminated\n• Create new classifications promptly when new positions are added\n• Ensure gender composition is updated as employees change positions\n\nAccurate job classifications are the foundation of pay equity compliance.'
+      },
+      {
+        title: 'When to Update Salary Information',
+        content: 'Salary data should be refreshed in these situations:\n\n• Annually: Update all salary ranges at year-end (typically December 31st)\n• After cost-of-living adjustments (COLA): Update minimum and maximum salaries\n• When union contracts are ratified: Update affected classifications immediately\n• After pay equity adjustments: Document implemented salary increases\n• When pay scales change: Update ranges for all affected job classes\n• After promotions or reclassifications: Ensure proper salary placement\n• Following budget approvals: Update ranges approved in new fiscal year\n\nKeeping salary data current ensures compliance testing reflects reality.'
+      },
+      {
+        title: 'Annual Data Audit Recommendations',
+        content: 'Conduct an annual data audit even when not filing a report:\n\n• Verify all employee counts are accurate by job classification\n• Confirm gender composition calculations are correct\n• Check that salary ranges match current pay scales and contracts\n• Review point values for consistency and accuracy\n• Identify any new positions that need evaluation\n• Remove eliminated positions from your active classifications\n• Verify exceptional service pay categories are current\n• Confirm total payroll calculations are accurate\n• Review prior year notes for follow-up items\n• Test data import/export processes work correctly\n\nThis annual audit takes 2-4 hours but prevents major issues when reporting deadlines approach.'
+      },
+      {
+        title: 'Preserving Institutional Knowledge',
+        content: 'Protect your organization from knowledge loss:\n\n• Document your job evaluation methodology in writing\n• Keep detailed notes explaining point assignments and rationale\n• Maintain a procedures manual for your pay equity process\n• Cross-train multiple staff members on the reporting process\n• Store all documentation in a central, accessible location\n• Archive all historical reports and supporting documentation\n• Document contacts and resources (MMB staff, consultants, etc.)\n• Create a timeline of key dates and requirements\n• Keep login credentials secure but accessible to authorized backup staff\n\nStaff turnover should not disrupt your pay equity program.'
+      },
+      {
+        title: 'Using This System for Year-Round Maintenance',
+        content: 'This pay equity system is available year-round for data maintenance:\n\n• Keep reports in "Private" draft status for ongoing updates\n• Copy last year\'s jobs and update current data\n• Run compliance tests periodically to spot emerging issues\n• Use the Gap Analysis tool to monitor equity trends\n• Track salary adjustment implementation progress\n• Store notes and documentation within report notes\n• Export updated reports for internal budget discussions\n• Generate compliance certificates for internal records\n\nDon\'t wait until January to discover problems that could have been addressed months earlier.'
+      },
+      {
+        title: 'Benefits of Proactive Maintenance',
+        content: 'Organizations that maintain data year-round experience:\n\n• Faster report preparation (days instead of weeks)\n• Higher data accuracy and fewer errors\n• Earlier identification of compliance issues\n• More time to plan and budget for equity adjustments\n• Reduced stress during reporting season\n• Better understanding of pay equity trends over time\n• Easier transition when staff members leave or change roles\n• More confidence in compliance testing results\n• Improved relationships with MMB reviewers\n\nThe small investment in ongoing maintenance pays significant dividends.'
+      }
+    ]
+  },
+  {
     id: 'contact',
     title: 'Getting Help & Contact Information',
     icon: Phone,
