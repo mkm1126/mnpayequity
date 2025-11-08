@@ -223,6 +223,38 @@ const helpSections: HelpSection[] = [
     ]
   },
   {
+    id: 'sharing-reports',
+    title: 'Report Sharing & Privacy Controls',
+    icon: CheckCircle,
+    content: 'Control who can access your pay equity reports using the built-in privacy and sharing features.',
+    subsections: [
+      {
+        title: 'Understanding Report Privacy',
+        content: 'Every report starts as "Private" which means only your jurisdiction can view it. You can choose to share reports with State Pay Equity Coordinators at Minnesota Management & Budget when you need assistance or are ready for review.'
+      },
+      {
+        title: 'Using the Toggle Slider',
+        content: 'You\'ll find a toggle slider next to each report in your list and in the report detail view:\n\n• Gray (Left Position) = Private: Only your jurisdiction can view\n• Yellow (Right Position) = Shared: State coordinators can also view\n\nSimply click the toggle to switch between states. A confirmation modal will appear explaining what will happen.'
+      },
+      {
+        title: 'When to Share Reports',
+        content: 'Consider sharing your report with state coordinators when:\n\n• You need technical assistance or guidance\n• You\'re ready for preliminary review before final submission\n• You want feedback on your compliance analysis\n• You have questions about implementation planning\n• You need help interpreting test results\n\nYou can switch back to Private at any time.'
+      },
+      {
+        title: 'What Shared Reports Include',
+        content: 'When you share a report, state coordinators can view:\n\n• All job classifications and evaluations\n• Salary data and equity calculations\n• Compliance test results\n• Implementation plans (if applicable)\n• Report notes and documentation\n\nThey cannot edit your data - they can only view it.'
+      },
+      {
+        title: 'Switching Back to Private',
+        content: 'You can make a report private again at any time by clicking the toggle slider. State coordinators will immediately lose access to the report data. Your report remains in your jurisdiction\'s records regardless of sharing status.'
+      },
+      {
+        title: 'Report Status Indicators',
+        content: 'Reports show their current status:\n\n• "Private (MMB Only)" - Only your jurisdiction can view\n• "Shared" - State coordinators have access\n• "Submitted" - Officially submitted to MMB\n• "In Compliance" - Approved and compliant\n• "Out of Compliance" - Requires action\n\nOnce a report is submitted, approved, or marked with compliance status, the sharing toggle is no longer available.'
+      }
+    ]
+  },
+  {
     id: 'tools',
     title: 'Using System Tools',
     icon: CheckCircle,
