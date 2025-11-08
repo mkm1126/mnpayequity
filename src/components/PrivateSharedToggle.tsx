@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { Lock, Share2 } from 'lucide-react';
 
 type PrivateSharedToggleProps = {
@@ -13,6 +14,23 @@ export function PrivateSharedToggle({
   disabled = false,
   size = 'md'
 }: PrivateSharedToggleProps) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const timeoutRef = useRef<number>();
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setShowTooltip(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = window.setTimeout(() => {
+      setShowTooltip(false);
+    }, 100);
+  };
+
   const sizeConfig = {
     sm: {
       container: 'h-6 w-12',
@@ -43,10 +61,13 @@ export function PrivateSharedToggle({
   const config = sizeConfig[size];
 
   return (
-    <div className={`flex items-center ${config.gap}`}>
+    <div className={`flex items-center ${config.gap} relative`}>
       <span className={`${config.label} font-medium text-gray-600 whitespace-nowrap`}>Private</span>
       <button
+        ref={buttonRef}
         onClick={onToggle}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         disabled={disabled}
         className={`relative inline-flex items-center ${config.container} rounded-full transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -73,6 +94,38 @@ export function PrivateSharedToggle({
         </span>
       </button>
       <span className={`${config.label} font-medium text-gray-600 whitespace-nowrap`}>Shared</span>
+
+      {showTooltip && (
+        <div
+          className="fixed z-[9999] w-72 p-3 bg-white rounded-lg shadow-2xl border-2 border-gray-300 pointer-events-auto"
+          style={{
+            left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left - 110}px` : '0',
+            top: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().bottom + 8}px` : '0',
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-gray-900">
+              {isShared ? 'Shared with State' : 'Private'}
+            </p>
+            <p className="text-xs text-gray-600">
+              {isShared
+                ? 'State Pay Equity Coordinators can view this report. Click to make private.'
+                : 'Only your jurisdiction can view this report. Click to share with State coordinators.'
+              }
+            </p>
+          </div>
+          <div
+            className="absolute w-0 h-0 border-8 border-transparent border-b-gray-300"
+            style={{
+              left: '50%',
+              top: '-16px',
+              transform: 'translateX(-50%)'
+            }}
+          ></div>
+        </div>
+      )}
     </div>
   );
 }
