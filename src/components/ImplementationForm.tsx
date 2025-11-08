@@ -363,6 +363,24 @@ export function ImplementationForm({
             onProceedToSubmit={handleProceedToSubmit}
           />
         )}
+
+        {showComplianceWarning && complianceResult && (
+          <ComplianceWarningModal
+            isOpen={showComplianceWarning}
+            complianceResult={complianceResult}
+            onClose={() => setShowComplianceWarning(false)}
+            onContinueSubmit={handleContinueWithSubmission}
+            onNavigateToWhatIf={handleNavigateToWhatIf}
+            onNavigateToTroubleshooting={handleNavigateToTroubleshooting}
+          />
+        )}
+
+        {showTroubleshooting && complianceResult && (
+          <ComplianceTroubleshooting
+            complianceResult={complianceResult}
+            onClose={() => setShowTroubleshooting(false)}
+          />
+        )}
       </div>
     </div>
   );
