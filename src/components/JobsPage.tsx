@@ -8,8 +8,9 @@ import { JobEntryMethodModal } from './JobEntryMethodModal';
 import { CopyJobsModal } from './CopyJobsModal';
 import { ImportJobsModal } from './ImportJobsModal';
 import { AddReportModal } from './AddReportModal';
-import { PrivateSharedToggle } from './PrivateSharedToggle';
 import { ShareConfirmationModal } from './ShareConfirmationModal';
+import { InlineStatusToggle } from './InlineStatusToggle';
+import { StatusHelpIcon } from './StatusHelpIcon';
 
 type JobsPageProps = {
   jurisdiction: Jurisdiction;
@@ -977,7 +978,12 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Year</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Case</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Description</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <div className="flex items-center">
+                    Status
+                    <StatusHelpIcon />
+                  </div>
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Manage</th>
               </tr>
             </thead>
@@ -1006,26 +1012,24 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                   <td className="px-4 py-3 text-sm text-gray-900">{report.case_number}</td>
                   <td className="px-4 py-3 text-sm text-gray-700">{report.case_description}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                      report.case_status === 'Private' ? 'bg-gray-100 text-gray-700' :
-                      report.case_status === 'Shared' ? 'bg-yellow-100 text-yellow-700' :
-                      report.case_status === 'Submitted' ? 'bg-blue-100 text-blue-700' :
-                      report.case_status === 'In Compliance' ? 'bg-green-100 text-green-700' :
-                      report.case_status === 'Out of Compliance' ? 'bg-red-100 text-red-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {report.case_status === 'Private' ? 'Private (MMB Only)' : report.case_status}
-                    </span>
+                    {(report.case_status === 'Private' || report.case_status === 'Shared') ? (
+                      <InlineStatusToggle
+                        isShared={report.case_status === 'Shared'}
+                        onToggle={() => handleToggleShareStatus(report)}
+                      />
+                    ) : (
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+                        report.case_status === 'Submitted' ? 'bg-blue-100 text-blue-700' :
+                        report.case_status === 'In Compliance' ? 'bg-green-100 text-green-700' :
+                        report.case_status === 'Out of Compliance' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {report.case_status}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
-                        <PrivateSharedToggle
-                          isShared={report.case_status === 'Shared'}
-                          onToggle={() => handleToggleShareStatus(report)}
-                          size="sm"
-                        />
-                      )}
                       <button
                         onClick={() => handleEditCaseDesc(report)}
                         className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
