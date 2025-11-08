@@ -1002,6 +1002,7 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
                   <td className="px-4 py-3">
                     <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
                       report.case_status === 'Private' ? 'bg-gray-100 text-gray-700' :
+                      report.case_status === 'Shared' ? 'bg-yellow-100 text-yellow-700' :
                       report.case_status === 'Submitted' ? 'bg-blue-100 text-blue-700' :
                       report.case_status === 'In Compliance' ? 'bg-green-100 text-green-700' :
                       report.case_status === 'Out of Compliance' ? 'bg-red-100 text-red-700' :
