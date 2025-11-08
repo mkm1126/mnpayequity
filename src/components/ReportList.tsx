@@ -1,6 +1,7 @@
 import { FileText, Eye, Trash2, Plus } from 'lucide-react';
 import { Report } from '../lib/supabase';
-import { PrivateSharedToggle } from './PrivateSharedToggle';
+import { InlineStatusToggle } from './InlineStatusToggle';
+import { StatusHelpIcon } from './StatusHelpIcon';
 
 type ReportListProps = {
   reports: Report[];
@@ -63,7 +64,12 @@ export function ReportList({
                 <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Report Year</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Case ID</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Case Description</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Case Status</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                  <div className="flex items-center">
+                    Case Status
+                    <StatusHelpIcon />
+                  </div>
+                </th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
               </tr>
             </thead>
@@ -78,21 +84,21 @@ export function ReportList({
                   <td className="py-3 px-4 text-sm text-gray-900">{report.case_number}</td>
                   <td className="py-3 px-4 text-sm text-gray-900">{report.case_description}</td>
                   <td className="py-3 px-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(report.case_status)}`}>
-                      {report.case_status}
-                    </span>
+                    {(report.case_status === 'Private' || report.case_status === 'Shared') ? (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <InlineStatusToggle
+                          isShared={report.case_status === 'Shared'}
+                          onToggle={() => onToggleShareStatus(report.id, report.case_status)}
+                        />
+                      </div>
+                    ) : (
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(report.case_status)}`}>
+                        {report.case_status}
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      {(report.case_status === 'Private' || report.case_status === 'Shared') && (
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <PrivateSharedToggle
-                            isShared={report.case_status === 'Shared'}
-                            onToggle={() => onToggleShareStatus(report.id, report.case_status)}
-                            size="sm"
-                          />
-                        </div>
-                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
