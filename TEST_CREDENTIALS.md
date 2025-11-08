@@ -5,7 +5,7 @@ This document contains the test credentials for accessing the Pay Equity Reporti
 
 ## Admin Account
 **Email:** admin@admin.com
-**Password:** Admin123456
+**Password:** Admin123
 **Jurisdiction:** Any (can select any jurisdiction at login)
 **Access Level:** Full system access
 - Can view and manage all jurisdictions
