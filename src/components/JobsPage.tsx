@@ -9,6 +9,7 @@ import { CopyJobsModal } from './CopyJobsModal';
 import { ImportJobsModal } from './ImportJobsModal';
 import { AddReportModal } from './AddReportModal';
 import { PrivateSharedToggle } from './PrivateSharedToggle';
+import { ShareConfirmationModal } from './ShareConfirmationModal';
 
 type JobsPageProps = {
   jurisdiction: Jurisdiction;
@@ -34,6 +35,8 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
   const [newJob, setNewJob] = useState<Partial<JobClassification>>({});
   const inlineEditRowRef = useRef<HTMLTableRowElement>(null);
   const [isAddReportModalOpen, setIsAddReportModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [reportToToggle, setReportToToggle] = useState<Report | null>(null);
 
   useEffect(() => {
     loadReports();
@@ -228,13 +231,15 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
     }
   }
 
-  async function handleToggleShareStatus(report: Report) {
-    const newStatus = report.case_status === 'Private' ? 'Shared' : 'Private';
-    const confirmMessage = newStatus === 'Shared'
-      ? 'Share this report with State Pay Equity Coordinators?\n\nThey will be able to view all job classifications and report data.'
-      : 'Change this report back to Private?\n\nOnly your jurisdiction will be able to view the data.';
+  function handleToggleShareStatus(report: Report) {
+    setReportToToggle(report);
+    setIsShareModalOpen(true);
+  }
 
-    if (!confirm(confirmMessage)) return;
+  async function confirmToggleShareStatus() {
+    if (!reportToToggle) return;
+
+    const newStatus = reportToToggle.case_status === 'Private' ? 'Shared' : 'Private';
 
     try {
       const { error } = await supabase
@@ -243,12 +248,12 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
           case_status: newStatus,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', report.id);
+        .eq('id', reportToToggle.id);
 
       if (error) throw error;
 
-      alert(`Case ${newStatus === 'Shared' ? 'shared' : 'changed to private'} successfully!`);
       await loadReports();
+      setReportToToggle(null);
     } catch (error) {
       console.error('Error updating case status:', error);
       alert('Error updating case status. Please try again.');
@@ -1097,6 +1102,16 @@ export function JobsPage({ jurisdiction, onBack }: JobsPageProps) {
           await loadReports();
           setIsAddReportModalOpen(false);
         }}
+      />
+
+      <ShareConfirmationModal
+        isOpen={isShareModalOpen}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          setReportToToggle(null);
+        }}
+        onConfirm={confirmToggleShareStatus}
+        currentStatus={reportToToggle?.case_status as 'Private' | 'Shared' || 'Private'}
       />
     </div>
   );

@@ -16,6 +16,7 @@ import { ReportNotes } from './ReportNotes';
 import { WhatIfCalculator } from './WhatIfCalculator';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { PrivateSharedToggle } from './PrivateSharedToggle';
+import { ShareConfirmationModal } from './ShareConfirmationModal';
 
 type ReportManagementProps = {
   jurisdiction: Jurisdiction;
@@ -46,6 +47,8 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [reportToToggle, setReportToToggle] = useState<Report | null>(null);
 
   useEffect(() => {
     loadReports();
@@ -181,13 +184,18 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
     }
   }
 
-  async function handleToggleShareStatus(reportId: string, currentStatus: string) {
-    const newStatus = currentStatus === 'Private' ? 'Shared' : 'Private';
-    const confirmMessage = newStatus === 'Shared'
-      ? 'Share this report with State Pay Equity Coordinators?\n\nThey will be able to view all job classifications and report data.'
-      : 'Change this report back to Private?\n\nOnly your jurisdiction will be able to view the data.';
+  function handleToggleShareStatus(reportId: string, currentStatus: string) {
+    const report = reports.find(r => r.id === reportId);
+    if (report) {
+      setReportToToggle(report);
+      setIsShareModalOpen(true);
+    }
+  }
 
-    if (!confirm(confirmMessage)) return;
+  async function confirmToggleShareStatus() {
+    if (!reportToToggle) return;
+
+    const newStatus = reportToToggle.case_status === 'Private' ? 'Shared' : 'Private';
 
     try {
       const { error } = await supabase
@@ -196,22 +204,23 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
           case_status: newStatus,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', reportId);
+        .eq('id', reportToToggle.id);
 
       if (error) throw error;
 
       await loadReports();
-      if (currentReport?.id === reportId) {
+      if (currentReport?.id === reportToToggle.id) {
         const { data } = await supabase
           .from('reports')
           .select('*')
-          .eq('id', reportId)
+          .eq('id', reportToToggle.id)
           .single();
         if (data) setCurrentReport(data);
       }
 
       setSuccessMessage(`Report ${newStatus === 'Shared' ? 'shared' : 'changed to private'} successfully`);
       setShowSuccessModal(true);
+      setReportToToggle(null);
     } catch (error) {
       console.error('Error updating report status:', error);
       alert('Error updating report status. Please try again.');
@@ -724,6 +733,16 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
         isOpen={showSuccessModal}
         message={successMessage}
         onClose={() => setShowSuccessModal(false)}
+      />
+
+      <ShareConfirmationModal
+        isOpen={isShareModalOpen}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          setReportToToggle(null);
+        }}
+        onConfirm={confirmToggleShareStatus}
+        currentStatus={reportToToggle?.case_status as 'Private' | 'Shared' || 'Private'}
       />
     </div>
   );
