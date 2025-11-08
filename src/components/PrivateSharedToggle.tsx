@@ -100,7 +100,7 @@ export function PrivateSharedToggle({
         ref={helpRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+        className="text-[#78BE21] hover:text-[#5a8f19] transition-colors focus:outline-none"
         type="button"
         aria-label="Help"
       >
