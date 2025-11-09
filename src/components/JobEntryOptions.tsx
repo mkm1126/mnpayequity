@@ -28,7 +28,7 @@ export function JobEntryOptions({
         >
           <FileEdit className="w-12 h-12 text-[#003865] group-hover:scale-110 transition-transform" />
           <div className="text-center">
-            <h4 className="font-semibold text-gray-900 mb-1">Enter Jobs On-Line</h4>
+            <h4 className="font-semibold text-gray-900 mb-1">Enter Jobs Manually</h4>
             <p className="text-sm text-gray-600">Manually enter job classifications one at a time</p>
           </div>
         </button>
