@@ -54,7 +54,7 @@ export function JobEntryMethodModal({ isOpen, onClose, onSelectMethod }: JobEntr
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <FileEdit className="w-6 h-6 text-[#003865] group-hover:scale-110 transition-transform" />
-                  <h3 className="font-semibold text-gray-900">Enter Jobs On Line</h3>
+                  <h3 className="font-semibold text-gray-900">Enter Jobs Manually</h3>
                 </div>
                 <p className="text-sm text-gray-600">Manually enter job classifications one at a time</p>
               </div>
