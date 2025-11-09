@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Edit2, Trash2, Plus, Save, X, AlertCircle, Calculator, BookOpen } from 'lucide-react';
+import { Edit2, Trash2, Plus, Save, X, AlertCircle, Calculator, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { JobEntryMethodModal } from './JobEntryMethodModal';
 import { ContextualHelp } from './ContextualHelp';
@@ -20,6 +20,7 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isJobEntryMethodModalOpen, setIsJobEntryMethodModalOpen] = useState(false);
   const [showFieldGuide, setShowFieldGuide] = useState(false);
+  const [isCalculatorExpanded, setIsCalculatorExpanded] = useState(false);
   const [formData, setFormData] = useState<Partial<JobClassification>>({
     title: '',
     males: 0,
@@ -425,30 +426,42 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
         )}
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Calculator className="w-5 h-5 text-[#003865]" />
-          <h4 className="font-semibold text-gray-900">Part-Time Salary Conversion Calculator</h4>
-        </div>
-        <div className="space-y-3 text-sm text-gray-700">
-          <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium mb-1">For Hourly Full and Part-Time Employees (one rate, no salary range/steps):</p>
-            <p className="text-gray-600">Hourly wage × 173.3 = Monthly Salary</p>
-            <p className="text-xs text-gray-500 mt-1">Example: $20.00 × 173.3 = $3,466.00/month (same number entered for min/max)</p>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <button
+          onClick={() => setIsCalculatorExpanded(!isCalculatorExpanded)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-[#003865]" />
+            <h4 className="font-semibold text-gray-900">Part-Time Salary Conversion Calculator</h4>
           </div>
-          <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium mb-1">For Hourly Full and Part-Time Employees with a salary range:</p>
-            <p className="text-gray-600">1. Lowest rate/minimum step × 173.3 = Monthly Salary</p>
-            <p className="text-gray-600">2. Highest rate/max step × 173.3 = Monthly Salary</p>
-            <p className="text-xs text-gray-500 mt-1">Example: Min step $15.00 × 173.3 = $2,599.50/month on Min</p>
-            <p className="text-xs text-gray-500">Max step $36.00 × 173.3 = $6,238.80/month on Max</p>
+          {isCalculatorExpanded ? (
+            <ChevronUp className="w-5 h-5 text-gray-500" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-gray-500" />
+          )}
+        </button>
+        {isCalculatorExpanded && (
+          <div className="px-6 pb-6 space-y-3 text-sm text-gray-700 border-t border-gray-200 pt-4">
+            <div className="p-3 bg-gray-50 rounded">
+              <p className="font-medium mb-1">For Hourly Full and Part-Time Employees (one rate, no salary range/steps):</p>
+              <p className="text-gray-600">Hourly wage × 173.3 = Monthly Salary</p>
+              <p className="text-xs text-gray-500 mt-1">Example: $20.00 × 173.3 = $3,466.00/month (same number entered for min/max)</p>
+            </div>
+            <div className="p-3 bg-gray-50 rounded">
+              <p className="font-medium mb-1">For Hourly Full and Part-Time Employees with a salary range:</p>
+              <p className="text-gray-600">1. Lowest rate/minimum step × 173.3 = Monthly Salary</p>
+              <p className="text-gray-600">2. Highest rate/max step × 173.3 = Monthly Salary</p>
+              <p className="text-xs text-gray-500 mt-1">Example: Min step $15.00 × 173.3 = $2,599.50/month on Min</p>
+              <p className="text-xs text-gray-500">Max step $36.00 × 173.3 = $6,238.80/month on Max</p>
+            </div>
+            <div className="p-3 bg-gray-50 rounded">
+              <p className="font-medium mb-1">For Annual Salary:</p>
+              <p className="text-gray-600">Annual salary ÷ months worked = Monthly salary</p>
+              <p className="text-xs text-gray-500 mt-1">Example: $36,000/year ÷ 12 = $3,000/month</p>
+            </div>
           </div>
-          <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium mb-1">For Annual Salary:</p>
-            <p className="text-gray-600">Annual salary ÷ months worked = Monthly salary</p>
-            <p className="text-xs text-gray-500 mt-1">Example: $36,000/year ÷ 12 = $3,000/month</p>
-          </div>
-        </div>
+        )}
       </div>
 
       <JobEntryMethodModal
