@@ -169,6 +169,28 @@ const helpContentMap: Record<string, HelpContent> = {
       },
     ],
   },
+  'job-entry-method': {
+    title: 'Job Data Entry Methods',
+    content: 'Choose the method that works best for your situation. Each approach has different advantages depending on your jurisdiction\'s size, data availability, and whether you\'ve reported before.',
+    tips: [
+      'New jurisdictions typically start with "Enter Online" to learn the process',
+      'Use "Copy from Previous" if only a few jobs changed since last year',
+      'Excel import is most efficient for 20+ job classifications',
+      'Download the template before starting an Excel import',
+    ],
+    commonMistakes: [
+      'Importing Excel data without first downloading and using the template',
+      'Copying from previous year when job structure has significantly changed',
+      'Not selecting "No Jobs" when truly no employees meet the requirements',
+      'Manually entering dozens of jobs instead of using Excel import',
+    ],
+    relatedResources: [
+      {
+        title: 'Submission Instructions',
+        url: 'https://mn.gov/mmb-stat/pay-equity/Instructions%20for%20submitting%20a%20local%20government%20pay%20equity%20report.pdf',
+      },
+    ],
+  },
 };
 
 export function ContextualHelp({ context, children }: ContextualHelpProps) {
