@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { X, FileEdit, Copy, Upload, FileX } from 'lucide-react';
+import { X, FileEdit, Copy, Upload, FileX, Download } from 'lucide-react';
+import { generateJobImportTemplate } from '../lib/jobTemplateGenerator';
 
 type JobEntryMethodModalProps = {
   isOpen: boolean;
@@ -92,6 +93,16 @@ export function JobEntryMethodModal({ isOpen, onClose, onSelectMethod }: JobEntr
                   <h3 className="font-semibold text-gray-900">Import Jobs From Excel</h3>
                 </div>
                 <p className="text-sm text-gray-600">Upload an Excel file with job classifications</p>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    generateJobImportTemplate();
+                  }}
+                  className="flex items-center gap-1.5 mt-2 text-xs text-[#003865] hover:text-[#004d7a] font-medium transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Download Template
+                </button>
               </div>
             </label>
 

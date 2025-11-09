@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
-import { X, Upload, AlertCircle } from 'lucide-react';
+import { X, Upload, AlertCircle, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { generateJobImportTemplate } from '../lib/jobTemplateGenerator';
 
 type ImportJobsModalProps = {
   isOpen: boolean;
@@ -169,13 +170,27 @@ export function ImportJobsModal({ isOpen, onClose, onImport }: ImportJobsModalPr
 
         <div className="p-6 space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-semibold text-blue-900 mb-2">Excel File Requirements:</h3>
-            <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-              <li>File must be in Excel format (.xls or .xlsx)</li>
-              <li>Tab name must match the filename</li>
-              <li>Must include exact column headers: jobid, title, males, females, points, mins, maxs, yrmax, yrsrv, exsrv</li>
-              <li>Title column is required for each row</li>
-            </ul>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="font-semibold text-blue-900 mb-2">Excel File Requirements:</h3>
+                <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                  <li>File must be in Excel format (.xls or .xlsx)</li>
+                  <li>Tab name must match the filename</li>
+                  <li>Must include exact column headers: jobid, title, males, females, points, mins, maxs, yrmax, yrsrv, exsrv</li>
+                  <li>Title column is required for each row</li>
+                </ul>
+                <p className="text-sm text-blue-700 mt-2 font-medium">
+                  Download our template to ensure proper formatting
+                </p>
+              </div>
+              <button
+                onClick={generateJobImportTemplate}
+                className="flex items-center gap-2 px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors whitespace-nowrap flex-shrink-0"
+              >
+                <Download className="w-4 h-4" />
+                Download Template
+              </button>
+            </div>
           </div>
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
