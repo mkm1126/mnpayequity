@@ -1,5 +1,4 @@
-import { FileEdit, Copy, Upload, FileX, Download } from 'lucide-react';
-import { generateJobImportTemplate } from '../lib/jobTemplateGenerator';
+import { FileEdit, Copy, Upload, FileX } from 'lucide-react';
 import { ContextualHelp } from './ContextualHelp';
 
 type JobEntryOptionsProps = {
@@ -45,28 +44,16 @@ export function JobEntryOptions({
           </div>
         </button>
 
-        <div className="relative">
-          <button
-            onClick={onImport}
-            className="w-full flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
-          >
-            <Upload className="w-12 h-12 text-[#003865] group-hover:scale-110 transition-transform" />
-            <div className="text-center">
-              <h4 className="font-semibold text-gray-900 mb-1">Import Jobs from Excel</h4>
-              <p className="text-sm text-gray-600">Upload an Excel file with job classifications</p>
-            </div>
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              generateJobImportTemplate();
-            }}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-[#003865] hover:bg-[#004d7a] rounded-md transition-colors font-medium shadow-sm"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Download Template
-          </button>
-        </div>
+        <button
+          onClick={onImport}
+          className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
+        >
+          <Upload className="w-12 h-12 text-[#003865] group-hover:scale-110 transition-transform" />
+          <div className="text-center">
+            <h4 className="font-semibold text-gray-900 mb-1">Import Jobs from Excel</h4>
+            <p className="text-sm text-gray-600">Upload an Excel file with job classifications</p>
+          </div>
+        </button>
 
         <button
           onClick={onNoJobs}
