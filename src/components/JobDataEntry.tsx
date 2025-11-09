@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit2, Trash2, Plus, Save, X, AlertCircle, Calculator, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { JobEntryMethodModal } from './JobEntryMethodModal';
@@ -21,6 +21,7 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
   const [isJobEntryMethodModalOpen, setIsJobEntryMethodModalOpen] = useState(false);
   const [showFieldGuide, setShowFieldGuide] = useState(false);
   const [isCalculatorExpanded, setIsCalculatorExpanded] = useState(false);
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [formData, setFormData] = useState<Partial<JobClassification>>({
     title: '',
     males: 0,
@@ -37,6 +38,14 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
     days_per_year: null,
     additional_cash_compensation: 0,
   });
+
+  // Automatically start adding mode when component first loads with no jobs
+  useEffect(() => {
+    if (jobs.length === 0 && !isAdding && !editingId && !hasAutoStarted) {
+      setIsAdding(true);
+      setHasAutoStarted(true);
+    }
+  }, [jobs.length, isAdding, editingId, hasAutoStarted]);
 
   const handleShowEntryOptions = () => {
     if (onCopyJobs || onImportJobs || onNoJobsToReport) {
