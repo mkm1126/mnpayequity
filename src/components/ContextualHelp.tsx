@@ -172,7 +172,7 @@ const helpContentMap: Record<string, HelpContent> = {
 };
 
 export function ContextualHelp({ context, children }: ContextualHelpProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const helpContent = helpContentMap[context];
 
@@ -265,7 +265,7 @@ export function ContextualHelp({ context, children }: ContextualHelpProps) {
         >
           <div className="flex items-center gap-3">
             <HelpCircle className="w-5 h-5 text-blue-600" />
-            <span className="font-medium text-gray-900">Show contextual help for this page</span>
+            <span className="font-medium text-gray-900">{helpContent.title}</span>
           </div>
           <span className="text-sm text-gray-600">Click to expand</span>
         </button>
