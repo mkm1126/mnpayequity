@@ -3,14 +3,19 @@ import { Save, Send } from 'lucide-react';
 import { ImplementationReport, Report, Jurisdiction, JobClassification } from '../lib/supabase';
 import { SubmissionChecklist } from './SubmissionChecklist';
 import { ContextualHelp } from './ContextualHelp';
+import { ComplianceWarningModal } from './ComplianceWarningModal';
+import { ComplianceTroubleshooting } from './ComplianceTroubleshooting';
+import { ComplianceResult } from '../lib/complianceAnalysis';
 
 type ImplementationFormProps = {
   report: Report;
   jurisdiction: Jurisdiction;
   jobs: JobClassification[];
   implementationData: ImplementationReport | null;
+  complianceResult?: ComplianceResult | null;
   onSave: (data: Partial<ImplementationReport>) => Promise<void>;
   onSubmit: () => Promise<void>;
+  onNavigateToWhatIf?: () => void;
 };
 
 export function ImplementationForm({
@@ -18,8 +23,10 @@ export function ImplementationForm({
   jurisdiction,
   jobs,
   implementationData,
+  complianceResult,
   onSave,
   onSubmit,
+  onNavigateToWhatIf,
 }: ImplementationFormProps) {
   const [formData, setFormData] = useState<Partial<ImplementationReport>>({
     evaluation_system: '',
@@ -37,6 +44,8 @@ export function ImplementationForm({
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
+  const [showComplianceWarning, setShowComplianceWarning] = useState(false);
+  const [showTroubleshooting, setShowTroubleshooting] = useState(false);
 
   useEffect(() => {
     if (implementationData) {
@@ -67,6 +76,20 @@ export function ImplementationForm({
   const handleProceedToSubmit = async () => {
     setShowChecklist(false);
 
+    if (complianceResult && !complianceResult.isCompliant) {
+      setShowComplianceWarning(true);
+      return;
+    }
+
+    proceedWithFinalSubmission();
+  };
+
+  const handleContinueWithSubmission = () => {
+    setShowComplianceWarning(false);
+    proceedWithFinalSubmission();
+  };
+
+  const proceedWithFinalSubmission = async () => {
     const confirmed = confirm(
       'Are you sure you want to submit this report? Once submitted, it cannot be edited.'
     );
@@ -82,6 +105,18 @@ export function ImplementationForm({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleNavigateToWhatIfFromWarning = () => {
+    setShowComplianceWarning(false);
+    if (onNavigateToWhatIf) {
+      onNavigateToWhatIf();
+    }
+  };
+
+  const handleNavigateToTroubleshooting = () => {
+    setShowComplianceWarning(false);
+    setShowTroubleshooting(true);
   };
 
   const isSubmitted = report.case_status === 'Submitted';
@@ -361,6 +396,24 @@ export function ImplementationForm({
             implementationData={formData}
             onClose={() => setShowChecklist(false)}
             onProceedToSubmit={handleProceedToSubmit}
+          />
+        )}
+
+        {showComplianceWarning && complianceResult && (
+          <ComplianceWarningModal
+            isOpen={showComplianceWarning}
+            complianceResult={complianceResult}
+            onClose={() => setShowComplianceWarning(false)}
+            onContinueSubmit={handleContinueWithSubmission}
+            onNavigateToWhatIf={handleNavigateToWhatIfFromWarning}
+            onNavigateToTroubleshooting={handleNavigateToTroubleshooting}
+          />
+        )}
+
+        {showTroubleshooting && complianceResult && (
+          <ComplianceTroubleshooting
+            complianceResult={complianceResult}
+            onClose={() => setShowTroubleshooting(false)}
           />
         )}
       </div>
