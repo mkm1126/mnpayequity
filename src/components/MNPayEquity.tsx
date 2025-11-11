@@ -148,17 +148,17 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">What does pay equity mean?</h2>
-          <div className="w-16 h-1 bg-[#78BE21] rounded"></div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
+        <div className="mb-3">
+          <h2 className="text-lg font-bold text-gray-900 mb-1">What does pay equity mean?</h2>
+          <div className="w-12 h-0.5 bg-[#78BE21] rounded"></div>
         </div>
         <div className="prose max-w-none">
-          <p className="text-gray-700 leading-relaxed mb-4">
+          <p className="text-gray-700 text-sm leading-snug mb-3">
             Pay Equity is a method of eliminating discrimination against women who are paid less than men for jobs requiring comparable levels of expertise. This goes beyond the familiar idea of equal pay for equal work where men and women with the same jobs must be paid equally. A policy to establish pay equity usually means: 1) that all jobs will be evaluated and given points according to the level of knowledge and responsibility required to do the job; and 2) that salary adjustments will be made if it is discovered that women are consistently paid less then men for jobs with similar points. The following example shows a typical gender-based wage disparity.
           </p>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-            <p className="text-sm text-blue-900">
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3">
+            <p className="text-xs text-blue-900">
               <strong>Note:</strong> It is important to remember that pay equity laws in Minnesota address only gender-based wage disparities and not all types of wage disparities. Pay equity does not replace collective bargaining and does not address all compensation issues.
             </p>
           </div>
@@ -166,20 +166,20 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
             href="https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#about"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[#003865] hover:text-[#004d7a] font-medium"
+            className="inline-flex items-center gap-1.5 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
           >
             Learn more about pay equity
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Local Government Pay Equity Reporting Process</h2>
-          <div className="w-16 h-1 bg-[#78BE21] rounded"></div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
+        <div className="mb-3">
+          <h2 className="text-lg font-bold text-gray-900 mb-1">Local Government Pay Equity Reporting Process</h2>
+          <div className="w-12 h-0.5 bg-[#78BE21] rounded"></div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {reportingSteps.map((step) => (
             <div
               key={step.number}
@@ -187,48 +187,48 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
             >
               <button
                 onClick={() => toggleStep(step.number)}
-                className="w-full flex items-center gap-4 p-4 text-left hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 transition-colors"
               >
-                <div className="w-10 h-10 bg-[#003865] text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">
+                <div className="w-8 h-8 bg-[#003865] text-white rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">
                   {step.number}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{step.title}</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">{step.title}</h3>
                 </div>
                 {expandedStep === step.number ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 )}
               </button>
               {expandedStep === step.number && (
-                <div className="px-4 pb-4 pt-0 pl-[72px] border-t border-gray-100">
+                <div className="px-3 pb-3 pt-0 pl-[56px] border-t border-gray-100">
                   {step.number === 2 ? (
-                    <div className="space-y-4">
-                      <p className="text-gray-700 text-sm leading-relaxed">{step.description}</p>
-                      <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="space-y-3">
+                      <p className="text-gray-700 text-xs leading-tight">{step.description}</p>
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <button
                           onClick={generatePayEquityDataTemplate}
-                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium text-sm"
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium text-xs"
                         >
-                          <Download className="w-4 h-4" />
+                          <Download className="w-3.5 h-3.5" />
                           Download Excel Template
                         </button>
                         <button
                           onClick={() => setShowDataGuide(true)}
-                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-[#003865] text-[#003865] rounded-lg hover:bg-blue-50 transition-colors font-medium text-sm"
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white border-2 border-[#003865] text-[#003865] rounded-lg hover:bg-blue-50 transition-colors font-medium text-xs"
                         >
-                          <HelpCircle className="w-4 h-4" />
+                          <HelpCircle className="w-3.5 h-3.5" />
                           View Column Definitions & Data Rules
                         </button>
                       </div>
                     </div>
                   ) : step.number === 1 ? (
-                    <div className="space-y-3">
-                      <p className="text-gray-700 text-sm leading-relaxed">
+                    <div className="space-y-2">
+                      <p className="text-gray-700 text-xs leading-tight">
                         Every political subdivision is required to use a job evaluation system to determine the comparable work value of the work performed by each class of its employees. Once established job points generally do not change unless a new evaluation system is adopted. You may choose to create your own internal job evaluation system, use a consultant's system, or use the State Job Match System. Your jurisdiction is responsible for making final decisions about which job evaluation system to use. For more information refer to the resources below:
                       </p>
-                      <ul className="space-y-2 text-sm">
+                      <ul className="space-y-1.5 text-xs">
                         <li className="flex items-start gap-2">
                           <span className="text-gray-400 mt-1">•</span>
                           <a
@@ -269,8 +269,8 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                       </ul>
                     </div>
                   ) : step.number === 3 ? (
-                    <div className="space-y-4">
-                      <p className="text-gray-700 text-sm leading-relaxed">
+                    <div className="space-y-3">
+                      <p className="text-gray-700 text-xs leading-tight">
                         All reports must be submitted electronically using the{' '}
                         <a
                           href="https://mn.gov/mmbapps/PayEquity/LogIn.aspx"
@@ -293,8 +293,8 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                         </a>
                         .
                       </p>
-                      <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-                        <p className="text-sm text-amber-900 font-medium">
+                      <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded">
+                        <p className="text-xs text-amber-900 font-medium">
                           You must get approval from your governing body (city council, school board, township, etc.) prior to submitting the pay equity report.
                         </p>
                       </div>
@@ -302,7 +302,7 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                         href={step.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                        className="inline-flex items-center gap-1 text-xs text-[#003865] hover:text-[#004d7a] font-medium"
                       >
                         View detailed instructions
                         <ExternalLink className="w-3 h-3" />
@@ -310,12 +310,12 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                     </div>
                   ) : step.number === 4 ? (
                     <>
-                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <p className="text-gray-700 text-xs leading-tight mb-2">{step.description}</p>
                       <a
                         href={step.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                        className="inline-flex items-center gap-1 text-xs text-[#003865] hover:text-[#004d7a] font-medium"
                       >
                         Interpret Results
                         <ExternalLink className="w-3 h-3" />
@@ -323,12 +323,12 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                     </>
                   ) : step.number === 5 ? (
                     <>
-                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <p className="text-gray-700 text-xs leading-tight mb-2">{step.description}</p>
                       <a
                         href={step.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                        className="inline-flex items-center gap-1 text-xs text-[#003865] hover:text-[#004d7a] font-medium"
                       >
                         Notice to Post-Pay Equity Report Has Been Submitted
                         <ExternalLink className="w-3 h-3" />
@@ -336,12 +336,12 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                     </>
                   ) : (
                     <>
-                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <p className="text-gray-700 text-xs leading-tight mb-2">{step.description}</p>
                       <a
                         href={step.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                        className="inline-flex items-center gap-1 text-xs text-[#003865] hover:text-[#004d7a] font-medium"
                       >
                         View detailed instructions
                         <ExternalLink className="w-3 h-3" />
@@ -355,30 +355,30 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Additional Resources</h2>
-          <div className="w-16 h-1 bg-[#78BE21] rounded"></div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
+        <div className="mb-3">
+          <h2 className="text-lg font-bold text-gray-900 mb-1">Additional Resources</h2>
+          <div className="w-12 h-0.5 bg-[#78BE21] rounded"></div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <a
             href="https://mn.gov/mmb/assets/PayEquityTheMinnesotaExperience_tcm36-453946.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-4 border border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
+            className="block p-3 border border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
           >
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0">
-                <FileText className="w-5 h-5 text-blue-600" />
+            <div className="flex items-start gap-2">
+              <div className="w-7 h-7 bg-blue-100 rounded flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0">
+                <FileText className="w-4 h-4 text-blue-600" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-[#003865] transition-colors">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <h3 className="font-semibold text-sm text-gray-900 group-hover:text-[#003865] transition-colors">
                     Pay Equity: The Minnesota Experience
                   </h3>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-[#003865] transition-colors" />
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#003865] transition-colors" />
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-gray-600">
                   Comprehensive overview of Minnesota's pay equity initiative, implementation history, and impact on local government compensation practices.
                 </p>
               </div>
@@ -389,20 +389,20 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
             href="https://mn.gov/mmb-stat/pay-equity/guide-understand-compl.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-4 border border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
+            className="block p-3 border border-gray-200 rounded-lg hover:border-[#003865] hover:bg-blue-50 transition-all group"
           >
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0">
-                <FileText className="w-5 h-5 text-blue-600" />
+            <div className="flex items-start gap-2">
+              <div className="w-7 h-7 bg-blue-100 rounded flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0">
+                <FileText className="w-4 h-4 text-blue-600" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-[#003865] transition-colors">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <h3 className="font-semibold text-sm text-gray-900 group-hover:text-[#003865] transition-colors">
                     Guide to Understanding Pay Equity Compliance
                   </h3>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-[#003865] transition-colors" />
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#003865] transition-colors" />
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-gray-600">
                   Essential guide explaining compliance requirements, statistical tests, and corrective action procedures for achieving pay equity.
                 </p>
               </div>
@@ -411,32 +411,32 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Legislative Reports</h2>
-          <div className="w-16 h-1 bg-[#78BE21] rounded"></div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="mb-3">
+          <h2 className="text-lg font-bold text-gray-900 mb-1">Legislative Reports</h2>
+          <div className="w-12 h-0.5 bg-[#78BE21] rounded"></div>
         </div>
-        <p className="text-gray-700 mb-4">
+        <p className="text-gray-700 text-sm mb-3">
           Review annual legislative reports on local government pay equity compliance across Minnesota.
         </p>
         <a
           href="https://www.lrl.mn.gov/mndocs/mandates_detail?orderid=152"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-5 py-3 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium text-sm"
         >
-          <FileText className="w-5 h-5" />
+          <FileText className="w-4 h-4" />
           View Legislative Reports
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
 
-      <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-        <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-          <CheckCircle className="w-5 h-5" />
+      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="font-semibold text-sm text-blue-900 mb-2 flex items-center gap-1.5">
+          <CheckCircle className="w-4 h-4" />
           Need Direct Assistance?
         </h3>
-        <div className="space-y-1 text-sm text-blue-800">
+        <div className="space-y-0.5 text-xs text-blue-800">
           <p><strong>Pay Equity Unit</strong></p>
           <p>Minnesota Management and Budget</p>
           <p>Phone: <a href="tel:651-259-3824" className="underline hover:text-blue-900 font-medium">651-259-3824</a></p>
