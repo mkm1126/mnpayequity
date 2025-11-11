@@ -31,7 +31,7 @@ const reportingSteps: ReportingStep[] = [
   {
     number: 3,
     title: 'Submit reports electronically',
-    description: 'Complete and submit your pay equity report through the online reporting system by the annual deadline of January 31st.',
+    description: 'All reports must be submitted electronically using the Minnesota Pay Equity Management System. For step by step instructions on how to submit your report please refer to the Instructions for Submitting a Local Government Pay Equity Report.',
     url: 'https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#step3'
   },
   {
@@ -262,6 +262,36 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                           </a>
                         </li>
                       </ul>
+                    </div>
+                  ) : step.number === 3 ? (
+                    <div className="space-y-4">
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        All reports must be submitted electronically using the{' '}
+                        <a
+                          href="https://mn.gov/mmbapps/PayEquity/LogIn.aspx"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#003865] hover:text-[#004d7a] font-medium underline inline-flex items-center gap-1"
+                        >
+                          Minnesota Pay Equity Management System
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        . For step by step instructions on how to submit your report please refer to the Instructions for Submitting a Local Government Pay Equity Report.
+                      </p>
+                      <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
+                        <p className="text-sm text-amber-900 font-medium">
+                          You must get approval from your governing body (city council, school board, township, etc.) prior to submitting the pay equity report.
+                        </p>
+                      </div>
+                      <a
+                        href={step.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                      >
+                        View detailed instructions
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                   ) : (
                     <>
