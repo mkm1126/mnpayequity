@@ -415,7 +415,7 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
           Review annual legislative reports on local government pay equity compliance across Minnesota.
         </p>
         <a
-          href="https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#legislative-reports"
+          href="https://www.lrl.mn.gov/mndocs/mandates_detail?orderid=152"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-5 py-3 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
