@@ -195,16 +195,65 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
               </button>
               {expandedStep === step.number && (
                 <div className="px-4 pb-4 pt-0 pl-[72px] border-t border-gray-100">
-                  <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
-                  <a
-                    href={step.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
-                  >
-                    View detailed instructions
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                  {step.number === 1 ? (
+                    <div className="space-y-3">
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        Every political subdivision is required to use a job evaluation system to determine the comparable work value of the work performed by each class of its employees. Once established job points generally do not change unless a new evaluation system is adopted. You may choose to create your own internal job evaluation system, use a consultant's system, or use the State Job Match System. Your jurisdiction is responsible for making final decisions about which job evaluation system to use. For more information refer to the resources below:
+                      </p>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <span className="text-gray-400 mt-1">•</span>
+                          <a
+                            href="https://mn.gov/mmb-stat/pay-equity/job-eval.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
+                          >
+                            Job Evaluation
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-gray-400 mt-1">•</span>
+                          <a
+                            href="https://www.revisor.mn.gov/statutes/cite/471.994"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
+                          >
+                            Minnesota Statute 471.994
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <span className="text-gray-600 text-xs"> - Requires each political subdivision to meet and have discussions with the exclusive representatives of their employees on the development or selection of a job evaluation system.</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-gray-400 mt-1">•</span>
+                          <a
+                            href="https://mn.gov/mmb-stat/pay-equity/State%20Job%20Match%20Evaluation%20System-%202023.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
+                          >
+                            State Job Match Evaluation System
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <a
+                        href={step.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                      >
+                        View detailed instructions
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </>
+                  )}
                 </div>
               )}
             </div>
