@@ -124,14 +124,14 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-[#78BE21] to-[#6aac1d] text-white rounded-lg shadow-lg p-5 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-            <GraduationCap className="w-7 h-7 text-white" />
+      <div className="bg-gradient-to-r from-[#78BE21] to-[#6aac1d] text-white rounded-lg shadow-lg p-3 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+            <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold mb-1">Local Government Pay Equity Training</h2>
-            <p className="text-white/95 text-sm leading-snug">
+            <h2 className="text-base font-bold mb-0.5">Local Government Pay Equity Training</h2>
+            <p className="text-white/95 text-xs leading-tight">
               This comprehensive course provides an understanding of Minnesota's pay equity law, the legal reporting requirements for local government entities, and detailed instructions to electronically submit a pay equity report to MMB.
             </p>
           </div>
@@ -139,11 +139,11 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
             href="https://lms.mnpals.net/iqs/ilsOnDemand/SSO/login.cfm?CFID=13597683&CFTOKEN=c4b84b50d9a82848-B31C65EB-0E15-09FE-16FCF09838E8A7CA"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#78BE21] rounded-lg hover:bg-gray-50 transition-colors font-semibold shadow-md hover:shadow-lg flex-shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-[#78BE21] rounded-lg hover:bg-gray-50 transition-colors font-semibold text-xs shadow-md hover:shadow-lg flex-shrink-0"
           >
-            <GraduationCap className="w-4 h-4" />
+            <GraduationCap className="w-3.5 h-3.5" />
             Access Training Course
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       </div>
