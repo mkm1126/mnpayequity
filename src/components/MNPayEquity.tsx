@@ -276,7 +276,17 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                           Minnesota Pay Equity Management System
                           <ExternalLink className="w-3 h-3" />
                         </a>
-                        . For step by step instructions on how to submit your report please refer to the Instructions for Submitting a Local Government Pay Equity Report.
+                        . For step by step instructions on how to submit your report please refer to the{' '}
+                        <a
+                          href="https://mn.gov/mmb-stat/pay-equity/Instructions%20for%20submitting%20a%20local%20government%20pay%20equity%20report.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#003865] hover:text-[#004d7a] font-medium underline inline-flex items-center gap-1"
+                        >
+                          Instructions for Submitting a Local Government Pay Equity Report
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        .
                       </p>
                       <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
                         <p className="text-sm text-amber-900 font-medium">
