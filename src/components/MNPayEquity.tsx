@@ -37,8 +37,8 @@ const reportingSteps: ReportingStep[] = [
   {
     number: 4,
     title: 'Interpret your results',
-    description: 'Review the compliance test results including the Statistical Analysis Test, Salary Range Test, and Exceptional Service Pay Test. Identify any areas of non-compliance that require attention.',
-    url: 'https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#step4'
+    description: 'The resource below can help you in understanding your jurisdiction\'s compliance results. Please remember that MMB will make the final decision about your jurisdiction\'s compliance.',
+    url: 'https://mn.gov/mmb-stat/pay-equity/interpret-results-pay%20equity.pdf'
   },
   {
     number: 5,
@@ -303,6 +303,19 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
+                  ) : step.number === 4 ? (
+                    <>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <a
+                        href={step.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                      >
+                        Interpret Results
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </>
                   ) : (
                     <>
                       <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
