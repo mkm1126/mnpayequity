@@ -98,7 +98,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'Salary Information',
-        content: 'For each job class, document:\n• Minimum monthly salary\n• Maximum monthly salary\n• Number of years to reach maximum\n• Any longevity or exceptional service pay\n\nConvert hourly wages to monthly: (Hourly Rate × Hours/Week × 52 weeks) ÷ 12 months'
+        content: 'For each job class, document:\n• Minimum monthly salary\n• Maximum monthly salary\n• Number of years to reach maximum\n• Any longevity or exceptional service pay'
       }
     ]
   },
