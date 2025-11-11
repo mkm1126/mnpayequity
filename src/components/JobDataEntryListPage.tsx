@@ -12,9 +12,9 @@ type JobDataEntryListPageProps = {
 };
 
 export function JobDataEntryListPage({ report, jurisdiction, jobs, onBack }: JobDataEntryListPageProps) {
-  const maleJobs = jobs.filter(job => job.males > 0 && job.females === 0);
-  const femaleJobs = jobs.filter(job => job.females > 0 && job.males === 0);
-  const balancedJobs = jobs.filter(job => job.males > 0 && job.females > 0);
+  const maleJobs = jobs.filter(job => getClassType(job.males, job.females) === 'M');
+  const femaleJobs = jobs.filter(job => getClassType(job.males, job.females) === 'F');
+  const balancedJobs = jobs.filter(job => getClassType(job.males, job.females) === 'B');
 
   async function exportToPDF() {
     const doc = new jsPDF('landscape', 'pt', 'letter');
