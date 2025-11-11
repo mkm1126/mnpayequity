@@ -103,6 +103,10 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
 
       if (!data || data.length === 0) {
         setShowJobOptions(true);
+      } else {
+        // Automatically calculate compliance for reports with jobs
+        const result = analyzeCompliance(data);
+        setComplianceResult(result);
       }
     } catch (error) {
       console.error('Error loading jobs:', error);
