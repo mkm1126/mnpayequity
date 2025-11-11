@@ -49,7 +49,8 @@ Deno.serve(async (req: Request) => {
 
     let subject = '';
     let htmlBody = '';
-    const appUrl = Deno.env.get('APP_URL') || 'https://yourapp.com';
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+    const appUrl = supabaseUrl.replace('.supabase.co', '.vercel.app') || window.location.origin || 'https://yourapp.com';
 
     switch (type) {
       case 'urgent_note':
@@ -81,7 +82,7 @@ Deno.serve(async (req: Request) => {
                 <p>${data.noteContent}</p>
                 <p><strong>Jurisdiction:</strong> ${data.jurisdictionName || 'N/A'}</p>
                 ${data.caseName ? `<p><strong>Case:</strong> ${data.caseName}</p>` : ''}
-                <a href="${appUrl}/admin/case-notes/${data.noteId}" class="button">View Note Details</a>
+                <a href="${appUrl}" class="button">View in Dashboard</a>
               </div>
               <div class="footer">
                 <p>You received this email because you are an administrator of the Pay Equity Reporting System.</p>
@@ -123,7 +124,7 @@ Deno.serve(async (req: Request) => {
                 <p><strong>Due Date:</strong> ${data.dueDate ? new Date(data.dueDate).toLocaleDateString() : 'N/A'}</p>
                 <p><strong>Jurisdiction:</strong> ${data.jurisdictionName || 'N/A'}</p>
                 ${data.caseName ? `<p><strong>Case:</strong> ${data.caseName}</p>` : ''}
-                <a href="${appUrl}/admin/case-notes/${data.noteId}" class="button">Complete Follow-up</a>
+                <a href="${appUrl}" class="button">Complete Follow-up</a>
               </div>
               <div class="footer">
                 <p>You received this email because you are an administrator of the Pay Equity Reporting System.</p>
@@ -159,7 +160,7 @@ Deno.serve(async (req: Request) => {
                 <p>A new pay equity case has been submitted and is awaiting your review and approval.</p>
                 <p><strong>Jurisdiction:</strong> ${data.jurisdictionName || 'N/A'}</p>
                 ${data.caseName ? `<p><strong>Case:</strong> ${data.caseName}</p>` : ''}
-                <a href="${appUrl}/admin/approval-dashboard" class="button">Review Case</a>
+                <a href="${appUrl}" class="button">Review Case</a>
               </div>
               <div class="footer">
                 <p>You received this email because you are an administrator of the Pay Equity Reporting System.</p>
@@ -213,7 +214,7 @@ Deno.serve(async (req: Request) => {
                     </div>
                   `).join('')}
                 ` : ''}
-                <a href="${appUrl}/admin/dashboard" class="button">View Admin Dashboard</a>
+                <a href="${appUrl}" class="button">View Admin Dashboard</a>
               </div>
               <div class="footer">
                 <p>You received this email because you are an administrator of the Pay Equity Reporting System.</p>
