@@ -238,11 +238,52 @@ export type AdminCaseNote = {
   tags: string[];
   priority: NotePriority;
   is_pinned: boolean;
+  due_date: string | null;
+  completed_at: string | null;
+  completed_by: string | null;
   created_by: string | null;
   created_by_email: string;
   created_at: string;
   updated_at: string;
   attachment_metadata: Record<string, any>;
+};
+
+export type DismissedNotification = {
+  id: string;
+  admin_user_id: string;
+  note_id: string;
+  dismissed_at: string;
+  dismiss_reason: string | null;
+};
+
+export type NotificationPreferences = {
+  id: string;
+  admin_user_id: string;
+  email_urgent_notes: boolean;
+  email_overdue_followups: boolean;
+  email_pending_approvals: boolean;
+  email_daily_digest: boolean;
+  email_weekly_digest: boolean;
+  digest_time: string;
+  do_not_disturb: boolean;
+  dnd_start_time: string | null;
+  dnd_end_time: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminActivityLog = {
+  id: string;
+  admin_user_id: string;
+  admin_email: string;
+  action_type: string;
+  action_description: string;
+  entity_type: string | null;
+  entity_id: string | null;
+  metadata: Record<string, any>;
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
 };
 
 export type NoteFilter = {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Pin, Tag, AlertCircle } from 'lucide-react';
+import { X, Pin, Tag, AlertCircle, Calendar } from 'lucide-react';
 import { supabase, type AdminCaseNote, type Jurisdiction, type Report, type NoteCategory, type NotePriority, type NoteType } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -43,6 +43,7 @@ export function NoteModal({ note, jurisdictions, reports, userEmail, onClose, on
   const [isPinned, setIsPinned] = useState(note?.is_pinned || false);
   const [tags, setTags] = useState<string[]>(note?.tags || []);
   const [tagInput, setTagInput] = useState('');
+  const [dueDate, setDueDate] = useState(note?.due_date || '');
 
   const filteredReports = reports.filter(r => r.jurisdiction_id === jurisdictionId);
 
@@ -112,6 +113,7 @@ export function NoteModal({ note, jurisdictions, reports, userEmail, onClose, on
         priority,
         is_pinned: isPinned,
         tags,
+        due_date: (category === 'follow-up' && dueDate) ? dueDate : null,
         created_by: user?.id || null,
         created_by_email: userEmail,
         updated_at: new Date().toISOString()
@@ -340,6 +342,24 @@ export function NoteModal({ note, jurisdictions, reports, userEmail, onClose, on
               </div>
             </div>
           </div>
+
+          {category === 'follow-up' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar size={16} className="inline mr-1" />
+                Due Date
+              </label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Set a deadline for this follow-up action. You'll receive notifications when the due date approaches or passes.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

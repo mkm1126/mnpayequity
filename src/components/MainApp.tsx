@@ -28,7 +28,10 @@ import { MNPayEquity } from './MNPayEquity';
 import { ApprovalDashboard } from './ApprovalDashboard';
 import { AdminCaseNotes } from './AdminCaseNotes';
 import { JurisdictionMaintenance } from './JurisdictionMaintenance';
-import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport } from '../lib/supabase';
+import { AdminDashboard } from './AdminDashboard';
+import { FollowUpCalendar } from './FollowUpCalendar';
+import { NoteDetailView } from './NoteDetailView';
+import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport, type AdminCaseNote } from '../lib/supabase';
 import { analyzeCompliance, type ComplianceResult } from '../lib/complianceAnalysis';
 
 export function MainApp() {
@@ -38,7 +41,7 @@ export function MainApp() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance'>('dashboard');
+  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar'>('dashboard');
   const [reportViewType, setReportViewType] = useState<'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation' | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -49,6 +52,8 @@ export function MainApp() {
   const [implementationData, setImplementationData] = useState<ImplementationReport | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showHelpCenter, setShowHelpCenter] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [selectedNote, setSelectedNote] = useState<AdminCaseNote | null>(null);
 
   useEffect(() => {
     const tutorialCompleted = localStorage.getItem('payEquityTutorialCompleted');
@@ -59,7 +64,10 @@ export function MainApp() {
 
   useEffect(() => {
     loadJurisdictions();
-  }, []);
+    if (isAdmin) {
+      setCurrentView('adminDashboard');
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     if (currentJurisdiction) {
@@ -446,14 +454,26 @@ export function MainApp() {
       />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
-        {currentView === 'jurisdictionMaintenance' ? (
+        {currentView === 'adminDashboard' ? (
+          <AdminDashboard onNavigate={(view, data) => {
+            if (data?.noteId) {
+              setSelectedNoteId(data.noteId);
+            }
+            handleNavigate(view);
+          }} />
+        ) : currentView === 'followupCalendar' ? (
+          <FollowUpCalendar onSelectNote={(note) => {
+            setSelectedNote(note);
+            setCurrentView('caseNotes');
+          }} />
+        ) : currentView === 'jurisdictionMaintenance' ? (
           <JurisdictionMaintenance
             jurisdictions={jurisdictions}
-            onBack={() => setCurrentView('dashboard')}
+            onBack={() => isAdmin ? setCurrentView('adminDashboard') : setCurrentView('dashboard')}
             onJurisdictionsUpdated={loadJurisdictions}
           />
         ) : currentView === 'caseNotes' ? (
-          <AdminCaseNotes onBack={() => setCurrentView('dashboard')} />
+          <AdminCaseNotes onBack={() => isAdmin ? setCurrentView('adminDashboard') : setCurrentView('dashboard')} />
         ) : currentView === 'approvalDashboard' ? (
           <ApprovalDashboard />
         ) : currentView === 'changePassword' ? (

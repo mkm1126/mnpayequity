@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ComprehensiveHelpGuide } from './ComprehensiveHelpGuide';
 
 type HeaderProps = {
-  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance';
-  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance') => void;
+  currentView?: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar';
+  onNavigate?: (view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'userManagement' | 'mnPayEquity' | 'reportView' | 'dataGuide' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar') => void;
   hasActiveReport?: boolean;
   hasActiveJurisdiction?: boolean;
   onShowHelp?: () => void;
@@ -70,7 +70,7 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
     onNavigate?.(view);
   };
 
-  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance') => {
+  const handleAdminNavigation = (view: 'jurisdictionLookup' | 'userManagement' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar') => {
     setIsAdminOpen(false);
     onNavigate?.(view);
   };
@@ -283,12 +283,12 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                   <ChevronDown size={16} className={`transition-transform ${isAdminOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isAdminOpen && (
-                  <div className="absolute left-0 top-full mt-0 bg-white shadow-lg rounded-b border border-gray-200 min-w-[200px] z-50">
+                  <div className="absolute left-0 top-full mt-0 bg-white shadow-lg rounded-b border border-gray-200 min-w-[220px] z-50">
                     <button
-                      onClick={() => handleAdminNavigation('jurisdictionLookup')}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => handleAdminNavigation('adminDashboard')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors font-medium border-b border-gray-200"
                     >
-                      Jurisdiction Lookup
+                      Admin Dashboard
                     </button>
                     <button
                       onClick={() => handleAdminNavigation('approvalDashboard')}
@@ -297,20 +297,26 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                       Case Approvals
                     </button>
                     <button
-                      onClick={handleSendEmail}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      Send Email
-                    </button>
-                    <button
                       onClick={() => handleAdminNavigation('caseNotes')}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       Case Notes
                     </button>
                     <button
-                      onClick={() => handleAdminNavigation('jurisdictionMaintenance')}
+                      onClick={() => handleAdminNavigation('followupCalendar')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Follow-up Calendar
+                    </button>
+                    <button
+                      onClick={() => handleAdminNavigation('jurisdictionLookup')}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors border-t border-gray-100"
+                    >
+                      Jurisdiction Lookup
+                    </button>
+                    <button
+                      onClick={() => handleAdminNavigation('jurisdictionMaintenance')}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       Jurisdiction Maintenance
                     </button>
@@ -319,6 +325,12 @@ export function Header({ currentView = 'home', onNavigate, hasActiveReport = fal
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       User Account Management
+                    </button>
+                    <button
+                      onClick={handleSendEmail}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors border-t border-gray-100"
+                    >
+                      Send Email
                     </button>
                   </div>
                 )}
