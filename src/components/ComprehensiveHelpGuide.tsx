@@ -173,31 +173,8 @@ const helpSections: HelpSection[] = [
     ]
   },
   {
-    id: 'implementation',
-    title: 'Step 5: Implementation Planning (If Out of Compliance)',
-    icon: CheckCircle,
-    content: 'If your jurisdiction is out of compliance, you must submit an implementation plan detailing how and when you will achieve compliance.',
-    subsections: [
-      {
-        title: 'What to Include in Your Plan',
-        content: '• Specific job classes that need adjustment\n• Proposed salary changes for each affected class\n• Timeline for implementation (may span multiple years)\n• Budget impact and funding sources\n• Approval status from governing body\n• Milestones and progress tracking methods'
-      },
-      {
-        title: 'Multi-Year Plans',
-        content: 'You can phase in compliance over multiple years if immediate compliance isn\'t feasible. However, you must show good faith progress each year and justify any delays.'
-      },
-      {
-        title: 'Getting It Approved',
-        content: 'Your implementation plan typically needs approval from your city council, county board, school board, or other governing body. Budget for equity adjustments in your next fiscal cycle.'
-      }
-    ],
-    links: [
-      { text: 'Understanding Compliance Guide', url: 'https://mn.gov/mmb-stat/pay-equity/guide-understand-compl.pdf' }
-    ]
-  },
-  {
     id: 'submission',
-    title: 'Step 6: Final Submission',
+    title: 'Step 5: Final Submission',
     icon: CheckCircle,
     content: 'Before submitting, use the Pre-Submission Checker to ensure all requirements are met.',
     subsections: [
@@ -515,7 +492,7 @@ export function ComprehensiveHelpGuide({ onClose }: ComprehensiveHelpGuideProps)
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold">6.</span>
-                        <span>Address any compliance issues (or create implementation plan)</span>
+                        <span>Address any compliance issues</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold">7.</span>
