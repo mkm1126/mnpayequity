@@ -155,8 +155,13 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
         <div className="prose max-w-none">
           <p className="text-gray-700 leading-relaxed mb-4">
-            Pay equity ensures that employees in female-dominated job classes receive compensation comparable to employees in male-dominated job classes of similar work value. This is determined by analyzing job evaluation points, salary data, and gender composition across all job classifications.
+            Pay Equity is a method of eliminating discrimination against women who are paid less than men for jobs requiring comparable levels of expertise. This goes beyond the familiar idea of equal pay for equal work where men and women with the same jobs must be paid equally. A policy to establish pay equity usually means: 1) that all jobs will be evaluated and given points according to the level of knowledge and responsibility required to do the job; and 2) that salary adjustments will be made if it is discovered that women are consistently paid less then men for jobs with similar points. The following example shows a typical gender-based wage disparity.
           </p>
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+            <p className="text-sm text-blue-900">
+              <strong>Note:</strong> It is important to remember that pay equity laws in Minnesota address only gender-based wage disparities and not all types of wage disparities. Pay equity does not replace collective bargaining and does not address all compensation issues.
+            </p>
+          </div>
           <a
             href="https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#about"
             target="_blank"
