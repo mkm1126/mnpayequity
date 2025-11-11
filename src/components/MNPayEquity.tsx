@@ -67,34 +67,34 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         ← Back
       </button>
 
-      <div className="bg-gradient-to-br from-[#003865] to-[#004d7a] text-white rounded-lg shadow-lg p-8 mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-            <Scale className="w-10 h-10 text-white" />
+      <div className="bg-gradient-to-br from-[#003865] to-[#004d7a] text-white rounded-lg shadow-lg p-4 mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+            <Scale className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Local Government Pay Equity</h1>
-            <p className="text-blue-100 text-lg mt-1">Minnesota Management & Budget</p>
+            <h1 className="text-xl font-bold text-white">Local Government Pay Equity</h1>
+            <p className="text-blue-100 text-sm">Minnesota Management & Budget</p>
           </div>
         </div>
-        <p className="text-white/90 leading-relaxed max-w-4xl">
+        <p className="text-white/90 text-sm leading-snug max-w-4xl">
           State law requires all public jurisdictions such as cities, counties, and school districts to eliminate any gender-based wage inequities in compensation and submit reports to MMB. For information about reporting, refer to the resources below.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white border border-gray-200 rounded-lg p-5 hover:border-[#003865] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FileText className="w-6 h-6 text-[#003865]" />
+        <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-[#003865] transition-colors">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <FileText className="w-4 h-4 text-[#003865]" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 mb-1">Minnesota Statute</h3>
+              <h3 className="font-semibold text-gray-900 text-sm mb-0.5">Minnesota Statute</h3>
               <a
                 href="https://www.revisor.mn.gov/statutes/cite/471.991"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
+                className="text-xs text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
               >
                 471.991-999 Municipal Rights, Powers, Duties; Equitable Compensation Relationship
                 <ExternalLink className="w-3 h-3" />
@@ -103,18 +103,18 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-5 hover:border-[#003865] transition-colors">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Book className="w-6 h-6 text-[#003865]" />
+        <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-[#003865] transition-colors">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Book className="w-4 h-4 text-[#003865]" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 mb-1">Administrative Rules</h3>
+              <h3 className="font-semibold text-gray-900 text-sm mb-0.5">Administrative Rules</h3>
               <a
                 href="https://www.revisor.mn.gov/rules/3920/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
+                className="text-xs text-[#003865] hover:text-[#004d7a] hover:underline flex items-center gap-1"
               >
                 Minnesota Rules Chapter 3920 Local Government Pay Equity
                 <ExternalLink className="w-3 h-3" />
