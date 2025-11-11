@@ -38,7 +38,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'Key Deadlines',
-        content: 'Annual reports are due by January 31st for data as of December 31st of the previous year. We recommend starting data collection in November to ensure adequate time for job evaluation, analysis, and any necessary corrections.'
+        content: 'Annual reports are due by January 31st for data as of December 31st of the previous year. We recommend starting data collection early to ensure adequate time for job evaluation, analysis, and any necessary corrections.'
       }
     ]
   },
@@ -82,7 +82,7 @@ const helpSections: HelpSection[] = [
     id: 'data-gathering',
     title: 'Step 1: Data Gathering',
     icon: CheckCircle,
-    content: 'Proper data collection is the foundation of accurate pay equity reporting. Start this process in November to ensure adequate time.',
+    content: 'Proper data collection is the foundation of accurate pay equity reporting. Start this process early to ensure adequate time.',
     subsections: [
       {
         title: 'Which Employees to Include',
@@ -326,7 +326,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'When to Update Your Data',
-        content: 'Establish a regular schedule for updating pay equity data:\n\n• Annually in November/December: Gather current year-end data even if not filing\n• After union negotiations: Update salary ranges when new contracts are ratified\n• When positions change: Update job evaluations when duties significantly change\n• After organizational restructuring: Review and update all affected classifications\n• During budget cycles: Align pay equity reviews with budget planning\n• Quarterly reviews: Check for new positions, retirements, or major changes\n\nSet calendar reminders to ensure data maintenance doesn\'t get overlooked.'
+        content: 'Establish a regular schedule for updating pay equity data:\n\n• Annually at year-end: Gather current year-end data even if not filing\n• After union negotiations: Update salary ranges when new contracts are ratified\n• When positions change: Update job evaluations when duties significantly change\n• After organizational restructuring: Review and update all affected classifications\n• During budget cycles: Align pay equity reviews with budget planning\n• Quarterly reviews: Check for new positions, retirements, or major changes\n\nSet calendar reminders to ensure data maintenance doesn\'t get overlooked.'
       },
       {
         title: 'Maintaining Job Classification Data',
@@ -499,7 +499,7 @@ export function ComprehensiveHelpGuide({ onClose }: ComprehensiveHelpGuideProps)
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold">2.</span>
-                        <span>Start gathering employee data in November</span>
+                        <span>Start gathering employee data early</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold">3.</span>
