@@ -314,7 +314,7 @@ export function ImplementationForm({
               disabled={isSubmitted}
               maxLength={60}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent disabled:bg-gray-100"
-              placeholder="e.g., John Smith"
+              placeholder="name of chief elected official"
             />
           </div>
 
