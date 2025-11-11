@@ -42,9 +42,9 @@ const reportingSteps: ReportingStep[] = [
   },
   {
     number: 5,
-    title: 'Download and post the official notice',
-    description: 'After submitting your report, download the official compliance notice and post it in a visible location at your workplace as required by law.',
-    url: 'https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#step5'
+    title: 'Post notice',
+    description: 'After submitting the report print the notice, complete the required fields and post the official notice in a shared work location such as city hall, town hall or employee breakroom for a period of 90 days from the date the report was submitted. This notice must also be provided to all union representatives.',
+    url: 'https://mn.gov/mmb-stat/pay-equity/Official%20Notice.pdf'
   }
 ];
 
@@ -313,6 +313,19 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
                         className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
                       >
                         Interpret Results
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </>
+                  ) : step.number === 5 ? (
+                    <>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{step.description}</p>
+                      <a
+                        href={step.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-[#003865] hover:text-[#004d7a] font-medium"
+                      >
+                        Notice to Post-Pay Equity Report Has Been Submitted
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </>
