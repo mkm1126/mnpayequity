@@ -1,6 +1,8 @@
-import { Book, ExternalLink, CheckCircle, FileText, GraduationCap, Scale, ChevronDown, ChevronUp } from 'lucide-react';
+import { Book, ExternalLink, CheckCircle, FileText, GraduationCap, Scale, ChevronDown, ChevronUp, Download, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
+import { generatePayEquityDataTemplate } from '../lib/jobTemplateGenerator';
+import { PayEquityDataGuide } from './PayEquityDataGuide';
 
 type MNPayEquityProps = {
   onBack: () => void;
@@ -23,7 +25,7 @@ const reportingSteps: ReportingStep[] = [
   {
     number: 2,
     title: 'Gather the data you will need to report',
-    description: 'Collect employee data including job classifications, gender composition, salary ranges, and evaluation points for each job class. This data will form the basis of your annual report.',
+    description: 'This includes information about your jurisdiction\'s jobs such as job title, job points, number of employees (male, female), minimum and maximum salary, years of service or years to max. Use the spreadsheet below to enter your data and upload into the pay equity system.',
     url: 'https://mn.gov/mmb/employee-relations/compensation/laws/local-gov/local-gov-pay-equity/#step2'
   },
   {
@@ -50,6 +52,7 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
   useScrollToTop();
 
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [showDataGuide, setShowDataGuide] = useState(false);
 
   const toggleStep = (stepNumber: number) => {
     setExpandedStep(expandedStep === stepNumber ? null : stepNumber);
@@ -195,7 +198,27 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
               </button>
               {expandedStep === step.number && (
                 <div className="px-4 pb-4 pt-0 pl-[72px] border-t border-gray-100">
-                  {step.number === 1 ? (
+                  {step.number === 2 ? (
+                    <div className="space-y-4">
+                      <p className="text-gray-700 text-sm leading-relaxed">{step.description}</p>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <button
+                          onClick={generatePayEquityDataTemplate}
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium text-sm"
+                        >
+                          <Download className="w-4 h-4" />
+                          Download Excel Template
+                        </button>
+                        <button
+                          onClick={() => setShowDataGuide(true)}
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-[#003865] text-[#003865] rounded-lg hover:bg-blue-50 transition-colors font-medium text-sm"
+                        >
+                          <HelpCircle className="w-4 h-4" />
+                          View Column Definitions & Data Rules
+                        </button>
+                      </div>
+                    </div>
+                  ) : step.number === 1 ? (
                     <div className="space-y-3">
                       <p className="text-gray-700 text-sm leading-relaxed">
                         Every political subdivision is required to use a job evaluation system to determine the comparable work value of the work performed by each class of its employees. Once established job points generally do not change unless a new evaluation system is adopted. You may choose to create your own internal job evaluation system, use a consultant's system, or use the State Job Match System. Your jurisdiction is responsible for making final decisions about which job evaluation system to use. For more information refer to the resources below:
@@ -349,6 +372,11 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
           <p>Email: <a href="mailto:payequity.mmb@state.mn.us" className="underline hover:text-blue-900 font-medium">payequity.mmb@state.mn.us</a></p>
         </div>
       </div>
+
+      <PayEquityDataGuide
+        isOpen={showDataGuide}
+        onClose={() => setShowDataGuide(false)}
+      />
     </div>
   );
 }

@@ -27,3 +27,40 @@ export function generateJobImportTemplate(): void {
 
   XLSX.writeFile(workbook, 'job_import_template.xlsx');
 }
+
+export function generatePayEquityDataTemplate(): void {
+  const headers = ['Job Title', 'Job Points', 'Males', 'Females', 'Min Salary', 'Max Salary', 'Years to Max', 'Years Service Pay', 'Exceptional Service'];
+
+  const sampleData = [
+    'Accountant',
+    450,
+    3,
+    5,
+    45000,
+    65000,
+    5,
+    2,
+    'A'
+  ];
+
+  const worksheetData = [headers, sampleData];
+
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+  worksheet['!cols'] = [
+    { wch: 30 },
+    { wch: 12 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 15 },
+    { wch: 18 },
+    { wch: 20 }
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'PayEquityData');
+
+  XLSX.writeFile(workbook, 'pay_equity_data_template.xlsx');
+}
