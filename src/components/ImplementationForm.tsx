@@ -6,6 +6,7 @@ import { ContextualHelp } from './ContextualHelp';
 import { ComplianceWarningModal } from './ComplianceWarningModal';
 import { ComplianceTroubleshooting } from './ComplianceTroubleshooting';
 import { ComplianceResult } from '../lib/complianceAnalysis';
+import { HelpTooltip } from './HelpTooltip';
 
 type ImplementationFormProps = {
   report: Report;
@@ -267,6 +268,10 @@ export function ImplementationForm({
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Governing body (max 60 characters)
+                <HelpTooltip
+                  title="What is a Governing Body?"
+                  content="The governing body is the legislative or decision-making authority for your jurisdiction that has the power to approve this pay equity report. Common examples include: City Council, County Board, Town Board, School Board, or Township Board. This information is required for official compliance documentation and to verify proper approval procedures were followed."
+                />
               </label>
               <input
                 type="text"
@@ -281,6 +286,10 @@ export function ImplementationForm({
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Title (max 60 characters)
+                <HelpTooltip
+                  title="What is the Title?"
+                  content="This is the official title of your jurisdiction's chief elected official who is authorized to sign and approve this report. Common examples include: Mayor, Council President, Board Chair, Superintendent, or Township Supervisor. The title should match the position of the person named in the 'Chief elected official' field below."
+                />
               </label>
               <input
                 type="text"
