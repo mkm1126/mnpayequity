@@ -450,8 +450,8 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
 
                   return (
                     <tr key={job.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-900">{job.job_number}</td>
-                      <td className="py-3 px-4 text-gray-900">{job.class_title}</td>
+                      <td className="py-3 px-4 text-gray-900">{job.job_number || ''}</td>
+                      <td className="py-3 px-4 text-gray-900">{job.class_title || ''}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{maleCount}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{femaleCount}</td>
                       <td className="text-center py-3 px-4">
@@ -460,9 +460,9 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                         </span>
                       </td>
                       <td className="text-right py-3 px-4 text-gray-900">
-                        ${job.max_monthly_salary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${(job.max_monthly_salary || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td className="text-center py-3 px-4 text-gray-900">{job.job_value}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{job.job_value || 0}</td>
                     </tr>
                   );
                 })}
