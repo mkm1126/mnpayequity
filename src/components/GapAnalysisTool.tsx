@@ -66,8 +66,9 @@ export function GapAnalysisTool({ jobs, complianceResult, onClose }: GapAnalysis
       })
       .filter(gap => {
         if (filterGender !== 'all') {
-          const isFemale = gap.job.females > 0 && gap.job.males === 0;
-          const isMale = gap.job.males > 0 && gap.job.females === 0;
+          const total = gap.job.males + gap.job.females;
+          const isFemale = total > 0 && (gap.job.females / total) >= 0.70;
+          const isMale = total > 0 && (gap.job.males / total) >= 0.80;
           if (filterGender === 'female' && !isFemale) return false;
           if (filterGender === 'male' && !isMale) return false;
         }
@@ -86,15 +87,22 @@ export function GapAnalysisTool({ jobs, complianceResult, onClose }: GapAnalysis
   const highPriorityGaps = underpaidJobs.filter(g => g.priority === 'high');
   const totalGapAmount = underpaidJobs.reduce((sum, g) => sum + Math.abs(g.gap), 0);
 
-  const femaleUnderpaid = underpaidJobs.filter(g => g.job.females > 0 && g.job.males === 0).length;
-  const maleUnderpaid = underpaidJobs.filter(g => g.job.males > 0 && g.job.females === 0).length;
+  const femaleUnderpaid = underpaidJobs.filter(g => {
+    const total = g.job.males + g.job.females;
+    return total > 0 && (g.job.females / total) >= 0.70;
+  }).length;
+  const maleUnderpaid = underpaidJobs.filter(g => {
+    const total = g.job.males + g.job.females;
+    return total > 0 && (g.job.males / total) >= 0.80;
+  }).length;
 
   const handleExport = () => {
     const csv = [
       ['Job Title', 'Gender', 'Points', 'Actual Max Pay', 'Predicted Pay', 'Gap Amount', 'Gap %', 'Priority', 'Employees Affected'],
       ...gaps.map(gap => {
-        const isFemale = gap.job.females > 0 && gap.job.males === 0;
-        const isMale = gap.job.males > 0 && gap.job.females === 0;
+        const total = gap.job.males + gap.job.females;
+        const isFemale = total > 0 && (gap.job.females / total) >= 0.70;
+        const isMale = total > 0 && (gap.job.males / total) >= 0.80;
         const gender = isFemale ? 'Female' : isMale ? 'Male' : 'Balanced';
         const employeeCount = gap.job.males + gap.job.females;
 

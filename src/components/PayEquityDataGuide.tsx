@@ -102,9 +102,9 @@ export function PayEquityDataGuide({ isOpen, onClose }: PayEquityDataGuideProps)
                   <div className="bg-amber-50 border border-amber-200 p-3 rounded">
                     <p className="font-medium text-amber-900 mb-1">Gender Classification:</p>
                     <p className="text-amber-800 text-sm">
-                      • Male-dominated: 70% or more male<br/>
+                      • Male-dominated: 80% or more male<br/>
                       • Female-dominated: 70% or more female<br/>
-                      • Balanced: Neither gender is 70% or more
+                      • Balanced: No more than 80% male and no more than 70% female
                     </p>
                   </div>
                 </div>

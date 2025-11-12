@@ -13,8 +13,14 @@ type PredictedPayReportPageProps = {
 };
 
 export function PredictedPayReportPage({ report, jurisdiction, jobs, complianceResult, onBack }: PredictedPayReportPageProps) {
-  const maleJobs = jobs.filter(job => job.males > 0 && job.females === 0);
-  const femaleJobs = jobs.filter(job => job.females > 0 && job.males === 0);
+  const maleJobs = jobs.filter(job => {
+    const total = job.males + job.females;
+    return total > 0 && (job.males / total) >= 0.80;
+  });
+  const femaleJobs = jobs.filter(job => {
+    const total = job.males + job.females;
+    return total > 0 && (job.females / total) >= 0.70;
+  });
 
   async function exportToPDF() {
     const doc = new jsPDF('portrait', 'pt', 'letter');

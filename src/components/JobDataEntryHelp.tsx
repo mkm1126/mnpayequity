@@ -63,7 +63,7 @@ export function JobDataEntryHelp({ isOpen, onClose }: JobDataEntryHelpProps) {
                 <div className="bg-amber-50 border border-amber-200 p-3 rounded text-sm">
                   <p className="font-medium text-amber-900 mb-1">Important:</p>
                   <p className="text-amber-800">
-                    A job class is considered "male-dominated" if 70% or more are male, "female-dominated" if 70% or more are female, and "balanced" otherwise.
+                    A job class is considered "male-dominated" if 80% or more are male, "female-dominated" if 70% or more are female, and "balanced" if no more than 80% male and no more than 70% female.
                   </p>
                 </div>
               </div>

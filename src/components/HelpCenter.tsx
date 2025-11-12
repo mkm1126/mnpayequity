@@ -72,8 +72,8 @@ const helpArticles: HelpArticle[] = [
     id: '3',
     title: 'How are job classes categorized by gender?',
     category: 'Job Classifications',
-    content: 'Job classes are categorized as: Male-dominated: 70% or more employees are male. Female-dominated: 70% or more employees are female. Balanced: Neither gender represents 70% or more. This categorization is based on the actual employee count in each job class, not the nature of the work itself.',
-    keywords: ['gender', 'male', 'female', 'balanced', '70%', 'dominated'],
+    content: 'Job classes are categorized as: Male-dominated: 80% or more employees are male. Female-dominated: 70% or more employees are female. Balanced: No more than 80% male and no more than 70% female. This categorization is based on the actual employee count in each job class, not the nature of the work itself.',
+    keywords: ['gender', 'male', 'female', 'balanced', '70%', '80%', 'dominated'],
   },
   {
     id: '4',

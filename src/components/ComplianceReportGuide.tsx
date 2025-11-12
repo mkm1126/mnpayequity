@@ -92,9 +92,9 @@ export function ComplianceReportGuide({ report, jurisdiction, complianceResult, 
                 <strong>Job Classification by Gender:</strong> Each job class is categorized based on the gender composition of its employees:
               </p>
               <ul className="list-disc ml-6 space-y-2">
-                <li><strong>Male-Dominated:</strong> Classes where 70% or more of employees are male</li>
+                <li><strong>Male-Dominated:</strong> Classes where 80% or more of employees are male</li>
                 <li><strong>Female-Dominated:</strong> Classes where 70% or more of employees are female</li>
-                <li><strong>Balanced:</strong> Classes where neither gender represents 70% or more</li>
+                <li><strong>Balanced:</strong> Classes where no more than 80% male and no more than 70% female</li>
               </ul>
               <p>
                 The average maximum monthly pay is calculated for each category to identify potential pay disparities. In your jurisdiction:

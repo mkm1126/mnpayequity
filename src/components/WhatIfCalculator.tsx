@@ -47,8 +47,14 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
     additionalComp: false,
   });
 
-  const femaleJobs = jobs.filter(job => job.females > 0 && job.males === 0);
-  const maleJobs = jobs.filter(job => job.males > 0 && job.females === 0);
+  const femaleJobs = jobs.filter(job => {
+    const total = job.males + job.females;
+    return total > 0 && (job.females / total) >= 0.70;
+  });
+  const maleJobs = jobs.filter(job => {
+    const total = job.males + job.females;
+    return total > 0 && (job.males / total) >= 0.80;
+  });
 
   useEffect(() => {
     calculateScenario();

@@ -86,12 +86,15 @@ export function analyzeCompliance(jobs: JobClassification[]): ComplianceResult {
     };
   }
 
-  // Use 70% threshold to classify jobs as male-dominated, female-dominated, or balanced
-  // per Minnesota Local Government Pay Equity Act requirements
+  // Use 80% threshold for male-dominated and 70% threshold for female-dominated
+  // per Minnesota Local Government Pay Equity Act requirements:
+  // - Male-dominated: 80% or more male
+  // - Female-dominated: 70% or more female
+  // - Balanced: less than 80% male AND less than 70% female
   const maleJobs = jobs.filter(job => {
     const total = job.males + job.females;
     if (total === 0) return false;
-    return (job.males / total) >= 0.70;
+    return (job.males / total) >= 0.80;
   });
 
   const femaleJobs = jobs.filter(job => {
@@ -105,7 +108,7 @@ export function analyzeCompliance(jobs: JobClassification[]): ComplianceResult {
     if (total === 0) return false;
     const malePercent = job.males / total;
     const femalePercent = job.females / total;
-    return malePercent < 0.70 && femalePercent < 0.70;
+    return malePercent < 0.80 && femalePercent < 0.70;
   });
 
   const generalInfo = calculateGeneralInfo(maleJobs, femaleJobs, balancedJobs, jobs);

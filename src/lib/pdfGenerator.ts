@@ -93,7 +93,7 @@ export function getClassType(males: number, females: number): string {
   const malePercentage = (males / total) * 100;
   const femalePercentage = (females / total) * 100;
 
-  if (malePercentage >= 70) return 'M';
+  if (malePercentage >= 80) return 'M';
   if (femalePercentage >= 70) return 'F';
   return 'B';
 }

@@ -70,8 +70,14 @@ export function BenefitsWorksheet({ jobs, worksheetData, onSave }: BenefitsWorks
   };
 
   const checkForTrigger = () => {
-    const femaleClasses = jobs.filter(j => j.females > 0 && j.males === 0);
-    const maleClasses = jobs.filter(j => j.males > 0 && j.females === 0);
+    const femaleClasses = jobs.filter(j => {
+      const total = j.males + j.females;
+      return total > 0 && (j.females / total) >= 0.70;
+    });
+    const maleClasses = jobs.filter(j => {
+      const total = j.males + j.females;
+      return total > 0 && (j.males / total) >= 0.80;
+    });
 
     let hasDisadvantage = false;
     let explanation = '';
