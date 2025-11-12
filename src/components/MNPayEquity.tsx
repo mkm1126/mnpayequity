@@ -412,7 +412,9 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
         </div>
       </div>
 
-      <JurisdictionReportingLookup />
+      <div className="mb-8">
+        <JurisdictionReportingLookup />
+      </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="mb-3">
