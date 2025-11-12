@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { generatePayEquityDataTemplate } from '../lib/jobTemplateGenerator';
 import { PayEquityDataGuide } from './PayEquityDataGuide';
+import { JurisdictionReportingLookup } from './JurisdictionReportingLookup';
 
 type MNPayEquityProps = {
   onBack: () => void;
@@ -410,6 +411,8 @@ export function MNPayEquity({ onBack }: MNPayEquityProps) {
           </a>
         </div>
       </div>
+
+      <JurisdictionReportingLookup />
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="mb-3">
