@@ -19,6 +19,9 @@ type ComplianceReportPageProps = {
 export function ComplianceReportPage({ report, jurisdiction, jobs, complianceResult, onBack }: ComplianceReportPageProps) {
   const [showGuide, setShowGuide] = useState(false);
 
+  console.log('ComplianceReportPage - jobs:', jobs);
+  console.log('ComplianceReportPage - jobs length:', jobs?.length);
+
   if (showGuide) {
     return (
       <ComplianceReportGuide
@@ -415,7 +418,23 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
         </div>
 
         <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Job Classification Details</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Job Classification Details</h2>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="text-sm text-gray-600 mb-1">Total Jobs</div>
+              <div className="text-3xl font-bold text-gray-900">{jobs.length}</div>
+            </div>
+            <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+              <div className="text-sm text-emerald-700 mb-1">Male-Dominated</div>
+              <div className="text-3xl font-bold text-emerald-800">{complianceResult.generalInfo.maleClasses}</div>
+            </div>
+            <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
+              <div className="text-sm text-pink-700 mb-1">Female-Dominated</div>
+              <div className="text-3xl font-bold text-pink-800">{complianceResult.generalInfo.femaleClasses}</div>
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -430,7 +449,13 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                 </tr>
               </thead>
               <tbody>
-                {jobs.map((job) => {
+                {jobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-8 text-gray-500">
+                      No job classifications found for this report
+                    </td>
+                  </tr>
+                ) : jobs.map((job) => {
                   const maleCount = job.number_of_male_employees || 0;
                   const femaleCount = job.number_of_female_employees || 0;
                   const total = maleCount + femaleCount;
