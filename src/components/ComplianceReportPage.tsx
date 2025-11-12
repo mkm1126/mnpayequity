@@ -456,8 +456,8 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                     </td>
                   </tr>
                 ) : jobs.map((job) => {
-                  const maleCount = job.number_of_male_employees || 0;
-                  const femaleCount = job.number_of_female_employees || 0;
+                  const maleCount = job.males || 0;
+                  const femaleCount = job.females || 0;
                   const total = maleCount + femaleCount;
                   const malePercent = total > 0 ? (maleCount / total) * 100 : 0;
                   const femalePercent = total > 0 ? (femaleCount / total) * 100 : 0;
@@ -468,7 +468,7 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                   if (malePercent >= 80) {
                     classType = 'M';
                     badgeColor = 'bg-sky-100 text-sky-800';
-                  } else if (femalePercent >= 80) {
+                  } else if (femalePercent >= 70) {
                     classType = 'F';
                     badgeColor = 'bg-pink-100 text-pink-800';
                   }
@@ -476,7 +476,7 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                   return (
                     <tr key={job.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-4 text-gray-900">{job.job_number || ''}</td>
-                      <td className="py-3 px-4 text-gray-900">{job.class_title || ''}</td>
+                      <td className="py-3 px-4 text-gray-900">{job.title || ''}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{maleCount}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{femaleCount}</td>
                       <td className="text-center py-3 px-4">
@@ -485,9 +485,9 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
                         </span>
                       </td>
                       <td className="text-right py-3 px-4 text-gray-900">
-                        ${(job.max_monthly_salary || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${(job.max_salary || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td className="text-center py-3 px-4 text-gray-900">{job.job_value || 0}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{job.points || 0}</td>
                     </tr>
                   );
                 })}
