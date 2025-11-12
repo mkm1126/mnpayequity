@@ -414,6 +414,63 @@ export function ComplianceReportPage({ report, jurisdiction, jobs, complianceRes
           </div>
         </div>
 
+        <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Job Classification Details</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-300 bg-gray-50">
+                  <th className="text-left py-3 px-4 font-bold text-gray-700">Job Nbr</th>
+                  <th className="text-left py-3 px-4 font-bold text-gray-700">Class Title</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Nbr Males</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Nbr Females</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Class Type</th>
+                  <th className="text-right py-3 px-4 font-bold text-gray-700">Max Monthly Salary</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Job Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map((job) => {
+                  const maleCount = job.number_of_male_employees || 0;
+                  const femaleCount = job.number_of_female_employees || 0;
+                  const total = maleCount + femaleCount;
+                  const malePercent = total > 0 ? (maleCount / total) * 100 : 0;
+                  const femalePercent = total > 0 ? (femaleCount / total) * 100 : 0;
+
+                  let classType = 'B';
+                  let badgeColor = 'bg-blue-100 text-blue-800';
+
+                  if (malePercent >= 80) {
+                    classType = 'M';
+                    badgeColor = 'bg-sky-100 text-sky-800';
+                  } else if (femalePercent >= 80) {
+                    classType = 'F';
+                    badgeColor = 'bg-pink-100 text-pink-800';
+                  }
+
+                  return (
+                    <tr key={job.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-900">{job.job_number}</td>
+                      <td className="py-3 px-4 text-gray-900">{job.class_title}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{maleCount}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{femaleCount}</td>
+                      <td className="text-center py-3 px-4">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${badgeColor}`}>
+                          {classType}
+                        </span>
+                      </td>
+                      <td className="text-right py-3 px-4 text-gray-900">
+                        ${job.max_monthly_salary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="text-center py-3 px-4 text-gray-900">{job.job_value}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {!complianceResult.requiresManualReview && complianceResult.statisticalTest && (
           <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
             <h2 className="text-xl font-bold text-gray-900 mb-6">II. STATISTICAL ANALYSIS TEST</h2>
