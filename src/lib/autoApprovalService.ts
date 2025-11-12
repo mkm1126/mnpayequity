@@ -36,6 +36,29 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
       return false;
     }
 
+    const submittedOnTime = checkSubmissionDeadline(report);
+
+    if (!submittedOnTime) {
+      await supabase.from('reports').update({
+        approval_status: 'pending',
+        requires_manual_review: true,
+        submitted_on_time: false,
+      }).eq('id', reportId);
+
+      await supabase.from('approval_history').insert({
+        report_id: reportId,
+        jurisdiction_id: report.jurisdiction_id,
+        action_type: 'manual_review_required',
+        previous_status: 'draft',
+        new_status: 'pending',
+        reason: 'Submitted after January 31st deadline - requires manual review',
+      });
+
+      await sendStaffNotificationEmail(report, 'Late submission - manual review required');
+
+      return false;
+    }
+
     const complianceResult = analyzeCompliance(jobs);
 
     if (complianceResult.requiresManualReview) {
@@ -70,6 +93,21 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         generated_by: 'Auto-Approval System',
       });
 
+      const testResults = {
+        submittedOnTime,
+        underpaymentRatioPassed: complianceResult.statisticalTest?.underpaymentRatioPassed ?? false,
+        salaryRangeTestPassed: complianceResult.salaryRangeTest?.passed ?? false,
+        exceptionalServiceTestPassed: complianceResult.exceptionalServiceTest?.passed ?? false,
+        timestamp: new Date().toISOString(),
+      };
+
+      const testApplicability = {
+        salaryRangeApplicable: complianceResult.salaryRangeTest?.applicable ?? false,
+        exceptionalServiceApplicable: complianceResult.exceptionalServiceTest?.applicable ?? false,
+        salaryRangeReason: complianceResult.salaryRangeTest?.reason,
+        exceptionalServiceReason: complianceResult.exceptionalServiceTest?.reason,
+      };
+
       await supabase.from('reports').update({
         approval_status: 'auto_approved',
         approved_by: 'Auto-Approval System',
@@ -78,6 +116,10 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         case_status: 'In Compliance',
         compliance_status: 'In Compliance',
         certificate_generated_at: new Date().toISOString(),
+        submitted_on_time: true,
+        submission_deadline: getSubmissionDeadline(report.report_year),
+        test_results: testResults,
+        test_applicability: testApplicability,
       }).eq('id', reportId);
 
       await supabase.from('approval_history').insert({
@@ -87,17 +129,36 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         previous_status: 'draft',
         new_status: 'auto_approved',
         approved_by: 'Auto-Approval System',
-        reason: 'Passed all compliance tests',
+        reason: buildApprovalReason(complianceResult, true),
       });
 
       await sendApprovalNotificationEmail(report, certificateData);
 
       return true;
     } else {
+      const testResults = {
+        submittedOnTime,
+        underpaymentRatioPassed: complianceResult.statisticalTest?.underpaymentRatioPassed ?? false,
+        salaryRangeTestPassed: complianceResult.salaryRangeTest?.passed ?? false,
+        exceptionalServiceTestPassed: complianceResult.exceptionalServiceTest?.passed ?? false,
+        timestamp: new Date().toISOString(),
+      };
+
+      const testApplicability = {
+        salaryRangeApplicable: complianceResult.salaryRangeTest?.applicable ?? false,
+        exceptionalServiceApplicable: complianceResult.exceptionalServiceTest?.applicable ?? false,
+        salaryRangeReason: complianceResult.salaryRangeTest?.reason,
+        exceptionalServiceReason: complianceResult.exceptionalServiceTest?.reason,
+      };
+
       await supabase.from('reports').update({
         approval_status: 'pending',
         case_status: 'Out of Compliance',
         compliance_status: 'Out of Compliance',
+        submitted_on_time: true,
+        submission_deadline: getSubmissionDeadline(report.report_year),
+        test_results: testResults,
+        test_applicability: testApplicability,
       }).eq('id', reportId);
 
       await supabase.from('approval_history').insert({
@@ -106,7 +167,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         action_type: 'failed_tests',
         previous_status: 'draft',
         new_status: 'pending',
-        reason: 'Failed one or more compliance tests',
+        reason: buildApprovalReason(complianceResult, false),
       });
 
       await sendStaffNotificationEmail(report, 'Failed compliance tests - manual review needed');
@@ -172,6 +233,66 @@ Pay Equity Unit
   } catch (error) {
     console.error('Error sending approval notification:', error);
   }
+}
+
+function checkSubmissionDeadline(report: any): boolean {
+  if (!report.submitted_at) return false;
+
+  const submittedDate = new Date(report.submitted_at);
+  const deadline = getSubmissionDeadline(report.report_year);
+
+  return submittedDate <= deadline;
+}
+
+function getSubmissionDeadline(reportYear: number): Date {
+  return new Date(reportYear, 0, 31, 23, 59, 59);
+}
+
+function buildApprovalReason(complianceResult: any, passed: boolean): string {
+  const parts = [];
+
+  if (passed) {
+    parts.push('✓ Submitted on time by January 31st deadline');
+    parts.push('✓ Implementation form completed');
+
+    if (complianceResult.statisticalTest?.underpaymentRatioPassed) {
+      parts.push(`✓ Underpayment ratio: ${complianceResult.statisticalTest.underpaymentRatio.toFixed(2)} (≥80 required)`);
+    }
+
+    if (complianceResult.salaryRangeTest) {
+      if (complianceResult.salaryRangeTest.applicable) {
+        parts.push(`✓ Salary range test: Ratio ${(complianceResult.salaryRangeTest.ratio * 100).toFixed(1)}% (≥80% required)`);
+      } else {
+        parts.push(`✓ Salary range test: Not applicable - ${complianceResult.salaryRangeTest.reason}`);
+      }
+    }
+
+    if (complianceResult.exceptionalServiceTest) {
+      if (complianceResult.exceptionalServiceTest.applicable) {
+        parts.push(`✓ Exceptional service pay test: Ratio ${(complianceResult.exceptionalServiceTest.ratio * 100).toFixed(1)}% (≥80% required)`);
+      } else {
+        parts.push(`✓ Exceptional service pay test: Not applicable - ${complianceResult.exceptionalServiceTest.reason}`);
+      }
+    }
+
+    parts.push('\nAuto-approved - all requirements met');
+  } else {
+    if (complianceResult.statisticalTest && !complianceResult.statisticalTest.underpaymentRatioPassed) {
+      parts.push(`✗ Underpayment ratio: ${complianceResult.statisticalTest.underpaymentRatio.toFixed(2)} (≥80 required)`);
+    }
+
+    if (complianceResult.salaryRangeTest && !complianceResult.salaryRangeTest.passed && complianceResult.salaryRangeTest.applicable) {
+      parts.push(`✗ Salary range test failed: Ratio ${(complianceResult.salaryRangeTest.ratio * 100).toFixed(1)}% (≥80% required)`);
+    }
+
+    if (complianceResult.exceptionalServiceTest && !complianceResult.exceptionalServiceTest.passed && complianceResult.exceptionalServiceTest.applicable) {
+      parts.push(`✗ Exceptional service pay test failed: Ratio ${(complianceResult.exceptionalServiceTest.ratio * 100).toFixed(1)}% (≥80% required)`);
+    }
+
+    parts.push('\nManual review required - one or more tests failed');
+  }
+
+  return parts.join('\n');
 }
 
 async function sendStaffNotificationEmail(report: any, reason: string) {

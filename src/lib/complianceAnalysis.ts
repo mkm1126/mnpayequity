@@ -35,17 +35,21 @@ export type ComplianceResult = {
   } | null;
   salaryRangeTest: {
     passed: boolean;
+    applicable: boolean;
     maleAverage: number;
     femaleAverage: number;
     ratio: number;
     threshold: number;
+    reason?: string;
   } | null;
   exceptionalServiceTest: {
     passed: boolean;
+    applicable: boolean;
     malePercentage: number;
     femalePercentage: number;
     ratio: number;
     threshold: number;
+    reason?: string;
   } | null;
   totalJobs: number;
   maleJobs: number;
@@ -152,23 +156,39 @@ function performSalaryRangeTest(
   if (maleJobs.length === 0 || femaleJobs.length === 0) {
     return {
       passed: true,
+      applicable: false,
       maleAverage: 0,
       femaleAverage: 0,
       ratio: 0,
       threshold,
+      reason: 'No male or female dominated jobs to compare',
     };
   }
 
   const maleAvgYearsToMax = maleJobs.reduce((sum, job) => sum + job.years_to_max, 0) / maleJobs.length;
   const femaleAvgYearsToMax = femaleJobs.reduce((sum, job) => sum + job.years_to_max, 0) / femaleJobs.length;
 
+  if (maleAvgYearsToMax === 0 && femaleAvgYearsToMax === 0) {
+    return {
+      passed: true,
+      applicable: false,
+      maleAverage: 0,
+      femaleAverage: 0,
+      ratio: 0,
+      threshold,
+      reason: 'Salary range data not provided (years to max not filled in)',
+    };
+  }
+
   if (femaleAvgYearsToMax === 0) {
     return {
       passed: true,
+      applicable: false,
       maleAverage: maleAvgYearsToMax,
       femaleAverage: femaleAvgYearsToMax,
       ratio: 0,
       threshold,
+      reason: 'Female jobs have no salary range data',
     };
   }
 
@@ -177,10 +197,12 @@ function performSalaryRangeTest(
 
   return {
     passed,
+    applicable: true,
     maleAverage: maleAvgYearsToMax,
     femaleAverage: femaleAvgYearsToMax,
     ratio,
     threshold,
+    reason: passed ? 'Salary range ratio meets threshold' : 'Salary range ratio below threshold',
   };
 }
 
@@ -193,10 +215,12 @@ function performExceptionalServiceTest(
   if (maleJobs.length === 0 || femaleJobs.length === 0) {
     return {
       passed: true,
+      applicable: false,
       malePercentage: 0,
       femalePercentage: 0,
       ratio: 0,
       threshold,
+      reason: 'No male or female dominated jobs to compare',
     };
   }
 
@@ -211,23 +235,39 @@ function performExceptionalServiceTest(
   const malePercentage = (maleWithExceptionalService / maleJobs.length) * 100;
   const femalePercentage = (femaleWithExceptionalService / femaleJobs.length) * 100;
 
+  if (maleWithExceptionalService === 0 && femaleWithExceptionalService === 0) {
+    return {
+      passed: true,
+      applicable: false,
+      malePercentage: 0,
+      femalePercentage: 0,
+      ratio: 0,
+      threshold,
+      reason: 'Exceptional service pay not offered (blank for all jobs)',
+    };
+  }
+
   if (malePercentage <= 20) {
     return {
       passed: true,
+      applicable: true,
       malePercentage,
       femalePercentage,
       ratio: 0,
       threshold,
+      reason: 'Less than 20% of male jobs have exceptional service pay',
     };
   }
 
   if (femalePercentage === 0) {
     return {
       passed: false,
+      applicable: true,
       malePercentage,
       femalePercentage,
       ratio: 0,
       threshold,
+      reason: 'Male jobs have exceptional service pay but female jobs do not',
     };
   }
 
@@ -236,10 +276,12 @@ function performExceptionalServiceTest(
 
   return {
     passed,
+    applicable: true,
     malePercentage,
     femalePercentage,
     ratio,
     threshold,
+    reason: passed ? 'Exceptional service pay ratio meets threshold' : 'Exceptional service pay ratio below threshold',
   };
 }
 

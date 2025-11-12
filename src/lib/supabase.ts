@@ -53,6 +53,10 @@ export type Report = {
   rejection_reason: string | null;
   certificate_generated_at: string | null;
   auto_approved: boolean;
+  submitted_on_time: boolean | null;
+  submission_deadline: string | null;
+  test_results: any | null;
+  test_applicability: any | null;
   created_at: string;
   updated_at: string;
 };
