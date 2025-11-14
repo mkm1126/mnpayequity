@@ -26,6 +26,7 @@ import { DataGatheringGuide } from './DataGatheringGuide';
 import { UserAccountManagement } from './UserAccountManagement';
 import { MNPayEquity } from './MNPayEquity';
 import { ApprovalDashboard } from './ApprovalDashboard';
+import { CaseReviewPage } from './CaseReviewPage';
 import { AdminCaseNotes } from './AdminCaseNotes';
 import { JurisdictionMaintenance } from './JurisdictionMaintenance';
 import { AdminDashboard } from './AdminDashboard';
@@ -41,7 +42,7 @@ export function MainApp() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar'>('dashboard');
+  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseReview' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar'>('dashboard');
   const [reportViewType, setReportViewType] = useState<'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation' | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -54,6 +55,8 @@ export function MainApp() {
   const [showHelpCenter, setShowHelpCenter] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [selectedNote, setSelectedNote] = useState<AdminCaseNote | null>(null);
+  const [reviewingReport, setReviewingReport] = useState<Report | null>(null);
+  const [reviewingJurisdiction, setReviewingJurisdiction] = useState<Jurisdiction | null>(null);
 
   useEffect(() => {
     const tutorialCompleted = localStorage.getItem('payEquityTutorialCompleted');
@@ -475,7 +478,23 @@ export function MainApp() {
         ) : currentView === 'caseNotes' ? (
           <AdminCaseNotes onBack={() => isAdmin ? setCurrentView('adminDashboard') : setCurrentView('dashboard')} />
         ) : currentView === 'approvalDashboard' ? (
-          <ApprovalDashboard />
+          <ApprovalDashboard
+            onReviewCase={(report) => {
+              setReviewingReport(report);
+              setReviewingJurisdiction(report.jurisdiction);
+              setCurrentView('caseReview');
+            }}
+          />
+        ) : currentView === 'caseReview' && reviewingReport && reviewingJurisdiction ? (
+          <CaseReviewPage
+            report={reviewingReport}
+            jurisdiction={reviewingJurisdiction}
+            onBack={() => {
+              setReviewingReport(null);
+              setReviewingJurisdiction(null);
+              setCurrentView('approvalDashboard');
+            }}
+          />
         ) : currentView === 'changePassword' ? (
           <ChangePassword onBack={() => setCurrentView('dashboard')} />
         ) : currentView === 'sendEmail' ? (

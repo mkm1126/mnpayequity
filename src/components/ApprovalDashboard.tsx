@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter } from 'lucide-react';
 import { supabase, Report, Jurisdiction, ComplianceCertificate } from '../lib/supabase';
-import { CaseApprovalModal } from './CaseApprovalModal';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
 type ReportWithJurisdiction = Report & {
   jurisdiction: Jurisdiction;
 };
 
-export function ApprovalDashboard() {
+type ApprovalDashboardProps = {
+  onReviewCase?: (report: ReportWithJurisdiction) => void;
+};
+
+export function ApprovalDashboard({ onReviewCase }: ApprovalDashboardProps) {
   useScrollToTop();
 
   const [reports, setReports] = useState<ReportWithJurisdiction[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
-  const [selectedReport, setSelectedReport] = useState<ReportWithJurisdiction | null>(null);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   useEffect(() => {
     loadReports();
@@ -117,14 +118,9 @@ export function ApprovalDashboard() {
   }
 
   function handleReviewCase(report: ReportWithJurisdiction) {
-    setSelectedReport(report);
-    setShowApprovalModal(true);
-  }
-
-  function handleModalClose() {
-    setShowApprovalModal(false);
-    setSelectedReport(null);
-    loadReports();
+    if (onReviewCase) {
+      onReviewCase(report);
+    }
   }
 
   if (loading) {
@@ -304,13 +300,6 @@ export function ApprovalDashboard() {
           </div>
         )}
 
-        {showApprovalModal && selectedReport && (
-          <CaseApprovalModal
-            report={selectedReport}
-            jurisdiction={selectedReport.jurisdiction}
-            onClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );
