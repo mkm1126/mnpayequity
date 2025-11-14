@@ -105,14 +105,23 @@ export function JobDataEntryHelp({ isOpen, onClose }: JobDataEntryHelpProps) {
                 <p className="text-gray-700 text-sm mb-3">
                   The lowest and highest monthly salary amounts for this job classification. Enter as monthly amounts, not annual.
                 </p>
-                <div className="bg-gray-50 p-3 rounded text-sm space-y-2">
+                <div className="bg-gray-50 p-3 rounded text-sm space-y-3">
                   <div>
-                    <p className="font-medium text-gray-900">For Hourly Employees:</p>
-                    <p className="text-gray-700">Convert to monthly: (Hourly Rate × Hours per Week × 52 weeks) ÷ 12 months</p>
+                    <p className="font-medium text-gray-900 mb-1">For Hourly Full and Part-Time Employees (one rate, no salary range/steps):</p>
+                    <p className="text-gray-700">Hourly wage × 173.3 = Monthly Salary</p>
+                    <p className="text-xs text-gray-500 mt-1">Example: $20.00 × 173.3 = $3,466.00/month (same number entered for min/max)</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 mt-2">Example:</p>
-                    <p className="text-gray-700">$20/hour × 40 hours/week × 52 weeks = $41,600/year ÷ 12 = $3,467/month</p>
+                    <p className="font-medium text-gray-900 mb-1">For Hourly Full and Part-Time Employees with a salary range:</p>
+                    <p className="text-gray-700">1. Lowest rate/minimum step × 173.3 = Monthly Salary</p>
+                    <p className="text-gray-700">2. Highest rate/max step × 173.3 = Monthly Salary</p>
+                    <p className="text-xs text-gray-500 mt-1">Example: Min step $15.00 × 173.3 = $2,599.50/month on Min</p>
+                    <p className="text-xs text-gray-500">Max step $36.00 × 173.3 = $6,238.80/month on Max</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 mb-1">For Annual Salary:</p>
+                    <p className="text-gray-700">Annual salary ÷ months worked = Monthly salary</p>
+                    <p className="text-xs text-gray-500 mt-1">Example: $36,000/year ÷ 12 = $3,000/month</p>
                   </div>
                 </div>
               </div>
