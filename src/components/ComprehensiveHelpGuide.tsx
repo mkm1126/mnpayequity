@@ -34,11 +34,11 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'Who Must Report?',
-        content: 'All Minnesota counties, cities, towns, school districts, and other political subdivisions with more than one female-dominated job class must submit annual pay equity reports by January 31st each year.',
+        content: 'All Minnesota counties, cities, towns, school districts, and other political subdivisions with more than one female-dominated job class must submit pay equity reports every three years by January 31st.',
       },
       {
         title: 'Key Deadlines',
-        content: 'Annual reports are due by January 31st for data as of December 31st of the previous year. We recommend starting data collection early to ensure adequate time for job evaluation, analysis, and any necessary corrections.'
+        content: 'Reports are due by January 31st every three years for data as of December 31st of the previous year. We recommend starting data collection early to ensure adequate time for job evaluation, analysis, and any necessary corrections.'
       }
     ]
   },
@@ -50,7 +50,7 @@ const helpSections: HelpSection[] = [
     subsections: [
       {
         title: 'Instructions for Submitting a Local Government Pay Equity Report',
-        content: 'This is your primary reference document. It contains complete step-by-step instructions for preparing and submitting your annual report, including all required forms and documentation.',
+        content: 'This is your primary reference document. It contains complete step-by-step instructions for preparing and submitting your report, including all required forms and documentation.',
         links: [
           { text: 'Download Submission Instructions PDF', url: 'https://mn.gov/mmb-stat/pay-equity/Instructions%20for%20submitting%20a%20local%20government%20pay%20equity%20report.pdf' }
         ]
@@ -137,7 +137,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'Creating Your Report',
-        content: 'Create a new report for the current year. Give it a clear case description (e.g., "Annual Report 2024" or "Corrected Report 2024").'
+        content: 'Create a new report for the current reporting cycle. Give it a clear case description (e.g., "2024 Report" or "Corrected Report 2024").'
       },
       {
         title: 'Entering Job Classifications',
@@ -192,7 +192,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'Deadline Reminder',
-        content: 'Reports must be submitted by January 31st each year. Late submissions may result in non-compliance penalties.'
+        content: 'Reports must be submitted by January 31st every three years. Late submissions may result in non-compliance penalties.'
       }
     ],
     links: [

@@ -182,7 +182,7 @@ export function SubmissionChecklist({
             <h4 className="font-semibold text-blue-900 mb-2">Important Reminders:</h4>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• Once submitted, the report cannot be edited</li>
-              <li>• Reports must be received by January 31st to remain in compliance</li>
+              <li>• Reports must be received by January 31st every three years to remain in compliance</li>
               <li>• All data should reflect information as of December 31st of the previous year</li>
               <li>• You will receive a confirmation email upon successful submission</li>
               <li>• The official notice must be posted for 90 days after submission</li>

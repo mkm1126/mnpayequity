@@ -272,8 +272,8 @@ export function ComplianceCertificate({ report, jurisdiction, onBack }: Complian
                 <li>Download and post the compliance certificate immediately</li>
                 <li>Keep a copy of the report and certificate in your official records</li>
                 <li>Monitor the posting location to ensure the notice remains visible for 90 days</li>
-                <li>Begin planning for next year's report (due by January 31)</li>
-                <li>Address any compliance issues identified in this year's report</li>
+                <li>Begin planning for next report cycle (due by January 31 every three years)</li>
+                <li>Address any compliance issues identified in this report</li>
                 <li>Review and update job classifications as positions change</li>
               </ol>
             </div>

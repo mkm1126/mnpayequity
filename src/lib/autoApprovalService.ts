@@ -51,7 +51,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         action_type: 'manual_review_required',
         previous_status: 'draft',
         new_status: 'pending',
-        reason: 'Submitted after January 31st deadline - requires manual review',
+        reason: 'Submitted after January 31st deadline (due every three years) - requires manual review',
       });
 
       await sendStaffNotificationEmail(report, 'Late submission - manual review required');
@@ -252,7 +252,7 @@ function buildApprovalReason(complianceResult: any, passed: boolean): string {
   const parts = [];
 
   if (passed) {
-    parts.push('✓ Submitted on time by January 31st deadline');
+    parts.push('✓ Submitted on time by January 31st deadline (due every three years)');
     parts.push('✓ Implementation form completed');
 
     if (complianceResult.statisticalTest?.underpaymentRatioPassed) {

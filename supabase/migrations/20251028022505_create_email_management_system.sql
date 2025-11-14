@@ -155,7 +155,7 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM email_templates WHERE type = 'announcement') THEN
     INSERT INTO email_templates (name, type, subject, body) VALUES
     (
-      'Annual Report Announcement',
+      'Pay Equity Report Announcement',
       'announcement',
       'Pay Equity Report Due for {{year}}',
       'Dear {{contact_name}},

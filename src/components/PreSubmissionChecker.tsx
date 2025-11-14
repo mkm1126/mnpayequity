@@ -220,7 +220,7 @@ export function PreSubmissionChecker({
       message: new Date().getMonth() === 0
         ? 'Reports are due by January 31st'
         : 'Plan ahead for January 31st deadline',
-      guidance: 'Annual pay equity reports must be submitted by January 31st'
+      guidance: 'Pay equity reports must be submitted by January 31st every three years'
     });
 
     setChecks(checkResults);

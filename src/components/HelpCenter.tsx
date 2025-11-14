@@ -22,9 +22,9 @@ const helpArticles: HelpArticle[] = [
     id: 'pdf-submission',
     title: 'Instructions for Submitting a Local Government Pay Equity Report',
     category: 'Official Documents',
-    content: 'This comprehensive official guide from Minnesota Management & Budget provides complete step-by-step instructions for submitting your local government pay equity report.\n\nWhat\'s Covered:\n• Report submission deadlines and procedures\n• Required forms and documentation\n• Data reporting requirements\n• Common submission errors to avoid\n• Contact information for assistance\n• Compliance certification requirements\n\nThis is your primary reference for understanding what must be submitted and how to properly complete your annual report.',
+    content: 'This comprehensive official guide from Minnesota Management & Budget provides complete step-by-step instructions for submitting your local government pay equity report.\n\nWhat\'s Covered:\n• Report submission deadlines and procedures\n• Required forms and documentation\n• Data reporting requirements\n• Common submission errors to avoid\n• Contact information for assistance\n• Compliance certification requirements\n\nThis is your primary reference for understanding what must be submitted and how to properly complete your report.',
     pdfUrl: 'https://mn.gov/mmb-stat/pay-equity/Instructions%20for%20submitting%20a%20local%20government%20pay%20equity%20report.pdf',
-    whenToUse: 'Reference this document when preparing to submit your annual report, verifying submission requirements, or if you receive questions from MMB about your submission.',
+    whenToUse: 'Reference this document when preparing to submit your report, verifying submission requirements, or if you receive questions from MMB about your submission.',
     keywords: ['instructions', 'submit', 'submission', 'requirements', 'how to', 'guide', 'pdf', 'forms', 'deadline'],
   },
   {
@@ -121,7 +121,7 @@ const helpArticles: HelpArticle[] = [
     id: '10',
     title: 'When is the report due?',
     category: 'Deadlines',
-    content: 'Pay equity reports are due by January 31st each year. The report should reflect data as of December 31st of the previous year. Late submissions may result in non-compliance penalties. Plan to start gathering data in November or December to ensure timely submission.',
+    content: 'Pay equity reports are due by January 31st every three years. The report should reflect data as of December 31st of the previous year. Late submissions may result in non-compliance penalties. Plan to start gathering data in November or December to ensure timely submission.',
     keywords: ['deadline', 'due date', 'january 31', 'when', 'submit'],
   },
   {

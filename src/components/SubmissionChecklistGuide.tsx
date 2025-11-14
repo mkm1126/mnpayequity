@@ -239,7 +239,7 @@ export function SubmissionChecklistGuide({ onClose }: SubmissionChecklistGuidePr
             <div className="flex items-start gap-2">
               <Calendar className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-yellow-900">
-                <p className="font-medium mb-1">Annual Deadline: January 31st</p>
+                <p className="font-medium mb-1">Reporting Deadline: January 31st (Every Three Years)</p>
                 <p>
                   Plan to start gathering data in November to ensure you have adequate time for evaluation,
                   testing, and any necessary corrections before the January 31st deadline.

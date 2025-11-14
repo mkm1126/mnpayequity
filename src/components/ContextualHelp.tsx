@@ -97,7 +97,7 @@ const helpContentMap: Record<string, HelpContent> = {
     title: 'Gathering Required Data',
     content: 'Before starting your report, gather all necessary information about your job classifications, employees, salaries, and benefits. Complete preparation makes the reporting process much smoother.',
     tips: [
-      'Start gathering data 4-6 weeks before the January 31 deadline',
+      'Start gathering data 4-6 weeks before the January 31 deadline (reports due every three years)',
       'Work with HR and payroll to ensure accurate employee counts',
       'Verify your job evaluation system is current and approved',
       'Collect previous year\'s report for reference',
@@ -131,7 +131,7 @@ const helpContentMap: Record<string, HelpContent> = {
     commonMistakes: [
       'Submitting without completing all required fields',
       'Not having official governing body approval',
-      'Submitting after the January 31 deadline',
+      'Submitting after the January 31 deadline (due every three years)',
       'Forgetting to download and post the compliance certificate',
     ],
     relatedResources: [
