@@ -43,6 +43,7 @@ export function MainApp() {
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseReview' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar'>('dashboard');
+  const [previousView, setPreviousView] = useState<string>('dashboard');
   const [reportViewType, setReportViewType] = useState<'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation' | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
@@ -407,6 +408,7 @@ export function MainApp() {
         setCurrentView('home');
         return;
       }
+      setPreviousView(currentView);
       setCurrentView(view);
       return;
     }
@@ -416,13 +418,16 @@ export function MainApp() {
         setCurrentView('home');
         return;
       }
+      setPreviousView(currentView);
       setCurrentView(view);
       return;
     }
     if (view === 'jurisdictionLookup') {
+      setPreviousView(currentView);
       setCurrentView('home');
       return;
     }
+    setPreviousView(currentView);
     setCurrentView(view);
   }
 
@@ -480,9 +485,13 @@ export function MainApp() {
         ) : currentView === 'approvalDashboard' ? (
           <ApprovalDashboard
             onReviewCase={(report) => {
+              setPreviousView(currentView);
               setReviewingReport(report);
               setReviewingJurisdiction(report.jurisdiction);
               setCurrentView('caseReview');
+            }}
+            onBack={() => {
+              setCurrentView(previousView as any);
             }}
           />
         ) : currentView === 'caseReview' && reviewingReport && reviewingJurisdiction ? (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter, ArrowLeft } from 'lucide-react';
 import { supabase, Report, Jurisdiction, ComplianceCertificate } from '../lib/supabase';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -9,9 +9,10 @@ type ReportWithJurisdiction = Report & {
 
 type ApprovalDashboardProps = {
   onReviewCase?: (report: ReportWithJurisdiction) => void;
+  onBack?: () => void;
 };
 
-export function ApprovalDashboard({ onReviewCase }: ApprovalDashboardProps) {
+export function ApprovalDashboard({ onReviewCase, onBack }: ApprovalDashboardProps) {
   useScrollToTop();
 
   const [reports, setReports] = useState<ReportWithJurisdiction[]>([]);
@@ -138,6 +139,15 @@ export function ApprovalDashboard({ onReviewCase }: ApprovalDashboardProps) {
     <div className="min-h-screen bg-[#F5F5F5]">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+            >
+              <ArrowLeft size={20} />
+              <span>Back</span>
+            </button>
+          )}
           <h1 className="text-3xl font-bold text-[#003865] mb-2">Case Approval Dashboard</h1>
           <p className="text-gray-600">Review and approve submitted pay equity reports</p>
         </div>
