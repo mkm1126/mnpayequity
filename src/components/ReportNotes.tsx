@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 type ReportNote = {
   id: string;
   report_id: string;
-  title: string;
   content: string;
+  created_by: string;
   created_at: string;
   updated_at: string;
 };
@@ -16,6 +17,7 @@ type ReportNotesProps = {
 };
 
 export function ReportNotes({ reportId }: ReportNotesProps) {
+  const { userProfile } = useAuth();
   const [notes, setNotes] = useState<ReportNote[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<ReportNote | null>(null);
@@ -36,8 +38,9 @@ export function ReportNotes({ reportId }: ReportNotesProps) {
 
       if (error) throw error;
       setNotes(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading notes:', error);
+      alert(`Error loading notes: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -64,9 +67,9 @@ export function ReportNotes({ reportId }: ReportNotesProps) {
 
       if (error) throw error;
       await loadNotes();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting note:', error);
-      alert('Error deleting note. Please try again.');
+      alert(`Error deleting note: ${error.message || 'Unknown error'}`);
     }
   }
 
@@ -100,7 +103,7 @@ export function ReportNotes({ reportId }: ReportNotesProps) {
           {notes.map((note) => (
             <div key={note.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-start justify-between mb-3">
-                <h4 className="text-lg font-semibold text-gray-900">{note.title}</h4>
+                <h4 className="text-sm font-medium text-gray-500">Note by {note.created_by}</h4>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEditNote(note)}
@@ -134,6 +137,7 @@ export function ReportNotes({ reportId }: ReportNotesProps) {
         <NoteModal
           note={editingNote}
           reportId={reportId}
+          createdBy={userProfile?.email || 'Unknown User'}
           onClose={() => setIsModalOpen(false)}
           onSave={() => {
             setIsModalOpen(false);
@@ -148,20 +152,20 @@ export function ReportNotes({ reportId }: ReportNotesProps) {
 type NoteModalProps = {
   note: ReportNote | null;
   reportId: string;
+  createdBy: string;
   onClose: () => void;
   onSave: () => void;
 };
 
-function NoteModal({ note, reportId, onClose, onSave }: NoteModalProps) {
-  const [title, setTitle] = useState(note?.title || '');
+function NoteModal({ note, reportId, createdBy, onClose, onSave }: NoteModalProps) {
   const [content, setContent] = useState(note?.content || '');
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!title.trim() || !content.trim()) {
-      alert('Please fill in all fields');
+    if (!content.trim()) {
+      alert('Please enter note content');
       return;
     }
 
@@ -172,7 +176,6 @@ function NoteModal({ note, reportId, onClose, onSave }: NoteModalProps) {
         const { error } = await supabase
           .from('report_notes')
           .update({
-            title: title.trim(),
             content: content.trim(),
             updated_at: new Date().toISOString(),
           })
@@ -185,8 +188,8 @@ function NoteModal({ note, reportId, onClose, onSave }: NoteModalProps) {
           .insert([
             {
               report_id: reportId,
-              title: title.trim(),
               content: content.trim(),
+              created_by: createdBy,
             },
           ]);
 
@@ -194,9 +197,10 @@ function NoteModal({ note, reportId, onClose, onSave }: NoteModalProps) {
       }
 
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving note:', error);
-      alert('Error saving note. Please try again.');
+      const errorMessage = error.message || error.hint || error.details || 'Unknown error occurred';
+      alert(`Error saving note: ${errorMessage}`);
     } finally {
       setSaving(false);
     }
@@ -214,28 +218,14 @@ function NoteModal({ note, reportId, onClose, onSave }: NoteModalProps) {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-              placeholder="Enter note title"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Content
+              Note
             </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={8}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003865] focus:border-transparent resize-none"
-              placeholder="Enter note content"
+              placeholder="Enter your note here..."
               required
             />
           </div>
