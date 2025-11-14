@@ -110,7 +110,7 @@ const helpSections: HelpSection[] = [
     subsections: [
       {
         title: 'The Four Evaluation Factors',
-        content: 'Jobs are evaluated on:\n\n1. Skill: Education, training, experience required\n2. Effort: Physical and mental demands\n3. Responsibility: Accountability for decisions, resources, outcomes\n4. Working Conditions: Physical environment and hazards\n\nEach factor is assigned points based on level (1-4). Use the Job Match Wizard in this system to guide you through the evaluation.'
+        content: 'Jobs are evaluated on:\n\n1. Skill: Education, training, experience required\n2. Effort: Physical and mental demands\n3. Responsibility: Accountability for decisions, resources, outcomes\n4. Working Conditions: Physical environment and hazards\n\nEach factor is assigned points based on level (1-4).'
       },
       {
         title: 'Consistency is Critical',
@@ -237,10 +237,6 @@ const helpSections: HelpSection[] = [
     icon: CheckCircle,
     content: 'This system includes powerful tools to help you understand and achieve pay equity compliance.',
     subsections: [
-      {
-        title: 'Job Match Wizard',
-        content: 'Interactive tool that guides you through evaluating a job using the State Job Match system. Answer questions about skill, effort, responsibility, and working conditions to calculate point values.'
-      },
       {
         title: 'What-If Calculator',
         content: 'Test different salary adjustment scenarios to see their impact on compliance before implementing changes. Calculate annual costs and see which adjustments move you toward compliance.'
