@@ -160,16 +160,13 @@ export function JobDataEntryHelp({ isOpen, onClose }: JobDataEntryHelpProps) {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Exceptional Service Pay (ESP)</h3>
                 <p className="text-gray-700 text-sm mb-3">
-                  Additional compensation beyond regular salary for longevity, special skills, or exceptional performance. Select the category if this job class receives ESP.
+                  Additional compensation beyond regular salary for longevity or exceptional performance. Select the category if this job class receives ESP.
                 </p>
                 <div className="bg-gray-50 p-3 rounded text-sm">
                   <p className="font-medium text-gray-900 mb-1">Common ESP Categories:</p>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Longevity Pay: Based on years of service</li>
-                    <li>• Certification Pay: For professional certifications</li>
-                    <li>• Shift Differential: For non-standard hours</li>
-                    <li>• Bilingual Pay: For language skills</li>
-                    <li>• Education Pay: For advanced degrees</li>
+                    <li>• Longevity Pay: Lump sum payments</li>
+                    <li>• Performance Pay: Exceptional performance</li>
                   </ul>
                 </div>
               </div>
