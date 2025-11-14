@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calculator, TrendingUp, DollarSign, AlertCircle, CheckCircle, RotateCcw, ChevronDown, ChevronUp, Eye, EyeOff, Users, Award, Clock, Gift, ArrowLeft } from 'lucide-react';
+import { CheckCircle, AlertCircle, RotateCcw, ArrowLeft, Edit2, XCircle } from 'lucide-react';
 import { JobClassification } from '../lib/supabase';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { ContextualHelp } from './ContextualHelp';
@@ -16,36 +16,17 @@ type FieldAdjustment = {
   adjustedJob: Partial<JobClassification>;
 };
 
-type ViewMode = 'simple' | 'advanced';
-type VisibleColumns = {
-  minSalary: boolean;
-  maxSalary: boolean;
-  employees: boolean;
-  points: boolean;
-  yearsToMax: boolean;
-  yearsServicePay: boolean;
-  exceptionalCategory: boolean;
-  benefits: boolean;
-  additionalComp: boolean;
-};
+type EditModalJob = {
+  job: JobClassification;
+  adjustedValues: Partial<JobClassification>;
+} | null;
 
 export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalculatorProps) {
   const [adjustments, setAdjustments] = useState<Map<string, FieldAdjustment>>(new Map());
   const [scenarioResult, setScenarioResult] = useState<ComplianceResult | null>(null);
   const [totalCost, setTotalCost] = useState(0);
-  const [viewMode, setViewMode] = useState<ViewMode>('simple');
-  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<VisibleColumns>({
-    minSalary: true,
-    maxSalary: true,
-    employees: true,
-    points: true,
-    yearsToMax: true,
-    yearsServicePay: false,
-    exceptionalCategory: false,
-    benefits: false,
-    additionalComp: false,
-  });
+  const [editModalJob, setEditModalJob] = useState<EditModalJob>(null);
+  const [showQuickAdjustments, setShowQuickAdjustments] = useState(false);
 
   const femaleJobs = jobs.filter(job => {
     const total = job.males + job.females;
@@ -135,11 +116,6 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
 
   const handleReset = () => {
     setAdjustments(new Map());
-    setExpandedJobId(null);
-  };
-
-  const toggleColumn = (column: keyof VisibleColumns) => {
-    setVisibleColumns(prev => ({ ...prev, [column]: !prev[column] }));
   };
 
   const getAdjustedValue = (jobId: string, field: keyof JobClassification) => {
@@ -154,639 +130,513 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
     return adjustments.has(jobId);
   };
 
-  const getChangeSummary = () => {
-    const changes: { type: string; count: number }[] = [];
-    const fieldCounts = new Map<string, number>();
-
-    adjustments.forEach((adj) => {
-      Object.keys(adj.adjustedJob).forEach(field => {
-        fieldCounts.set(field, (fieldCounts.get(field) || 0) + 1);
-      });
-    });
-
-    fieldCounts.forEach((count, field) => {
-      const label = field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      changes.push({ type: label, count });
-    });
-
-    return changes;
-  };
-
   const complianceImproved = scenarioResult && currentResult && (
     (scenarioResult.isCompliant && !currentResult.isCompliant) ||
     (scenarioResult.salaryRangeTest?.passed && !currentResult.salaryRangeTest?.passed) ||
     (scenarioResult.exceptionalServiceTest?.passed && !currentResult.exceptionalServiceTest?.passed)
   );
 
-  const changeSummary = getChangeSummary();
   const totalJobsModified = adjustments.size;
+
+  const openEditModal = (job: JobClassification) => {
+    const adjustment = adjustments.get(job.id);
+    setEditModalJob({
+      job,
+      adjustedValues: adjustment?.adjustedJob || {}
+    });
+  };
+
+  const saveEditModal = () => {
+    if (!editModalJob) return;
+
+    const { job, adjustedValues } = editModalJob;
+    const hasChanges = Object.keys(adjustedValues).some(
+      key => adjustedValues[key as keyof JobClassification] !== job[key as keyof JobClassification]
+    );
+
+    const newAdjustments = new Map(adjustments);
+    if (hasChanges && Object.keys(adjustedValues).length > 0) {
+      newAdjustments.set(job.id, {
+        jobId: job.id,
+        originalJob: job,
+        adjustedJob: adjustedValues
+      });
+    } else {
+      newAdjustments.delete(job.id);
+    }
+    setAdjustments(newAdjustments);
+    setEditModalJob(null);
+  };
+
+  const updateEditModalField = (field: keyof JobClassification, value: any) => {
+    if (!editModalJob) return;
+    setEditModalJob({
+      ...editModalJob,
+      adjustedValues: {
+        ...editModalJob.adjustedValues,
+        [field]: value
+      }
+    });
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <ContextualHelp context="what-if-calculator" />
+
+      <div className="flex items-center justify-between">
         <button
           onClick={onClose}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-2 text-[#003865] hover:text-[#004d7a] transition-colors"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft className="w-5 h-5" />
           Back to Results
+        </button>
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+          Reset All Changes
         </button>
       </div>
 
-      <ContextualHelp context="what-if-calculator" />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">What-If Scenario Calculator</h1>
+          <p className="text-gray-600">Model changes to job classifications and analyze compliance impact</p>
+        </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="border-b border-gray-200 p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#003865] rounded-lg flex items-center justify-center">
-              <Calculator className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">What-If Scenario Calculator</h2>
-              <p className="text-sm text-gray-600">Model changes to any job field to analyze compliance impact</p>
-            </div>
+        {complianceImproved && (
+          <div className={`mb-6 p-5 rounded-xl ${
+            scenarioResult?.isCompliant
+              ? 'bg-emerald-50 border border-emerald-200'
+              : 'bg-amber-50 border border-amber-200'
+          }`}>
+            <p className={`text-sm font-medium ${
+              scenarioResult?.isCompliant
+                ? 'text-emerald-800'
+                : 'text-amber-800'
+            }`}>
+              {scenarioResult?.isCompliant
+                ? 'These adjustments would bring your jurisdiction into compliance.'
+                : 'These adjustments would improve your compliance status, but additional changes may be needed.'}
+            </p>
+          </div>
+        )}
+
+        <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Scenario Summary</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-300 bg-white">
+                  <th className="text-left py-3 px-4 font-bold text-gray-700">Metric</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Current</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Scenario</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100 hover:bg-white">
+                  <td className="py-3 px-4 font-medium text-gray-700">Compliance Status</td>
+                  <td className="text-center py-3 px-4">
+                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${
+                      currentResult.isCompliant
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {currentResult.isCompliant ? (
+                        <><CheckCircle className="w-3 h-3" /> Compliant</>
+                      ) : (
+                        <><AlertCircle className="w-3 h-3" /> Non-Compliant</>
+                      )}
+                    </span>
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${
+                      scenarioResult?.isCompliant
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {scenarioResult?.isCompliant ? (
+                        <><CheckCircle className="w-3 h-3" /> Compliant</>
+                      ) : (
+                        <><AlertCircle className="w-3 h-3" /> Non-Compliant</>
+                      )}
+                    </span>
+                  </td>
+                  <td className="text-center py-3 px-4 text-gray-900">
+                    {complianceImproved ? (
+                      <span className="text-emerald-600 font-medium">Improved</span>
+                    ) : (
+                      <span className="text-gray-500">No change</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 hover:bg-white">
+                  <td className="py-3 px-4 font-medium text-gray-700">Jobs Modified</td>
+                  <td className="text-center py-3 px-4 text-gray-900">-</td>
+                  <td className="text-center py-3 px-4 font-bold text-gray-900">{totalJobsModified} of {jobs.length}</td>
+                  <td className="text-center py-3 px-4 text-gray-900">
+                    {totalJobsModified > 0 ? `${totalJobsModified} changed` : 'No changes'}
+                  </td>
+                </tr>
+                <tr className="hover:bg-white">
+                  <td className="py-3 px-4 font-medium text-gray-700">Annual Cost Impact</td>
+                  <td className="text-center py-3 px-4 text-gray-900">$0.00</td>
+                  <td className="text-center py-3 px-4 font-bold text-gray-900">
+                    ${Math.abs(totalCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    <span className={`font-medium ${totalCost > 0 ? 'text-rose-600' : totalCost < 0 ? 'text-emerald-600' : 'text-gray-500'}`}>
+                      {totalCost > 0 ? '+' : ''}{totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div className="p-6 space-y-6">
-          <div className="grid md:grid-cols-4 gap-4">
-            <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">Current Status</h3>
-                {currentResult.isCompliant ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                )}
-              </div>
-              <p className={`text-lg font-bold ${
-                currentResult.isCompliant ? 'text-green-700' : 'text-red-700'
-              }`}>
-                {currentResult.isCompliant ? 'In Compliance' : 'Out of Compliance'}
-              </p>
-            </div>
+        <div className="mb-8">
+          <button
+            onClick={() => setShowQuickAdjustments(!showQuickAdjustments)}
+            className="flex items-center justify-between w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+          >
+            <h2 className="text-xl font-bold text-gray-900">Quick Adjustments (Optional)</h2>
+            <span className="text-sm text-gray-600">
+              {showQuickAdjustments ? 'Hide' : 'Show'}
+            </span>
+          </button>
 
-            <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">Scenario Result</h3>
-                {scenarioResult?.isCompliant ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                )}
-              </div>
-              <p className={`text-lg font-bold ${
-                scenarioResult?.isCompliant ? 'text-green-700' : 'text-red-700'
-              }`}>
-                {scenarioResult?.isCompliant ? 'Would Be Compliant' : 'Still Out of Compliance'}
-              </p>
-            </div>
-
-            <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">Annual Cost Impact</h3>
-                <DollarSign className="w-5 h-5 text-gray-400" />
-              </div>
-              <p className="text-lg font-bold text-gray-900">
-                ${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-
-            <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">Jobs Modified</h3>
-                <Calculator className="w-5 h-5 text-gray-400" />
-              </div>
-              <p className="text-lg font-bold text-gray-900">
-                {totalJobsModified} of {jobs.length}
-              </p>
-            </div>
-          </div>
-
-          {complianceImproved && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <TrendingUp className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+          {showQuickAdjustments && (
+            <div className="mt-4 p-6 bg-white rounded-lg border border-gray-200">
+              <div className="space-y-6">
                 <div>
-                  <p className="font-medium text-green-900">Compliance Improvement Detected</p>
-                  <p className="text-sm text-green-800 mt-1">
-                    These adjustments would improve your compliance status. Review the changes below.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {changeSummary.length > 0 && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-semibold text-blue-900 mb-2">Change Summary</h4>
-              <div className="flex flex-wrap gap-3 text-sm">
-                {changeSummary.map(change => (
-                  <span key={change.type} className="px-3 py-1 bg-white border border-blue-300 text-blue-900 rounded-full">
-                    {change.type}: {change.count} {change.count === 1 ? 'job' : 'jobs'}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h3 className="text-lg font-semibold text-gray-900">View Mode</h3>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setViewMode('simple')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    viewMode === 'simple'
-                      ? 'bg-[#003865] text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Simple
-                </button>
-                <button
-                  onClick={() => setViewMode('advanced')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    viewMode === 'advanced'
-                      ? 'bg-[#003865] text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Advanced
-                </button>
-              </div>
-            </div>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Reset All
-            </button>
-          </div>
-
-          {viewMode === 'advanced' && (
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    Column Visibility
-                  </h4>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Select which fields to show when you expand a job below
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries({
-                  minSalary: 'Min Salary',
-                  maxSalary: 'Max Salary',
-                  employees: 'Employee Counts',
-                  points: 'Job Points',
-                  yearsToMax: 'Years to Max',
-                  yearsServicePay: 'Service Pay Years',
-                  exceptionalCategory: 'Exceptional Category',
-                  benefits: 'Benefits in Salary',
-                  additionalComp: 'Additional Compensation'
-                }).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => toggleColumn(key as keyof VisibleColumns)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
-                      visibleColumns[key as keyof VisibleColumns]
-                        ? 'bg-[#003865] text-white'
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {visibleColumns[key as keyof VisibleColumns] ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Quick Adjustments</h3>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 bg-pink-50 border border-pink-200 rounded-lg">
-                <h4 className="font-semibold text-pink-900 mb-3">Female-Dominated Classes ({femaleJobs.length})</h4>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-xs text-pink-800 mb-1">Max Salary Adjustments:</p>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 2)}
-                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                      >
-                        +2% All
-                      </button>
-                      <button
-                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 5)}
-                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                      >
-                        +5% All
-                      </button>
-                      <button
-                        onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 10)}
-                        className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                      >
-                        +10% All
-                      </button>
-                    </div>
+                  <h3 className="font-semibold text-gray-900 mb-3">
+                    Female-Dominated Classes ({femaleJobs.length} classes)
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">Apply salary increases to all female-dominated job classes:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 2)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +2% Max Salary
+                    </button>
+                    <button
+                      onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 5)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +5% Max Salary
+                    </button>
+                    <button
+                      onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'max_salary', 10)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +10% Max Salary
+                    </button>
                   </div>
-                  {viewMode === 'advanced' && (
-                    <div>
-                      <p className="text-xs text-pink-800 mb-1">Min Salary Adjustments:</p>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 2)}
-                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                        >
-                          +2% All
-                        </button>
-                        <button
-                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 5)}
-                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                        >
-                          +5% All
-                        </button>
-                        <button
-                          onClick={() => handleApplyToAll(femaleJobs.map(j => j.id), 'min_salary', 10)}
-                          className="px-3 py-1.5 bg-white border border-pink-300 text-pink-900 rounded-md hover:bg-pink-100 transition-colors text-sm"
-                        >
-                          +10% All
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
 
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-3">Male-Dominated Classes ({maleJobs.length})</h4>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-xs text-blue-800 mb-1">Max Salary Adjustments:</p>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 2)}
-                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                      >
-                        +2% All
-                      </button>
-                      <button
-                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 5)}
-                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                      >
-                        +5% All
-                      </button>
-                      <button
-                        onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 10)}
-                        className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                      >
-                        +10% All
-                      </button>
-                    </div>
+                <div className="pt-6 border-t border-gray-200">
+                  <h3 className="font-semibold text-gray-900 mb-3">
+                    Male-Dominated Classes ({maleJobs.length} classes)
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">Apply salary increases to all male-dominated job classes:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 2)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +2% Max Salary
+                    </button>
+                    <button
+                      onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 5)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +5% Max Salary
+                    </button>
+                    <button
+                      onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'max_salary', 10)}
+                      className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      +10% Max Salary
+                    </button>
                   </div>
-                  {viewMode === 'advanced' && (
-                    <div>
-                      <p className="text-xs text-blue-800 mb-1">Min Salary Adjustments:</p>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 2)}
-                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                        >
-                          +2% All
-                        </button>
-                        <button
-                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 5)}
-                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                        >
-                          +5% All
-                        </button>
-                        <button
-                          onClick={() => handleApplyToAll(maleJobs.map(j => j.id), 'min_salary', 10)}
-                          className="px-3 py-1.5 bg-white border border-blue-300 text-blue-900 rounded-md hover:bg-blue-100 transition-colors text-sm"
-                        >
-                          +10% All
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
-          </div>
+          )}
+        </div>
 
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Job Adjustments</h3>
-            <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {jobs.map(job => {
-                const isExpanded = expandedJobId === job.id;
-                const hasChanges = hasAnyChanges(job.id);
-                const isFemale = job.females > 0 && job.males === 0;
-                const isMale = job.males > 0 && job.females === 0;
-                const genderLabel = isFemale ? 'Female' : isMale ? 'Male' : 'Balanced';
+        <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Individual Job Adjustments</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-300 bg-gray-50">
+                  <th className="text-left py-3 px-4 font-bold text-gray-700">Job Nbr</th>
+                  <th className="text-left py-3 px-4 font-bold text-gray-700">Class Title</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Males</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Females</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Type</th>
+                  <th className="text-right py-3 px-4 font-bold text-gray-700">Max Salary</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Status</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map((job) => {
+                  const maleCount = job.males || 0;
+                  const femaleCount = job.females || 0;
+                  const total = maleCount + femaleCount;
+                  const malePercent = total > 0 ? (maleCount / total) * 100 : 0;
+                  const femalePercent = total > 0 ? (femaleCount / total) * 100 : 0;
+                  const hasChanges = hasAnyChanges(job.id);
+                  const adjustedMaxSalary = getAdjustedValue(job.id, 'max_salary') as number;
 
-                return (
-                  <div key={job.id} className={`border rounded-lg ${hasChanges ? 'border-[#003865] bg-blue-50' : 'border-gray-200 bg-white'}`}>
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 flex-1">
-                          <button
-                            onClick={() => setExpandedJobId(isExpanded ? null : job.id)}
-                            className="text-gray-400 hover:text-gray-600"
-                          >
-                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                          </button>
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{job.title}</h4>
-                            <div className="flex items-center gap-3 mt-1">
-                              <span className={`px-2 py-1 text-xs rounded-full ${
-                                isFemale ? 'bg-pink-100 text-pink-800' :
-                                isMale ? 'bg-blue-100 text-blue-800' :
-                                'bg-gray-100 text-gray-800'
-                              }`}>
-                                {genderLabel}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {job.males}M / {job.females}F
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                Points: {job.points}
-                              </span>
+                  let classType = 'B';
+                  let badgeColor = 'bg-gray-100 text-gray-800';
+
+                  if (malePercent >= 80) {
+                    classType = 'M';
+                    badgeColor = 'bg-sky-100 text-sky-800';
+                  } else if (femalePercent >= 70) {
+                    classType = 'F';
+                    badgeColor = 'bg-pink-100 text-pink-800';
+                  }
+
+                  return (
+                    <tr key={job.id} className={`border-b border-gray-100 ${hasChanges ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
+                      <td className="py-3 px-4 text-gray-900">{job.job_number || ''}</td>
+                      <td className="py-3 px-4 text-gray-900">{job.title || ''}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{maleCount}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{femaleCount}</td>
+                      <td className="text-center py-3 px-4">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${badgeColor}`}>
+                          {classType}
+                        </span>
+                      </td>
+                      <td className="text-right py-3 px-4">
+                        {adjustedMaxSalary !== job.max_salary ? (
+                          <div>
+                            <div className="font-bold text-blue-600">
+                              ${adjustedMaxSalary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            <div className="text-xs text-gray-500 line-through">
+                              ${job.max_salary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-600">Current Range</p>
-                          <p className="font-medium text-gray-900">
-                            ${job.min_salary.toFixed(2)} - ${job.max_salary.toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
-
-                      {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-gray-200 space-y-4">
-                          <div className="grid md:grid-cols-2 gap-4">
-                            {visibleColumns.minSalary && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <DollarSign className="w-4 h-4 inline mr-1" />
-                                  Minimum Salary
-                                </label>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  value={getAdjustedValue(job.id, 'min_salary') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'min_salary', parseFloat(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.min_salary !== getAdjustedValue(job.id, 'min_salary') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: ${job.min_salary.toFixed(2)}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.maxSalary && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <DollarSign className="w-4 h-4 inline mr-1" />
-                                  Maximum Salary
-                                </label>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  value={getAdjustedValue(job.id, 'max_salary') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'max_salary', parseFloat(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.max_salary !== getAdjustedValue(job.id, 'max_salary') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: ${job.max_salary.toFixed(2)}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.employees && (
-                              <>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    <Users className="w-4 h-4 inline mr-1" />
-                                    Male Employees
-                                  </label>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={getAdjustedValue(job.id, 'males') as number}
-                                    onChange={(e) => handleAdjustField(job.id, 'males', parseInt(e.target.value) || 0)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                  />
-                                  {job.males !== getAdjustedValue(job.id, 'males') && (
-                                    <p className="text-xs text-blue-600 mt-1">
-                                      Original: {job.males}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    <Users className="w-4 h-4 inline mr-1" />
-                                    Female Employees
-                                  </label>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={getAdjustedValue(job.id, 'females') as number}
-                                    onChange={(e) => handleAdjustField(job.id, 'females', parseInt(e.target.value) || 0)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                  />
-                                  {job.females !== getAdjustedValue(job.id, 'females') && (
-                                    <p className="text-xs text-blue-600 mt-1">
-                                      Original: {job.females}
-                                    </p>
-                                  )}
-                                </div>
-                              </>
-                            )}
-
-                            {visibleColumns.points && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <Award className="w-4 h-4 inline mr-1" />
-                                  Job Evaluation Points
-                                </label>
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={getAdjustedValue(job.id, 'points') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'points', parseInt(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.points !== getAdjustedValue(job.id, 'points') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: {job.points}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.yearsToMax && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <Clock className="w-4 h-4 inline mr-1" />
-                                  Years to Maximum
-                                </label>
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={getAdjustedValue(job.id, 'years_to_max') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'years_to_max', parseInt(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.years_to_max !== getAdjustedValue(job.id, 'years_to_max') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: {job.years_to_max}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.yearsServicePay && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <Clock className="w-4 h-4 inline mr-1" />
-                                  Years Service Pay
-                                </label>
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={getAdjustedValue(job.id, 'years_service_pay') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'years_service_pay', parseInt(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.years_service_pay !== getAdjustedValue(job.id, 'years_service_pay') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: {job.years_service_pay}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.exceptionalCategory && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <Award className="w-4 h-4 inline mr-1" />
-                                  Exceptional Service Category
-                                </label>
-                                <input
-                                  type="text"
-                                  value={getAdjustedValue(job.id, 'exceptional_service_category') as string}
-                                  onChange={(e) => handleAdjustField(job.id, 'exceptional_service_category', e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.exceptional_service_category !== getAdjustedValue(job.id, 'exceptional_service_category') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: {job.exceptional_service_category || '(empty)'}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.benefits && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <Gift className="w-4 h-4 inline mr-1" />
-                                  Benefits Included in Salary
-                                </label>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  min="0"
-                                  value={getAdjustedValue(job.id, 'benefits_included_in_salary') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'benefits_included_in_salary', parseFloat(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.benefits_included_in_salary !== getAdjustedValue(job.id, 'benefits_included_in_salary') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: ${job.benefits_included_in_salary.toFixed(2)}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                            {visibleColumns.additionalComp && (
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  <DollarSign className="w-4 h-4 inline mr-1" />
-                                  Additional Cash Compensation
-                                </label>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  min="0"
-                                  value={getAdjustedValue(job.id, 'additional_cash_compensation') as number}
-                                  onChange={(e) => handleAdjustField(job.id, 'additional_cash_compensation', parseFloat(e.target.value) || 0)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
-                                />
-                                {job.additional_cash_compensation !== getAdjustedValue(job.id, 'additional_cash_compensation') && (
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    Original: ${job.additional_cash_compensation.toFixed(2)}
-                                  </p>
-                                )}
-                              </div>
-                            )}
+                        ) : (
+                          <div className="text-gray-900">
+                            ${job.max_salary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                        )}
+                      </td>
+                      <td className="text-center py-3 px-4">
+                        {hasChanges ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                            Modified
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
+                      </td>
+                      <td className="text-center py-3 px-4">
+                        <button
+                          onClick={() => openEditModal(job)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-[#003865] hover:bg-[#003865] hover:text-white rounded-lg transition-colors border border-[#003865]"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
-          {scenarioResult && (
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <h3 className="font-semibold text-gray-900 mb-3">Scenario Test Results</h3>
-              <div className="space-y-2 text-sm">
-                {scenarioResult.salaryRangeTest && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Salary Range Test:</span>
-                    <span className={`font-medium ${
-                      scenarioResult.salaryRangeTest.passed ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {scenarioResult.salaryRangeTest.passed ? 'Pass' : 'Fail'} ({(scenarioResult.salaryRangeTest.ratio * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                )}
-                {scenarioResult.exceptionalServiceTest && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Exceptional Service Test:</span>
-                    <span className={`font-medium ${
-                      scenarioResult.exceptionalServiceTest.passed ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {scenarioResult.exceptionalServiceTest.passed ? 'Pass' : 'Fail'} ({(scenarioResult.exceptionalServiceTest.ratio * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="border-t border-gray-200 p-6 bg-gray-50">
-          <p className="text-sm text-gray-600">
-            Changes are not saved. This is for planning purposes only.
+        {scenarioResult && (
+          <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Scenario Test Results</h2>
+            <div className="space-y-4">
+              {scenarioResult.salaryRangeTest && (
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-gray-900">Salary Range Test</h3>
+                    {scenarioResult.salaryRangeTest.passed ? (
+                      <span className="flex items-center gap-2 text-emerald-600 text-sm font-bold px-3 py-1.5 bg-emerald-50 rounded-lg">
+                        <CheckCircle className="w-4 h-4" />
+                        Passed
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2 text-rose-600 text-sm font-bold px-3 py-1.5 bg-rose-50 rounded-lg">
+                        <XCircle className="w-4 h-4" />
+                        Failed
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Result: <span className="font-semibold">{(scenarioResult.salaryRangeTest.ratio * 100).toFixed(2)}%</span>
+                  </p>
+                </div>
+              )}
+              {scenarioResult.exceptionalServiceTest && (
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-gray-900">Exceptional Service Pay Test</h3>
+                    {scenarioResult.exceptionalServiceTest.passed ? (
+                      <span className="flex items-center gap-2 text-emerald-600 text-sm font-bold px-3 py-1.5 bg-emerald-50 rounded-lg">
+                        <CheckCircle className="w-4 h-4" />
+                        Passed
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2 text-rose-600 text-sm font-bold px-3 py-1.5 bg-rose-50 rounded-lg">
+                        <XCircle className="w-4 h-4" />
+                        Failed
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Result: <span className="font-semibold">{(scenarioResult.exceptionalServiceTest.ratio * 100).toFixed(2)}%</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-sm text-amber-800">
+            <strong>Note:</strong> Changes are not saved automatically. This calculator is for planning purposes only.
           </p>
         </div>
       </div>
+
+      {editModalJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Edit Job: {editModalJob.job.title}</h2>
+                <button
+                  onClick={() => setEditModalJob(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Minimum Salary</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editModalJob.adjustedValues.min_salary ?? editModalJob.job.min_salary}
+                    onChange={(e) => updateEditModalField('min_salary', parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.min_salary !== undefined && editModalJob.adjustedValues.min_salary !== editModalJob.job.min_salary && (
+                    <p className="text-xs text-blue-600 mt-1">Original: ${editModalJob.job.min_salary.toFixed(2)}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Maximum Salary</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editModalJob.adjustedValues.max_salary ?? editModalJob.job.max_salary}
+                    onChange={(e) => updateEditModalField('max_salary', parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.max_salary !== undefined && editModalJob.adjustedValues.max_salary !== editModalJob.job.max_salary && (
+                    <p className="text-xs text-blue-600 mt-1">Original: ${editModalJob.job.max_salary.toFixed(2)}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Male Employees</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editModalJob.adjustedValues.males ?? editModalJob.job.males}
+                    onChange={(e) => updateEditModalField('males', parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.males !== undefined && editModalJob.adjustedValues.males !== editModalJob.job.males && (
+                    <p className="text-xs text-blue-600 mt-1">Original: {editModalJob.job.males}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Female Employees</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editModalJob.adjustedValues.females ?? editModalJob.job.females}
+                    onChange={(e) => updateEditModalField('females', parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.females !== undefined && editModalJob.adjustedValues.females !== editModalJob.job.females && (
+                    <p className="text-xs text-blue-600 mt-1">Original: {editModalJob.job.females}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Evaluation Points</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editModalJob.adjustedValues.points ?? editModalJob.job.points}
+                    onChange={(e) => updateEditModalField('points', parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.points !== undefined && editModalJob.adjustedValues.points !== editModalJob.job.points && (
+                    <p className="text-xs text-blue-600 mt-1">Original: {editModalJob.job.points}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Years to Maximum</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editModalJob.adjustedValues.years_to_max ?? editModalJob.job.years_to_max}
+                    onChange={(e) => updateEditModalField('years_to_max', parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent"
+                  />
+                  {editModalJob.adjustedValues.years_to_max !== undefined && editModalJob.adjustedValues.years_to_max !== editModalJob.job.years_to_max && (
+                    <p className="text-xs text-blue-600 mt-1">Original: {editModalJob.job.years_to_max}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+              <button
+                onClick={() => setEditModalJob(null)}
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveEditModal}
+                className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
