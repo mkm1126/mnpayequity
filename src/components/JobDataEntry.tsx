@@ -442,7 +442,7 @@ export function JobDataEntry({ jobs, onAddJob, onUpdateJob, onDeleteJob, onCopyJ
         >
           <div className="flex items-center gap-2">
             <Calculator className="w-5 h-5 text-[#003865]" />
-            <h4 className="font-semibold text-gray-900">Part-Time Salary Conversion Calculator</h4>
+            <h4 className="font-semibold text-gray-900">Salary Conversion Calculator</h4>
           </div>
           {isCalculatorExpanded ? (
             <ChevronUp className="w-5 h-5 text-gray-500" />
