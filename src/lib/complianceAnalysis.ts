@@ -168,44 +168,68 @@ function performSalaryRangeTest(
     };
   }
 
+  const maleAvgMaxSalary = maleJobs.reduce((sum, job) => sum + job.max_salary, 0) / maleJobs.length;
+  const femaleAvgMaxSalary = femaleJobs.reduce((sum, job) => sum + job.max_salary, 0) / femaleJobs.length;
+
+  // If female max salary is higher or equal, they pass
+  if (femaleAvgMaxSalary >= maleAvgMaxSalary) {
+    const ratio = maleAvgMaxSalary > 0 ? femaleAvgMaxSalary / maleAvgMaxSalary : 0;
+    return {
+      passed: true,
+      applicable: true,
+      maleAverage: maleAvgMaxSalary,
+      femaleAverage: femaleAvgMaxSalary,
+      ratio,
+      threshold,
+      reason: 'Female max salary equals or exceeds male max salary',
+    };
+  }
+
+  // Otherwise check years to max - if females have equal or more time to reach max, they have opportunity
   const maleAvgYearsToMax = maleJobs.reduce((sum, job) => sum + job.years_to_max, 0) / maleJobs.length;
   const femaleAvgYearsToMax = femaleJobs.reduce((sum, job) => sum + job.years_to_max, 0) / femaleJobs.length;
 
   if (maleAvgYearsToMax === 0 && femaleAvgYearsToMax === 0) {
+    // No years to max data, fall back to comparing max salary only
+    const ratio = maleAvgMaxSalary > 0 ? femaleAvgMaxSalary / maleAvgMaxSalary : 0;
+    const passed = ratio >= threshold;
     return {
-      passed: true,
-      applicable: false,
-      maleAverage: 0,
-      femaleAverage: 0,
-      ratio: 0,
+      passed,
+      applicable: true,
+      maleAverage: maleAvgMaxSalary,
+      femaleAverage: femaleAvgMaxSalary,
+      ratio,
       threshold,
-      reason: 'Salary range data not provided (years to max not filled in)',
+      reason: passed ? 'Max salary ratio meets threshold' : 'Max salary ratio below threshold',
     };
   }
 
-  if (femaleAvgYearsToMax === 0) {
+  // If female years to max >= male years to max, they have equal or better opportunity
+  if (femaleAvgYearsToMax >= maleAvgYearsToMax) {
+    const ratio = maleAvgMaxSalary > 0 ? femaleAvgMaxSalary / maleAvgMaxSalary : 0;
     return {
       passed: true,
-      applicable: false,
-      maleAverage: maleAvgYearsToMax,
-      femaleAverage: femaleAvgYearsToMax,
-      ratio: 0,
+      applicable: true,
+      maleAverage: femaleAvgMaxSalary,
+      femaleAverage: maleAvgMaxSalary,
+      ratio,
       threshold,
-      reason: 'Female jobs have no salary range data',
+      reason: 'Female jobs have equal or greater opportunity (years to max)',
     };
   }
 
-  const ratio = maleAvgYearsToMax / femaleAvgYearsToMax;
+  // Female max salary is lower AND years to max is lower - check if max salary meets threshold
+  const ratio = maleAvgMaxSalary > 0 ? femaleAvgMaxSalary / maleAvgMaxSalary : 0;
   const passed = ratio >= threshold;
 
   return {
     passed,
     applicable: true,
-    maleAverage: maleAvgYearsToMax,
-    femaleAverage: femaleAvgYearsToMax,
+    maleAverage: maleAvgMaxSalary,
+    femaleAverage: femaleAvgMaxSalary,
     ratio,
     threshold,
-    reason: passed ? 'Salary range ratio meets threshold' : 'Salary range ratio below threshold',
+    reason: passed ? 'Max salary ratio meets threshold' : 'Max salary ratio below threshold',
   };
 }
 
