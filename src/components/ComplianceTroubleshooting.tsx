@@ -9,7 +9,7 @@ type ComplianceTroubleshootingProps = {
 export function ComplianceTroubleshooting({ complianceResult, onClose }: ComplianceTroubleshootingProps) {
   const failedTests = [];
 
-  if (complianceResult.statisticalTest && complianceResult.statisticalTest.underpaymentRatio > 80) {
+  if (complianceResult.statisticalTest && !complianceResult.statisticalTest.underpaymentRatioPassed) {
     failedTests.push('statistical');
   }
   if (complianceResult.salaryRangeTest && !complianceResult.salaryRangeTest.passed) {
@@ -94,12 +94,12 @@ export function ComplianceTroubleshooting({ complianceResult, onClose }: Complia
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Statistical Analysis Test Failed</h3>
                   <p className="text-gray-700 text-sm mb-3">
-                    Underpayment Ratio: {complianceResult.statisticalTest.underpaymentRatio.toFixed(2)}% (Must be ≤80%)
+                    Underpayment Ratio: {complianceResult.statisticalTest.underpaymentRatio.toFixed(2)}% (Must be ≥80%)
                   </p>
                   <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
                     <p className="font-medium text-gray-900">What This Means:</p>
                     <p className="text-gray-700">
-                      Female-dominated job classes are being underpaid at a rate more than 1.25 times that of male-dominated classes when compared to predicted pay based on job value.
+                      Female-dominated job classes are being underpaid at a disproportionately higher rate compared to male-dominated classes when measured against predicted pay based on job value. The ratio should be at least 80%, meaning male underpayment should be at least 80% of the female underpayment rate.
                     </p>
                   </div>
                 </div>

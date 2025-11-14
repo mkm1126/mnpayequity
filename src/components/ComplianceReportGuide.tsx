@@ -115,10 +115,10 @@ export function ComplianceReportGuide({ report, jurisdiction, complianceResult, 
                 <div className="space-y-2 text-sm">
                   <div>
                     <span className="font-semibold">Underpayment Ratio:</span> {complianceResult.statisticalTest.underpaymentRatio.toFixed(2)}%
-                    {complianceResult.statisticalTest.underpaymentRatio <= 80 ? (
-                      <span className="ml-2 text-emerald-600 font-semibold">✓ Passed (≤80%)</span>
+                    {complianceResult.statisticalTest.underpaymentRatioPassed ? (
+                      <span className="ml-2 text-emerald-600 font-semibold">✓ Passed (≥80%)</span>
                     ) : (
-                      <span className="ml-2 text-rose-600 font-semibold">✗ Failed (&gt;80%)</span>
+                      <span className="ml-2 text-rose-600 font-semibold">✗ Failed (&lt;80%)</span>
                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4">
@@ -164,13 +164,13 @@ export function ComplianceReportGuide({ report, jurisdiction, complianceResult, 
                   <li>A T-test is performed to determine if the difference in average pay is statistically significant.</li>
                 </ol>
                 <p>
-                  <strong>Pass Requirement:</strong> The underpayment ratio must be 80% or less. This means that female-dominated classes should not be underpaid at a rate more than 1.25 times that of male-dominated classes.
+                  <strong>Pass Requirement:</strong> The underpayment ratio must be 80% or more. This ensures that male-dominated classes are underpaid at a rate of at least 80% compared to female-dominated classes, indicating relatively balanced underpayment patterns between genders.
                 </p>
                 <p className="font-semibold">
                   In your case: The male classes below predicted pay ({complianceResult.statisticalTest.malePercentBelowPredicted.toFixed(2)}%)
                   divided by female classes below predicted pay ({complianceResult.statisticalTest.femalePercentBelowPredicted.toFixed(2)}%)
                   equals {complianceResult.statisticalTest.underpaymentRatio.toFixed(2)}%, which is
-                  {complianceResult.statisticalTest.underpaymentRatio <= 80 ? ' within' : ' outside'} the acceptable range.
+                  {complianceResult.statisticalTest.underpaymentRatioPassed ? ' within' : ' outside'} the acceptable range.
                 </p>
               </div>
             </section>
