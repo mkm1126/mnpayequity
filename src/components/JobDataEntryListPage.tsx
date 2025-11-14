@@ -1,7 +1,8 @@
-import { ArrowLeft, FileDown } from 'lucide-react';
+import { ArrowLeft, FileDown, FileSpreadsheet } from 'lucide-react';
 import { Report, JobClassification, Jurisdiction } from '../lib/supabase';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 import { addLogoToPDF, addPageNumbers, addReportHeader, formatCurrency, formatNumber, getClassType } from '../lib/pdfGenerator';
 
 type JobDataEntryListPageProps = {
@@ -15,6 +16,71 @@ export function JobDataEntryListPage({ report, jurisdiction, jobs, onBack }: Job
   const maleJobs = jobs.filter(job => getClassType(job.males, job.females) === 'M');
   const femaleJobs = jobs.filter(job => getClassType(job.males, job.females) === 'F');
   const balancedJobs = jobs.filter(job => getClassType(job.males, job.females) === 'B');
+
+  function exportToExcel() {
+    const worksheetData = [
+      ['Management and Budget'],
+      [],
+      ['Job Class Data Entry Verification List'],
+      [`Case: ${report.case_number} ${jurisdiction.name} ${report.case_description}`],
+      [`LGID: ${jurisdiction.jurisdiction_id}`],
+      [],
+      ['Summary Statistics:'],
+      [`Total Jobs: ${jobs.length}`],
+      [`Male-Dominated: ${maleJobs.length}`],
+      [`Female-Dominated: ${femaleJobs.length}`],
+      [],
+      [
+        'Job Nbr',
+        'Class Title',
+        'Nbr Males',
+        'Nbr Females',
+        'Class Type',
+        'Jobs Points',
+        'Min Mo Salary',
+        'Max Mo Salary',
+        'Yrs to Max',
+        'Yrs of Service',
+        'Exceptional Service Pay'
+      ],
+      ...jobs.map(job => [
+        job.job_number,
+        job.title,
+        job.males,
+        job.females,
+        getClassType(job.males, job.females),
+        job.points,
+        job.min_salary,
+        job.max_salary,
+        job.years_to_max,
+        job.years_service_pay,
+        job.exceptional_service_category || ''
+      ]),
+      [],
+      [`Job Number Count: ${jobs.length}`]
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    worksheet['!cols'] = [
+      { wch: 10 },
+      { wch: 30 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 25 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Job Data Entry List');
+
+    XLSX.writeFile(workbook, `${jurisdiction.name}_${report.report_year}_Job_Data_Entry_List.xlsx`);
+  }
 
   async function exportToPDF() {
     const doc = new jsPDF('landscape', 'pt', 'letter');
@@ -125,13 +191,22 @@ export function JobDataEntryListPage({ report, jurisdiction, jobs, onBack }: Job
           <ArrowLeft className="w-5 h-5" />
           Back to Reports
         </button>
-        <button
-          onClick={exportToPDF}
-          className="flex items-center gap-2 px-6 py-3 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
-        >
-          <FileDown className="w-5 h-5" />
-          Export to PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={exportToExcel}
+            className="flex items-center gap-2 px-6 py-3 bg-[#78BE21] text-white rounded-lg hover:bg-[#6aac1d] transition-colors font-medium"
+          >
+            <FileSpreadsheet className="w-5 h-5" />
+            Export to Excel
+          </button>
+          <button
+            onClick={exportToPDF}
+            className="flex items-center gap-2 px-6 py-3 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+          >
+            <FileDown className="w-5 h-5" />
+            Export to PDF
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
