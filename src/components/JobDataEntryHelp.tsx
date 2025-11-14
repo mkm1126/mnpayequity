@@ -173,32 +173,6 @@ export function JobDataEntryHelp({ isOpen, onClose }: JobDataEntryHelpProps) {
             </div>
           </div>
 
-          <div className="border border-gray-200 rounded-lg p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-indigo-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Benefits Included in Salary</h3>
-                <p className="text-gray-700 text-sm mb-3">
-                  The monthly cash value of employer-provided benefits if your jurisdiction includes benefits in pay equity calculations. This is optional.
-                </p>
-                <div className="bg-blue-50 border border-blue-200 p-3 rounded text-sm">
-                  <p className="font-medium text-blue-900 mb-1">Typical Monthly Benefit Values:</p>
-                  <ul className="text-blue-800 space-y-1">
-                    <li>• Health Insurance: $500-$1,500/month</li>
-                    <li>• Dental Insurance: $50-$100/month</li>
-                    <li>• Life Insurance: $20-$50/month</li>
-                    <li>• Retirement (employer match): Varies by percentage</li>
-                  </ul>
-                  <p className="text-blue-700 mt-2">
-                    Check with your HR department for exact values used by your jurisdiction.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <h3 className="font-semibold text-green-900 mb-3">Tips for Accurate Data Entry</h3>
             <ul className="space-y-2 text-sm text-green-800">
