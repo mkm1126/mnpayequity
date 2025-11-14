@@ -184,7 +184,7 @@ const helpSections: HelpSection[] = [
       },
       {
         title: 'How to Submit',
-        content: 'Email all documents to the MMB Pay Equity Unit at:\npayequity.mmb@state.mn.us\n\nInclude your jurisdiction name and report year in the subject line.'
+        content: 'All submissions must be completed through this system. Use the export features to generate your final report and compliance documents, then submit electronically through the system\'s submission workflow.'
       },
       {
         title: 'After Submission',
