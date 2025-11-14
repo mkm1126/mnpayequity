@@ -38,9 +38,9 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
   const [visibleColumns, setVisibleColumns] = useState<VisibleColumns>({
     minSalary: true,
     maxSalary: true,
-    employees: false,
-    points: false,
-    yearsToMax: false,
+    employees: true,
+    points: true,
+    yearsToMax: true,
     yearsServicePay: false,
     exceptionalCategory: false,
     benefits: false,
@@ -327,10 +327,17 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
 
           {viewMode === 'advanced' && (
             <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                Column Visibility
-              </h4>
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                    <Eye className="w-4 h-4" />
+                    Column Visibility
+                  </h4>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Select which fields to show when you expand a job below
+                  </p>
+                </div>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries({
                   minSalary: 'Min Salary',
