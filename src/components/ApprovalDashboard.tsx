@@ -10,9 +10,10 @@ type ReportWithJurisdiction = Report & {
 type ApprovalDashboardProps = {
   onReviewCase?: (report: ReportWithJurisdiction) => void;
   onBack?: () => void;
+  previousPageName?: string;
 };
 
-export function ApprovalDashboard({ onReviewCase, onBack }: ApprovalDashboardProps) {
+export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: ApprovalDashboardProps) {
   useScrollToTop();
 
   const [reports, setReports] = useState<ReportWithJurisdiction[]>([]);
@@ -142,10 +143,10 @@ export function ApprovalDashboard({ onReviewCase, onBack }: ApprovalDashboardPro
           {onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+              className="flex items-center gap-2 text-[#003865] hover:text-[#00508F] transition-colors mb-4 font-medium"
             >
               <ArrowLeft size={20} />
-              <span>Back</span>
+              <span>Return to {previousPageName || 'Previous Page'}</span>
             </button>
           )}
           <h1 className="text-3xl font-bold text-[#003865] mb-2">Case Approval Dashboard</h1>

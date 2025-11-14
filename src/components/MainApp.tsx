@@ -401,6 +401,31 @@ export function MainApp() {
     );
   }
 
+  function getViewDisplayName(view: string): string {
+    const viewNames: Record<string, string> = {
+      'home': 'Home',
+      'dashboard': 'Dashboard',
+      'reports': 'Reports',
+      'changePassword': 'Change Password',
+      'sendEmail': 'Send Email',
+      'jobs': 'Jobs',
+      'testResults': 'Test Results',
+      'jurisdictionLookup': 'Jurisdiction Lookup',
+      'notes': 'Notes',
+      'reportView': 'Report View',
+      'dataGuide': 'Data Guide',
+      'userManagement': 'User Management',
+      'mnPayEquity': 'MN Pay Equity',
+      'caseNotes': 'Case Notes',
+      'approvalDashboard': 'Case Approvals',
+      'jurisdictionMaintenance': 'Jurisdiction Maintenance',
+      'adminDashboard': 'Admin Dashboard',
+      'followupCalendar': 'Follow-up Calendar',
+      'caseReview': 'Case Review'
+    };
+    return viewNames[view] || 'Previous Page';
+  }
+
   function handleNavigate(view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'caseNotes' | 'approvalDashboard' | 'jurisdictionMaintenance') {
     if (view === 'jobs') {
       if (!currentJurisdiction) {
@@ -493,6 +518,7 @@ export function MainApp() {
             onBack={() => {
               setCurrentView(previousView as any);
             }}
+            previousPageName={getViewDisplayName(previousView)}
           />
         ) : currentView === 'caseReview' && reviewingReport && reviewingJurisdiction ? (
           <CaseReviewPage
