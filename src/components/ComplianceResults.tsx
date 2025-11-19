@@ -118,7 +118,7 @@ export function ComplianceResults({ results: result, onBack, reportYear, showBac
         </div>
       </div>
 
-      {!result.requiresManualReview && result.statisticalTest && (
+      {result.statisticalTest && (
         <>
           <div className="border border-gray-200 rounded-xl p-6">
             <h4 className="text-lg font-bold text-gray-900 mb-6">II. STATISTICAL ANALYSIS TEST</h4>
