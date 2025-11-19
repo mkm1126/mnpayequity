@@ -113,24 +113,24 @@ export function analyzeCompliance(jobs: JobClassification[]): ComplianceResult {
 
   const generalInfo = calculateGeneralInfo(maleJobs, femaleJobs, balancedJobs, jobs);
 
+  const statisticalTest = performStatisticalTest(maleJobs, femaleJobs, jobs);
+  const salaryRangeTest = performSalaryRangeTest(maleJobs, femaleJobs);
+  const exceptionalServiceTest = performExceptionalServiceTest(maleJobs, femaleJobs);
+
   if (maleJobs.length <= 3) {
     return {
       isCompliant: false,
       requiresManualReview: true,
       generalInfo,
-      statisticalTest: null,
-      salaryRangeTest: null,
-      exceptionalServiceTest: null,
+      statisticalTest,
+      salaryRangeTest,
+      exceptionalServiceTest,
       totalJobs: jobs.length,
       maleJobs: maleJobs.length,
       femaleJobs: femaleJobs.length,
       message: 'Your jurisdiction has three or fewer male classes. Alternative Analysis (manual review) is required.',
     };
   }
-
-  const statisticalTest = performStatisticalTest(maleJobs, femaleJobs, jobs);
-  const salaryRangeTest = performSalaryRangeTest(maleJobs, femaleJobs);
-  const exceptionalServiceTest = performExceptionalServiceTest(maleJobs, femaleJobs);
 
   const isCompliant = salaryRangeTest.passed && exceptionalServiceTest.passed;
 
