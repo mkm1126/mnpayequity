@@ -18,6 +18,9 @@ import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { PrivateSharedToggle } from './PrivateSharedToggle';
 import { ShareConfirmationModal } from './ShareConfirmationModal';
 import { NotificationModal } from './NotificationModal';
+import SubmissionWorkflowTracker from './SubmissionWorkflowTracker';
+import { SubmissionWorkflowService } from '../lib/submissionWorkflowService';
+import { useAuth } from '../contexts/AuthContext';
 
 type ReportManagementProps = {
   jurisdiction: Jurisdiction;
@@ -29,6 +32,7 @@ type ReportManagementProps = {
 
 export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavigateToReportView, onReportSelect }: ReportManagementProps) {
   useScrollToTop();
+  const { user } = useAuth();
 
   const [reports, setReports] = useState<Report[]>([]);
   const [currentReport, setCurrentReport] = useState<Report | null>(null);
@@ -492,6 +496,57 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
     }
   }
 
+  async function handleReopenReport() {
+    if (!currentReport || !user?.email) return;
+
+    const confirmed = confirm(
+      'Are you sure you want to reopen this report for editing? This will allow you to make changes before resubmitting.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const result = await SubmissionWorkflowService.reopenReport({
+        reportId: currentReport.id,
+        userEmail: user.email,
+        userId: user.id
+      });
+
+      if (result.success) {
+        await loadReports();
+
+        const { data: updatedReport } = await supabase
+          .from('reports')
+          .select('*')
+          .eq('id', currentReport.id)
+          .single();
+
+        if (updatedReport) {
+          setCurrentReport(updatedReport);
+        }
+
+        setNotification({
+          message: 'Report has been reopened for editing. You can now make changes and resubmit when ready.',
+          type: 'success',
+          title: 'Report Reopened'
+        });
+      } else {
+        setNotification({
+          message: result.error || 'Failed to reopen report',
+          type: 'error',
+          title: 'Error'
+        });
+      }
+    } catch (error) {
+      console.error('Error reopening report:', error);
+      setNotification({
+        message: 'An unexpected error occurred while reopening the report',
+        type: 'error',
+        title: 'Error'
+      });
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -613,6 +668,11 @@ export function ReportManagement({ jurisdiction, selectedReport, onBack, onNavig
               </button>
             </div>
           </div>
+
+          <SubmissionWorkflowTracker
+            report={currentReport}
+            onReopenReport={handleReopenReport}
+          />
 
           {currentView === 'jobs' && (
             <>

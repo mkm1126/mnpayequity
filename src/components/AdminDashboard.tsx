@@ -515,6 +515,16 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                 <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button
+                onClick={() => onNavigate('submissionReview')}
+                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp size={18} />
+                  <span className="font-medium">Submission Analytics</span>
+                </div>
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button
                 onClick={() => onNavigate('caseNotes')}
                 className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors group"
               >

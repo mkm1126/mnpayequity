@@ -32,6 +32,7 @@ import { JurisdictionMaintenance } from './JurisdictionMaintenance';
 import { AdminDashboard } from './AdminDashboard';
 import { FollowUpCalendar } from './FollowUpCalendar';
 import { NoteDetailView } from './NoteDetailView';
+import AdminSubmissionReview from './AdminSubmissionReview';
 import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport, type AdminCaseNote } from '../lib/supabase';
 import { analyzeCompliance, type ComplianceResult } from '../lib/complianceAnalysis';
 
@@ -42,7 +43,7 @@ export function MainApp() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseReview' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar'>('dashboard');
+  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'approvalDashboard' | 'caseReview' | 'caseNotes' | 'jurisdictionMaintenance' | 'adminDashboard' | 'followupCalendar' | 'submissionReview'>('dashboard');
   const [previousView, setPreviousView] = useState<string>('dashboard');
   const [reportViewType, setReportViewType] = useState<'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation' | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -421,12 +422,13 @@ export function MainApp() {
       'jurisdictionMaintenance': 'Jurisdiction Maintenance',
       'adminDashboard': 'Admin Dashboard',
       'followupCalendar': 'Follow-up Calendar',
-      'caseReview': 'Case Review'
+      'caseReview': 'Case Review',
+      'submissionReview': 'Submission Analytics'
     };
     return viewNames[view] || 'Previous Page';
   }
 
-  function handleNavigate(view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'caseNotes' | 'approvalDashboard' | 'jurisdictionMaintenance') {
+  function handleNavigate(view: 'home' | 'dashboard' | 'reports' | 'changePassword' | 'sendEmail' | 'jobs' | 'testResults' | 'jurisdictionLookup' | 'notes' | 'reportView' | 'dataGuide' | 'userManagement' | 'mnPayEquity' | 'caseNotes' | 'approvalDashboard' | 'jurisdictionMaintenance' | 'submissionReview') {
     if (view === 'jobs') {
       if (!currentJurisdiction) {
         alert('Please select a jurisdiction first.');
@@ -507,6 +509,8 @@ export function MainApp() {
           />
         ) : currentView === 'caseNotes' ? (
           <AdminCaseNotes onBack={() => isAdmin ? setCurrentView('adminDashboard') : setCurrentView('dashboard')} />
+        ) : currentView === 'submissionReview' ? (
+          <AdminSubmissionReview />
         ) : currentView === 'approvalDashboard' ? (
           <ApprovalDashboard
             onReviewCase={(report) => {

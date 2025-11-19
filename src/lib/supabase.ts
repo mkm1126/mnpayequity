@@ -57,6 +57,11 @@ export type Report = {
   submission_deadline: string | null;
   test_results: any | null;
   test_applicability: any | null;
+  revision_count: number;
+  previous_submission_date: string | null;
+  revision_notes: string | null;
+  is_resubmission: boolean;
+  workflow_status: 'draft' | 'submitted' | 'under_revision' | 'resubmitted' | 'finalized';
   created_at: string;
   updated_at: string;
 };
@@ -317,4 +322,33 @@ export type NoteStats = {
     date: string;
     count: number;
   }>;
+};
+
+export type SubmissionHistory = {
+  id: string;
+  report_id: string;
+  jurisdiction_id: string;
+  action_type: 'submitted' | 'reopened' | 'resubmitted';
+  previous_status: string;
+  new_status: string;
+  revision_notes: string | null;
+  data_snapshot: Record<string, any>;
+  performed_by: string | null;
+  performed_by_email: string;
+  created_at: string;
+};
+
+export type ReportRevision = {
+  id: string;
+  report_id: string;
+  revision_number: number;
+  revision_notes: string;
+  changes_summary: Record<string, any>;
+  jobs_modified_count: number;
+  jobs_added_count: number;
+  jobs_removed_count: number;
+  implementation_modified: boolean;
+  created_by: string | null;
+  created_by_email: string;
+  created_at: string;
 };
