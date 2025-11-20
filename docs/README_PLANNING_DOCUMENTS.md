@@ -142,7 +142,58 @@ Response 200 OK:
 
 ---
 
-### 5. **post-submission-workflow-plan.md** (19KB)
+### 5. **database_schema.sql** (42KB, 1,022 lines)
+**Purpose**: Complete SQL Server database creation script
+
+**Contents**:
+- All 20 table definitions with complete DDL
+- Primary keys, foreign keys, and constraints
+- Indexes for optimal performance
+- Check constraints for data validation
+- 2 database views for common queries
+- 2 stored procedures for reporting
+- Seed data for email templates and system configuration
+- Comprehensive inline documentation
+
+**Tables Created**:
+1. Jurisdictions - Local government entities
+2. Contacts - Contact persons for jurisdictions
+3. Reports - Pay equity reports
+4. JobClassifications - Job data with salary and points
+5. ImplementationReports - Implementation form data
+6. SubmissionHistory - Audit trail of submissions
+7. ReportRevisions - Change tracking for resubmissions
+8. ApprovalHistory - Approval workflow tracking
+9. ComplianceCertificates - Generated certificates
+10. BenefitsWorksheet - Benefits comparison data
+11. EmailTemplates - Email template library
+12. EmailLog - Email communication tracking
+13. AdminCaseNotes - Administrative case management
+14. UserProfiles - User accounts linked to auth system
+15. AuditLog - System-wide audit trail
+16. SystemConfig - System configuration settings
+17. NotificationQueue - Email notification queue
+18. ReportAttachments - File attachments for reports
+19. DataExportLog - Track data exports
+20. SystemAlerts - Admin alerts and notifications
+
+**Views**:
+- `vw_ActiveReportsByJurisdiction` - Active reports with job counts
+- `vw_PendingApprovals` - Pending reports awaiting approval
+
+**Stored Procedures**:
+- `usp_GetComplianceSummary` - Compliance statistics by year
+- `usp_GetJurisdictionDashboard` - Complete jurisdiction overview
+
+**Usage**:
+```sql
+-- Run on new SQL Server database
+sqlcmd -S your-server -d PayEquityDB -i database_schema.sql
+```
+
+---
+
+### 6. **post-submission-workflow-plan.md** (19KB)
 **Purpose**: Detailed specification for the post-submission workflow feature
 
 **Contents**:
@@ -166,13 +217,13 @@ Response 200 OK:
 
 ## Existing Documentation (Original System)
 
-### 6. **FUNCTIONAL_SPECIFICATION.md** (9.8KB)
+### 7. **FUNCTIONAL_SPECIFICATION.md** (9.8KB)
 Original functional requirements for the current React/Supabase system.
 
-### 7. **HELP_CENTER_SPECIFICATION.md** (45KB)
+### 8. **HELP_CENTER_SPECIFICATION.md** (45KB)
 User help documentation and contextual help specifications.
 
-### 8. **ASP_NET_HELP_MENU_SPECIFICATION.md** (42KB)
+### 9. **ASP_NET_HELP_MENU_SPECIFICATION.md** (42KB)
 Help menu requirements specifically for ASP.NET implementation.
 
 ---
@@ -196,9 +247,10 @@ Help menu requirements specifically for ASP.NET implementation.
 3. Reference **api_specification.md** for API testing
 
 ### For Database Administrators
-1. Review **migration_plan.md** Phase 2 for database migration
-2. Use DDL scripts in **ASPNET_CORE_REQUIREMENTS.md**
-3. Follow data validation procedures
+1. Use **database_schema.sql** to create SQL Server database
+2. Review **migration_plan.md** Phase 2 for database migration
+3. Use DDL scripts in **ASPNET_CORE_REQUIREMENTS.md** for reference
+4. Follow data validation procedures
 
 ---
 
@@ -220,6 +272,7 @@ Help menu requirements specifically for ASP.NET implementation.
 | Task | Document to Reference |
 |------|----------------------|
 | Understanding system architecture | architecture_diagram.md |
+| Creating SQL Server database | database_schema.sql |
 | Implementing compliance calculations | ASPNET_CORE_REQUIREMENTS.md (Business Logic section) |
 | Building REST APIs | api_specification.md |
 | Planning database migration | migration_plan.md (Phase 2) |
