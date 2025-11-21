@@ -142,7 +142,41 @@ Response 200 OK:
 
 ---
 
-### 5. **database_schema.sql** (42KB, 1,022 lines)
+### 5. **migration_milestones.md** (30KB)
+**Purpose**: Detailed milestone breakdown for the migration project
+
+**Contents**:
+- 28 milestones across 6 phases + post-go-live
+- Week-by-week timeline (20-28 weeks)
+- Budget breakdown by milestone ($514,050 total)
+- Deliverables and acceptance criteria for each milestone
+- Dependencies and critical path analysis
+- Risk management by milestone
+- Gantt chart visualization
+
+**Key Milestones**:
+- **Phase 1** (5 milestones): Infrastructure Setup - $52,500
+- **Phase 2** (6 milestones): Database Migration - $73,500
+- **Phase 3** (8 milestones): Backend Development - $210,000
+- **Phase 4** (4 milestones): Frontend Updates - $118,125
+- **Phase 5** (3 milestones): Testing & Validation - $73,500
+- **Phase 6** (2 milestones): Deployment & Cutover - $15,300
+
+**Critical Path Highlights**:
+- M2.6: Data Validation (High Risk)
+- M3.5: Compliance Analysis Engine (High Risk)
+- M5.2: User Acceptance Testing (High Risk)
+- M6.2: Cutover & Go-Live (High Risk)
+
+**Tracking**:
+- Weekly status reports
+- Milestone review meetings
+- Status indicators (Green/Yellow/Red)
+- Success metrics and completion criteria
+
+---
+
+### 6. **database_schema.sql** (42KB, 1,022 lines)
 **Purpose**: Complete SQL Server database creation script
 
 **Contents**:
@@ -193,7 +227,7 @@ sqlcmd -S your-server -d PayEquityDB -i database_schema.sql
 
 ---
 
-### 6. **post-submission-workflow-plan.md** (19KB)
+### 7. **post-submission-workflow-plan.md** (19KB)
 **Purpose**: Detailed specification for the post-submission workflow feature
 
 **Contents**:
@@ -217,13 +251,13 @@ sqlcmd -S your-server -d PayEquityDB -i database_schema.sql
 
 ## Existing Documentation (Original System)
 
-### 7. **FUNCTIONAL_SPECIFICATION.md** (9.8KB)
+### 8. **FUNCTIONAL_SPECIFICATION.md** (9.8KB)
 Original functional requirements for the current React/Supabase system.
 
-### 8. **HELP_CENTER_SPECIFICATION.md** (45KB)
+### 9. **HELP_CENTER_SPECIFICATION.md** (45KB)
 User help documentation and contextual help specifications.
 
-### 9. **ASP_NET_HELP_MENU_SPECIFICATION.md** (42KB)
+### 10. **ASP_NET_HELP_MENU_SPECIFICATION.md** (42KB)
 Help menu requirements specifically for ASP.NET implementation.
 
 ---
@@ -232,8 +266,9 @@ Help menu requirements specifically for ASP.NET implementation.
 
 ### For Project Managers
 1. Start with **ASPNET_CORE_REQUIREMENTS.md** for scope and budget
-2. Review **migration_plan.md** for timeline and resources
-3. Use documents for stakeholder presentations
+2. Review **migration_plan.md** for overall strategy and timeline
+3. Use **migration_milestones.md** for detailed tracking and reporting
+4. Use documents for stakeholder presentations
 
 ### For Developers
 1. Read **architecture_diagram.md** to understand system design
@@ -273,10 +308,12 @@ Help menu requirements specifically for ASP.NET implementation.
 |------|----------------------|
 | Understanding system architecture | architecture_diagram.md |
 | Creating SQL Server database | database_schema.sql |
+| Tracking project milestones | migration_milestones.md |
 | Implementing compliance calculations | ASPNET_CORE_REQUIREMENTS.md (Business Logic section) |
 | Building REST APIs | api_specification.md |
 | Planning database migration | migration_plan.md (Phase 2) |
-| Estimating timeline and budget | migration_plan.md (Timeline section) |
+| Estimating timeline and budget | migration_plan.md + migration_milestones.md |
+| Managing project phases | migration_milestones.md |
 | Writing test cases | ASPNET_CORE_REQUIREMENTS.md (Testing section) |
 | Implementing post-submission workflow | post-submission-workflow-plan.md |
 | Deploying to production | migration_plan.md (Phase 6) |
