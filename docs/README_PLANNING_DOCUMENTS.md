@@ -136,8 +136,6 @@ Response 200 OK:
 
 **Total Timeline**: 20-28 weeks (5-7 months)
 
-**Budget Estimate**: $514,050
-
 **Cutover Plan**: 4-hour maintenance window with detailed hour-by-hour tasks
 
 ---
@@ -148,19 +146,19 @@ Response 200 OK:
 **Contents**:
 - 28 milestones across 6 phases + post-go-live
 - Week-by-week timeline (20-28 weeks)
-- Budget breakdown by milestone ($514,050 total)
+- Resource allocation by milestone
 - Deliverables and acceptance criteria for each milestone
 - Dependencies and critical path analysis
 - Risk management by milestone
 - Gantt chart visualization
 
 **Key Milestones**:
-- **Phase 1** (5 milestones): Infrastructure Setup - $52,500
-- **Phase 2** (6 milestones): Database Migration - $73,500
-- **Phase 3** (8 milestones): Backend Development - $210,000
-- **Phase 4** (4 milestones): Frontend Updates - $118,125
-- **Phase 5** (3 milestones): Testing & Validation - $73,500
-- **Phase 6** (2 milestones): Deployment & Cutover - $15,300
+- **Phase 1** (5 milestones): Infrastructure Setup
+- **Phase 2** (6 milestones): Database Migration
+- **Phase 3** (8 milestones): Backend Development
+- **Phase 4** (4 milestones): Frontend Updates
+- **Phase 5** (3 milestones): Testing & Validation
+- **Phase 6** (2 milestones): Deployment & Cutover
 
 **Critical Path Highlights**:
 - M2.6: Data Validation (High Risk)

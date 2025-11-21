@@ -1668,7 +1668,7 @@ public class ReportSubmissionIntegrationTests
 |------|--------|-------------|------------|
 | Integration issues | Medium | Medium | Early integration testing, API contracts |
 | Security vulnerabilities | High | Low | Security audit, penetration testing |
-| Budget overrun | Medium | Medium | Clear scope, change management process |
+| Resource overrun | Medium | Medium | Clear scope, change management process |
 | Timeline delays | Medium | High | Buffer time, parallel workstreams |
 
 ### Risk Response Plan
@@ -1803,18 +1803,17 @@ Month 6: Testing & Deployment
 | Project Manager | 1 | Part-time (50%) | 6 months |
 | Business Analyst | 1 | Part-time (25%) | 3 months |
 
-#### Budget Estimate
+#### Resource Estimate
 
-| Category | Cost (Estimated) |
-|----------|-----------------|
-| Personnel (7 people, 6 months) | $420,000 |
-| Azure Infrastructure (6 months) | $12,000 |
-| SQL Server Licenses | $5,000 |
-| Development Tools | $3,000 |
-| Testing Tools | $2,000 |
-| Training & Documentation | $5,000 |
-| Contingency (15%) | $67,050 |
-| **Total** | **$514,050** |
+| Category | Duration |
+|----------|----------|
+| Personnel | 7 people, 6 months |
+| Azure Infrastructure | 6 months |
+| SQL Server Licenses | Standard Edition |
+| Development Tools | Visual Studio Enterprise |
+| Testing Tools | Azure DevOps Test Plans |
+| Training & Documentation | 2 weeks |
+| Contingency Buffer | 15% additional time |
 
 ---
 

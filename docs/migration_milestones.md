@@ -4,7 +4,6 @@
 **Version**: 1.0
 **Date**: November 20, 2025
 **Duration**: 20-28 weeks (5-7 months)
-**Budget**: $514,050
 
 ---
 
@@ -16,15 +15,15 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 
 ## Milestone Overview
 
-| Phase | Milestones | Duration | Budget |
-|-------|-----------|----------|--------|
-| Phase 1: Infrastructure Setup | 5 milestones | 2-3 weeks | $52,500 |
-| Phase 2: Database Migration | 6 milestones | 2-3 weeks | $73,500 |
-| Phase 3: Backend Development | 8 milestones | 8-10 weeks | $210,000 |
-| Phase 4: Frontend Updates | 4 milestones | 4-6 weeks | $105,000 |
-| Phase 5: Testing & Validation | 3 milestones | 3-4 weeks | $57,750 |
-| Phase 6: Deployment & Cutover | 2 milestones | 1-2 weeks | $15,300 |
-| **TOTAL** | **28 milestones** | **20-28 weeks** | **$514,050** |
+| Phase | Milestones | Duration |
+|-------|-----------|----------|
+| Phase 1: Infrastructure Setup | 5 milestones | 2-3 weeks |
+| Phase 2: Database Migration | 6 milestones | 2-3 weeks |
+| Phase 3: Backend Development | 8 milestones | 8-10 weeks |
+| Phase 4: Frontend Updates | 4 milestones | 4-6 weeks |
+| Phase 5: Testing & Validation | 3 milestones | 3-4 weeks |
+| Phase 6: Deployment & Cutover | 2 milestones | 1-2 weeks |
+| **TOTAL** | **28 milestones** | **20-28 weeks** |
 
 ---
 
@@ -35,7 +34,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 1.1: Development Environment Setup
 **Duration**: 3 days
 **Owner**: DevOps Lead
-**Budget**: $7,500
 
 **Deliverables**:
 - Visual Studio 2022 Enterprise configured for all developers
@@ -57,7 +55,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 1.2: Azure Resource Provisioning
 **Duration**: 5 days
 **Owner**: Cloud Architect
-**Budget**: $12,500
 
 **Deliverables**:
 - Azure SQL Database (Standard S3 tier) provisioned
@@ -72,19 +69,15 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 - [ ] All Azure resources provisioned in correct subscription
 - [ ] Network security groups configured
 - [ ] Connection strings stored in Key Vault
-- [ ] Cost alerts configured at 80% and 100% of budget
 - [ ] Monitoring dashboards created in Azure Portal
 
 **Dependencies**: Milestone 1.1
-
-**Estimated Monthly Cost**: $850/month
 
 ---
 
 ### Milestone 1.3: CI/CD Pipeline Setup
 **Duration**: 4 days
 **Owner**: DevOps Engineer
-**Budget**: $10,000
 
 **Deliverables**:
 - Azure Pipelines YAML files for build
@@ -109,7 +102,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 1.4: Solution Architecture Implementation
 **Duration**: 5 days
 **Owner**: Solution Architect
-**Budget**: $12,500
 
 **Deliverables**:
 - ASP.NET Core 8.0 solution structure (Clean Architecture)
@@ -135,7 +127,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 1.5: Security Framework Implementation
 **Duration**: 3 days
 **Owner**: Security Engineer
-**Budget**: $10,000
 
 **Deliverables**:
 - ASP.NET Core Identity configured
@@ -164,7 +155,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.1: SQL Server Schema Creation
 **Duration**: 3 days
 **Owner**: Database Administrator
-**Budget**: $7,500
 
 **Deliverables**:
 - Execute `database_schema.sql` on Azure SQL Database
@@ -190,7 +180,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.2: Entity Framework Core Setup
 **Duration**: 4 days
 **Owner**: Backend Developer
-**Budget**: $10,000
 
 **Deliverables**:
 - DbContext created with all 20 entity configurations
@@ -214,7 +203,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.3: Data Export from Supabase
 **Duration**: 2 days
 **Owner**: Database Administrator
-**Budget**: $5,000
 
 **Deliverables**:
 - PostgreSQL export scripts for all tables
@@ -237,7 +225,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.4: Data Transformation Scripts
 **Duration**: 5 days
 **Owner**: Data Engineer
-**Budget**: $12,500
 
 **Deliverables**:
 - C# console application for data transformation
@@ -261,7 +248,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.5: Data Import to SQL Server
 **Duration**: 3 days
 **Owner**: Database Administrator
-**Budget**: $7,500
 
 **Deliverables**:
 - SQL Server bulk insert scripts
@@ -284,7 +270,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 2.6: Data Validation & Reconciliation
 **Duration**: 5 days
 **Owner**: QA Engineer + DBA
-**Budget**: $31,000
 
 **Deliverables**:
 - Automated validation scripts comparing source vs destination
@@ -312,7 +297,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.1: Authentication & User Management APIs
 **Duration**: 1 week
 **Owner**: Backend Developer 1
-**Budget**: $26,250
 
 **Deliverables**:
 - POST /api/auth/register
@@ -339,7 +323,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.2: Jurisdiction Management APIs
 **Duration**: 1 week
 **Owner**: Backend Developer 2
-**Budget**: $26,250
 
 **Deliverables**:
 - GET /api/jurisdictions (with filtering, pagination)
@@ -366,7 +349,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.3: Report Management APIs
 **Duration**: 2 weeks
 **Owner**: Backend Developer 1 + 2
-**Budget**: $52,500
 
 **Deliverables**:
 - GET /api/reports (with filtering, pagination)
@@ -395,7 +377,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.4: Job Classification APIs
 **Duration**: 1 week
 **Owner**: Backend Developer 2
-**Budget**: $26,250
 
 **Deliverables**:
 - GET /api/reports/{reportId}/jobs
@@ -421,7 +402,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.5: Compliance Analysis Engine
 **Duration**: 2 weeks
 **Owner**: Senior Backend Developer
-**Budget**: $52,500
 
 **Deliverables**:
 - ComplianceAnalysisService implementation
@@ -450,7 +430,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.6: Auto-Approval Service
 **Duration**: 1 week
 **Owner**: Backend Developer 1
-**Budget**: $26,250
 
 **Deliverables**:
 - AutoApprovalService implementation
@@ -476,7 +455,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.7: Certificate Generation & Email Services
 **Duration**: 1 week
 **Owner**: Backend Developer 2
-**Budget**: $26,250
 
 **Deliverables**:
 - CertificateGenerationService (PDF)
@@ -502,7 +480,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 3.8: Admin & Reporting APIs
 **Duration**: 1 week
 **Owner**: Backend Developer 1
-**Budget**: $26,250
 
 **Deliverables**:
 - GET /api/admin/dashboard
@@ -534,7 +511,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 4.1: API Client & Authentication Integration
 **Duration**: 1 week
 **Owner**: Frontend Developer 1
-**Budget**: $26,250
 
 **Deliverables**:
 - API client service (Axios/Fetch wrapper)
@@ -558,7 +534,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 4.2: Core Feature Integration
 **Duration**: 2 weeks
 **Owner**: Frontend Developer 1 + 2
-**Budget**: $52,500
 
 **Deliverables**:
 - Jurisdiction management integration
@@ -582,7 +557,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 4.3: Admin Features Integration
 **Duration**: 1 week
 **Owner**: Frontend Developer 2
-**Budget**: $26,250
 
 **Deliverables**:
 - Admin dashboard integration
@@ -605,7 +579,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 4.4: Certificate & Email Integration
 **Duration**: 5 days
 **Owner**: Frontend Developer 1
-**Budget**: $13,125
 
 **Deliverables**:
 - Certificate download integration
@@ -630,7 +603,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 5.1: Integration Testing
 **Duration**: 2 weeks
 **Owner**: QA Team
-**Budget**: $31,500
 
 **Deliverables**:
 - 100+ integration test cases
@@ -654,7 +626,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 5.2: User Acceptance Testing (UAT)
 **Duration**: 2 weeks
 **Owner**: Business Analyst + Users
-**Budget**: $21,000
 
 **Deliverables**:
 - UAT test plan and scripts
@@ -677,7 +648,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 5.3: Performance & Security Testing
 **Duration**: 1 week
 **Owner**: Performance Engineer + Security Engineer
-**Budget**: $21,000
 
 **Deliverables**:
 - Load testing (200 concurrent users)
@@ -707,7 +677,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 6.1: Production Deployment
 **Duration**: 3 days
 **Owner**: DevOps Lead
-**Budget**: $7,500
 
 **Deliverables**:
 - Production deployment checklist
@@ -733,7 +702,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 6.2: Cutover & Go-Live
 **Duration**: 4-hour maintenance window
 **Owner**: Project Manager + Full Team
-**Budget**: $7,800
 
 **Deliverables**:
 - Cutover plan execution
@@ -768,7 +736,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 7.1: Hypercare Support (Week 28-29)
 **Duration**: 1 week
 **Owner**: Full Team
-**Budget**: Included in Phase 6
 
 **Deliverables**:
 - 24/7 on-call support
@@ -788,7 +755,6 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 ### Milestone 7.2: Post-Implementation Review (Week 30)
 **Duration**: 2 days
 **Owner**: Project Manager
-**Budget**: Included in Phase 6
 
 **Deliverables**:
 - Lessons learned document
@@ -820,49 +786,47 @@ This document outlines the key milestones for migrating the Minnesota Pay Equity
 
 ---
 
-## Budget Breakdown by Milestone
+## Resource Allocation by Milestone
 
-### Phase 1 Milestones: $52,500
-- M1.1: Dev Environment - $7,500
-- M1.2: Azure Resources - $12,500
-- M1.3: CI/CD Pipeline - $10,000
-- M1.4: Solution Architecture - $12,500
-- M1.5: Security Framework - $10,000
+### Phase 1 Milestones
+- M1.1: Dev Environment - DevOps Lead (3 days)
+- M1.2: Azure Resources - Cloud Architect (5 days)
+- M1.3: CI/CD Pipeline - DevOps Engineer (4 days)
+- M1.4: Solution Architecture - Solution Architect (5 days)
+- M1.5: Security Framework - Security Engineer (3 days)
 
-### Phase 2 Milestones: $73,500
-- M2.1: Schema Creation - $7,500
-- M2.2: EF Core Setup - $10,000
-- M2.3: Data Export - $5,000
-- M2.4: Data Transformation - $12,500
-- M2.5: Data Import - $7,500
-- M2.6: Data Validation - $31,000
+### Phase 2 Milestones
+- M2.1: Schema Creation - Database Administrator (3 days)
+- M2.2: EF Core Setup - Backend Developer (4 days)
+- M2.3: Data Export - Database Administrator (2 days)
+- M2.4: Data Transformation - Data Engineer (5 days)
+- M2.5: Data Import - Database Administrator (3 days)
+- M2.6: Data Validation - QA Engineer + DBA (5 days)
 
-### Phase 3 Milestones: $210,000
-- M3.1: Auth APIs - $26,250
-- M3.2: Jurisdiction APIs - $26,250
-- M3.3: Report APIs - $52,500
-- M3.4: Job APIs - $26,250
-- M3.5: Compliance Engine - $52,500
-- M3.6: Auto-Approval - $26,250
-- M3.7: Certificates & Email - $26,250
-- M3.8: Admin APIs - $26,250
+### Phase 3 Milestones
+- M3.1: Auth APIs - Backend Developer 1 (1 week)
+- M3.2: Jurisdiction APIs - Backend Developer 2 (1 week)
+- M3.3: Report APIs - Backend Developer 1 + 2 (2 weeks)
+- M3.4: Job APIs - Backend Developer 2 (1 week)
+- M3.5: Compliance Engine - Senior Backend Developer (2 weeks)
+- M3.6: Auto-Approval - Backend Developer 1 (1 week)
+- M3.7: Certificates & Email - Backend Developer 2 (1 week)
+- M3.8: Admin APIs - Backend Developer 1 (1 week)
 
-### Phase 4 Milestones: $118,125
-- M4.1: API Client Integration - $26,250
-- M4.2: Core Feature Integration - $52,500
-- M4.3: Admin Features - $26,250
-- M4.4: Certificate & Email - $13,125
+### Phase 4 Milestones
+- M4.1: API Client Integration - Frontend Developer 1 (1 week)
+- M4.2: Core Feature Integration - Frontend Developer 1 + 2 (2 weeks)
+- M4.3: Admin Features - Frontend Developer 2 (1 week)
+- M4.4: Certificate & Email - Frontend Developer 1 (5 days)
 
-### Phase 5 Milestones: $73,500
-- M5.1: Integration Testing - $31,500
-- M5.2: UAT - $21,000
-- M5.3: Performance & Security - $21,000
+### Phase 5 Milestones
+- M5.1: Integration Testing - QA Team (2 weeks)
+- M5.2: UAT - Business Analyst + Users (2 weeks)
+- M5.3: Performance & Security - Performance Engineer + Security Engineer (1 week)
 
-### Phase 6 Milestones: $15,300
-- M6.1: Production Deployment - $7,500
-- M6.2: Cutover & Go-Live - $7,800
-
-**Total Budget**: $514,050
+### Phase 6 Milestones
+- M6.1: Production Deployment - DevOps Lead (3 days)
+- M6.2: Cutover & Go-Live - Full Team (4-hour window)
 
 ---
 
@@ -890,7 +854,6 @@ The following milestones are on the critical path (delays will impact project ti
 | Metric | Target | Measurement |
 |--------|--------|-------------|
 | On-Time Delivery | Within 28 weeks | Project completion date |
-| Budget Adherence | Within 10% of $514,050 | Actual spend vs budget |
 | Data Migration Accuracy | 100% | Row count and checksum validation |
 | Compliance Algorithm Accuracy | 100% match to current system | Test cases with known results |
 | System Uptime (post-launch) | >99.9% | Azure monitoring |
@@ -929,7 +892,6 @@ Each milestone is considered complete when:
 - Milestones completed this week
 - Milestones in progress
 - Milestones at risk (red/yellow status)
-- Budget burn rate vs planned
 - Risks and issues
 - Decisions required
 
