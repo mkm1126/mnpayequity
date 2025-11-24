@@ -37,6 +37,7 @@ import {
   type DeadlineInfo
 } from '../lib/deadlineCalculator';
 import { useScrollToTop } from '../hooks/useScrollToTop';
+import { ReminderManagement } from './ReminderManagement';
 
 type JurisdictionWithStatus = Jurisdiction & {
   latestReport: Report | null;
@@ -672,12 +673,7 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
       )}
 
       {selectedTab === 'reminders' && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Reminder Management</h2>
-          <p className="text-gray-600 text-center py-8">
-            Reminder management feature coming soon. This will include automated reminder scheduling and manual reminder sending.
-          </p>
-        </div>
+        <ReminderManagement />
       )}
 
       {selectedJurisdiction && (
