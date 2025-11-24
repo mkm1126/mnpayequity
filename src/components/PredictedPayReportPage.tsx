@@ -235,6 +235,7 @@ export function PredictedPayReportPage({
             regressionLine={chartData.regressionLine}
             lineExtension={chartData.lineExtension}
             regression={regression}
+            chartRef={chartRef}
           />
         </div>
 

@@ -20,6 +20,7 @@ type PredictedPayScatterChartProps = {
   regressionLine: { x: number; y: number }[];
   lineExtension: { x: number; y: number }[];
   regression: RegressionResult;
+  chartRef?: React.RefObject<ChartJS<'scatter'>>;
 };
 
 export function PredictedPayScatterChart({
@@ -29,8 +30,10 @@ export function PredictedPayScatterChart({
   regressionLine,
   lineExtension,
   regression,
+  chartRef: externalChartRef,
 }: PredictedPayScatterChartProps) {
-  const chartRef = useRef<ChartJS<'scatter'>>(null);
+  const internalChartRef = useRef<ChartJS<'scatter'>>(null);
+  const chartRef = externalChartRef || internalChartRef;
 
   const allDataPoints = [...maleJobs, ...femaleJobs, ...balancedJobs];
   const allSalaries = allDataPoints.map(p => p.y);
