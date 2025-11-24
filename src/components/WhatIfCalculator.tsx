@@ -378,6 +378,7 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
                 <tr className="border-b-2 border-gray-300 bg-gray-50">
                   <th className="text-left py-3 px-4 font-bold text-gray-700">Job Nbr</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700">Class Title</th>
+                  <th className="text-center py-3 px-4 font-bold text-gray-700">Points</th>
                   <th className="text-center py-3 px-4 font-bold text-gray-700">Males</th>
                   <th className="text-center py-3 px-4 font-bold text-gray-700">Females</th>
                   <th className="text-center py-3 px-4 font-bold text-gray-700">Type</th>
@@ -411,6 +412,7 @@ export function WhatIfCalculator({ jobs, currentResult, onClose }: WhatIfCalcula
                     <tr key={job.id} className={`border-b border-gray-100 ${hasChanges ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
                       <td className="py-3 px-4 text-gray-900">{job.job_number || ''}</td>
                       <td className="py-3 px-4 text-gray-900">{job.title || ''}</td>
+                      <td className="text-center py-3 px-4 text-gray-900">{job.job_value || 0}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{maleCount}</td>
                       <td className="text-center py-3 px-4 text-gray-900">{femaleCount}</td>
                       <td className="text-center py-3 px-4">
