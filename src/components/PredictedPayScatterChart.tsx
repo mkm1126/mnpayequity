@@ -32,6 +32,18 @@ export function PredictedPayScatterChart({
 }: PredictedPayScatterChartProps) {
   const chartRef = useRef<ChartJS<'scatter'>>(null);
 
+  const allDataPoints = [...maleJobs, ...femaleJobs, ...balancedJobs];
+  const allSalaries = allDataPoints.map(p => p.y);
+  const allPoints = allDataPoints.map(p => p.x);
+
+  const minSalary = allSalaries.length > 0 ? Math.min(...allSalaries) : 0;
+  const maxSalary = allSalaries.length > 0 ? Math.max(...allSalaries) : 14000;
+  const minPoints = allPoints.length > 0 ? Math.min(...allPoints) : -340;
+  const maxPoints = allPoints.length > 0 ? Math.max(...allPoints) : 2720;
+
+  const salaryPadding = (maxSalary - minSalary) * 0.1;
+  const pointsPadding = (maxPoints - minPoints) * 0.1;
+
   const data = {
     datasets: [
       {
@@ -112,11 +124,8 @@ export function PredictedPayScatterChart({
             weight: 'normal',
           },
         },
-        min: -340,
-        max: 2720,
-        ticks: {
-          stepSize: 340,
-        },
+        min: Math.floor(minPoints - pointsPadding),
+        max: Math.ceil(maxPoints + pointsPadding),
       },
       y: {
         type: 'linear',
@@ -128,11 +137,8 @@ export function PredictedPayScatterChart({
             weight: 'normal',
           },
         },
-        min: 0,
-        max: 14000,
-        ticks: {
-          stepSize: 2000,
-        },
+        min: Math.floor(minSalary - salaryPadding),
+        max: Math.ceil(maxSalary + salaryPadding),
       },
     },
     plugins: {
