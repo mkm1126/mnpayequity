@@ -608,12 +608,11 @@ export function MainApp() {
                 complianceResult={complianceResult}
                 onBack={handleBackFromReportView}
               />
-            ) : reportViewType === 'predictedPay' && complianceResult ? (
+            ) : reportViewType === 'predictedPay' && jobs.length > 0 ? (
               <PredictedPayReportPage
                 report={selectedReport}
                 jurisdiction={currentJurisdiction}
                 jobs={jobs}
-                complianceResult={complianceResult}
                 onBack={handleBackFromReportView}
               />
             ) : reportViewType === 'implementation' && implementationData ? (
@@ -629,7 +628,7 @@ export function MainApp() {
                 <p className="text-gray-600 mb-4">
                   {reportViewType === 'jobDataEntry' && jobs.length === 0 && 'No job data available. Please add jobs first.'}
                   {reportViewType === 'compliance' && !complianceResult && 'No compliance analysis available. Please run compliance analysis first.'}
-                  {reportViewType === 'predictedPay' && !complianceResult && 'No compliance analysis available. Please run compliance analysis first.'}
+                  {reportViewType === 'predictedPay' && jobs.length === 0 && 'No job data available. Please add jobs first.'}
                   {reportViewType === 'implementation' && !implementationData && 'No implementation data available. Please complete the implementation form first.'}
                 </p>
                 <button
