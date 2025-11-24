@@ -4,6 +4,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  LineController,
   Tooltip,
   Legend,
   ChartOptions,
@@ -11,7 +12,7 @@ import {
 import { Scatter } from 'react-chartjs-2';
 import { RegressionResult } from '../lib/predictedPayAnalysis';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(LinearScale, PointElement, LineElement, LineController, Tooltip, Legend);
 
 type PredictedPayScatterChartProps = {
   maleJobs: { x: number; y: number }[];
