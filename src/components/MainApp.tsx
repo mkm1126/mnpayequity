@@ -460,14 +460,6 @@ export function MainApp() {
   }
 
   function handleNavigateToReportView(reportType: 'jobDataEntry' | 'compliance' | 'predictedPay' | 'implementation') {
-    console.log('Navigating to report view:', reportType);
-    console.log('Current state:', {
-      currentJurisdiction: currentJurisdiction?.name,
-      selectedReport: selectedReport?.id,
-      jobsCount: jobs.length,
-      hasComplianceResult: !!complianceResult,
-      hasImplementationData: !!implementationData
-    });
     setReportViewType(reportType);
     setCurrentView('reportView');
   }
@@ -593,52 +585,72 @@ export function MainApp() {
           />
         ) : currentView === 'reportView' && currentJurisdiction && selectedReport && reportViewType ? (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {reportViewType === 'jobDataEntry' && jobs.length > 0 ? (
-              <JobDataEntryListPage
-                report={selectedReport}
-                jurisdiction={currentJurisdiction}
-                jobs={jobs}
-                onBack={handleBackFromReportView}
-              />
-            ) : reportViewType === 'compliance' && complianceResult ? (
-              <ComplianceReportPage
-                report={selectedReport}
-                jurisdiction={currentJurisdiction}
-                jobs={jobs}
-                complianceResult={complianceResult}
-                onBack={handleBackFromReportView}
-              />
-            ) : reportViewType === 'predictedPay' && jobs.length > 0 ? (
-              <PredictedPayReportPage
-                report={selectedReport}
-                jurisdiction={currentJurisdiction}
-                jobs={jobs}
-                onBack={handleBackFromReportView}
-              />
-            ) : reportViewType === 'implementation' && implementationData ? (
-              <ImplementationReportPage
-                report={selectedReport}
-                jurisdiction={currentJurisdiction}
-                implementationData={implementationData}
-                onBack={handleBackFromReportView}
-              />
-            ) : (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Report Not Available</h2>
-                <p className="text-gray-600 mb-4">
-                  {reportViewType === 'jobDataEntry' && jobs.length === 0 && 'No job data available. Please add jobs first.'}
-                  {reportViewType === 'compliance' && !complianceResult && 'No compliance analysis available. Please run compliance analysis first.'}
-                  {reportViewType === 'predictedPay' && jobs.length === 0 && 'No job data available. Please add jobs first.'}
-                  {reportViewType === 'implementation' && !implementationData && 'No implementation data available. Please complete the implementation form first.'}
-                </p>
-                <button
-                  onClick={handleBackFromReportView}
-                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors"
-                >
-                  Back to Reports
-                </button>
-              </div>
-            )}
+            {reportViewType === 'jobDataEntry' ? (
+              jobs.length > 0 ? (
+                <JobDataEntryListPage
+                  report={selectedReport}
+                  jurisdiction={currentJurisdiction}
+                  jobs={jobs}
+                  onBack={handleBackFromReportView}
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003865] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading job data...</p>
+                  </div>
+                </div>
+              )
+            ) : reportViewType === 'compliance' ? (
+              complianceResult ? (
+                <ComplianceReportPage
+                  report={selectedReport}
+                  jurisdiction={currentJurisdiction}
+                  jobs={jobs}
+                  complianceResult={complianceResult}
+                  onBack={handleBackFromReportView}
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003865] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading compliance data...</p>
+                  </div>
+                </div>
+              )
+            ) : reportViewType === 'predictedPay' ? (
+              jobs.length > 0 && complianceResult ? (
+                <PredictedPayReportPage
+                  report={selectedReport}
+                  jurisdiction={currentJurisdiction}
+                  jobs={jobs}
+                  onBack={handleBackFromReportView}
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003865] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading predicted pay data...</p>
+                  </div>
+                </div>
+              )
+            ) : reportViewType === 'implementation' ? (
+              implementationData ? (
+                <ImplementationReportPage
+                  report={selectedReport}
+                  jurisdiction={currentJurisdiction}
+                  implementationData={implementationData}
+                  onBack={handleBackFromReportView}
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003865] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading implementation data...</p>
+                  </div>
+                </div>
+              )
+            ) : null}
           </div>
         ) : (
           <>
