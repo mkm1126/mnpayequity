@@ -19,7 +19,7 @@ export type RegressionResult = {
 export function calculateLinearRegression(
   jobs: JobClassification[]
 ): RegressionResult {
-  const validJobs = jobs.filter(job => job.job_value_points > 0 && job.max_salary > 0);
+  const validJobs = jobs.filter(job => job.points > 0 && job.max_salary > 0);
 
   if (validJobs.length === 0) {
     return {
@@ -41,7 +41,7 @@ export function calculateLinearRegression(
   let sumY2 = 0;
 
   validJobs.forEach(job => {
-    const x = job.job_value_points;
+    const x = job.points;
     const y = job.max_salary;
     sumX += x;
     sumY += y;
@@ -58,14 +58,14 @@ export function calculateLinearRegression(
   const meanY = sumY / n;
 
   validJobs.forEach(job => {
-    const predictedY = slope * job.job_value_points + intercept;
+    const predictedY = slope * job.points + intercept;
     sumSquaredResiduals += Math.pow(job.max_salary - predictedY, 2);
     sumSquaredTotal += Math.pow(job.max_salary - meanY, 2);
   });
 
   const rSquared = 1 - (sumSquaredResiduals / sumSquaredTotal);
 
-  const points = validJobs.map(j => j.job_value_points);
+  const points = validJobs.map(j => j.points);
   const minPoints = Math.min(...points);
   const maxPoints = Math.max(...points);
 
@@ -109,7 +109,7 @@ export function enrichJobsWithPredictedPay(
   const regression = calculateLinearRegression(jobs);
 
   return jobs.map(job => {
-    const predicted_pay = calculatePredictedPay(job.job_value_points, regression);
+    const predicted_pay = calculatePredictedPay(job.points, regression);
     const pay_difference = job.max_salary - predicted_pay;
     const job_type = classifyJobType(job);
 
@@ -141,9 +141,9 @@ export function getChartData(jobs: JobWithPredictedPay[], regression: Regression
   ];
 
   return {
-    maleJobs: maleJobs.map(j => ({ x: j.job_value_points, y: j.max_salary })),
-    femaleJobs: femaleJobs.map(j => ({ x: j.job_value_points, y: j.max_salary })),
-    balancedJobs: balancedJobs.map(j => ({ x: j.job_value_points, y: j.max_salary })),
+    maleJobs: maleJobs.map(j => ({ x: j.points, y: j.max_salary })),
+    femaleJobs: femaleJobs.map(j => ({ x: j.points, y: j.max_salary })),
+    balancedJobs: balancedJobs.map(j => ({ x: j.points, y: j.max_salary })),
     regressionLine: regressionLinePoints,
     lineExtension: lineExtensionPoints,
   };

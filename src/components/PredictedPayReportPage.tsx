@@ -81,7 +81,7 @@ export function PredictedPayReportPage({
     });
     doc.text(timestamp, pageWidth - marginRight, pageHeight - 20, { align: 'right' });
 
-    const sortedJobs = [...enrichedJobs].sort((a, b) => a.job_value_points - b.job_value_points);
+    const sortedJobs = [...enrichedJobs].sort((a, b) => a.points - b.points);
 
     const tableData = sortedJobs.map((job, index) => {
       const total = job.males + job.females;
@@ -95,7 +95,7 @@ export function PredictedPayReportPage({
         nonBinary.toString(),
         total.toString(),
         job.job_type,
-        job.job_value_points.toString(),
+        job.points.toString(),
         job.max_salary.toFixed(4),
         job.predicted_pay.toFixed(4),
         job.pay_difference.toFixed(4),

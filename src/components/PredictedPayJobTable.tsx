@@ -5,7 +5,7 @@ type PredictedPayJobTableProps = {
 };
 
 export function PredictedPayJobTable({ jobs }: PredictedPayJobTableProps) {
-  const sortedJobs = [...jobs].sort((a, b) => a.job_value_points - b.job_value_points);
+  const sortedJobs = [...jobs].sort((a, b) => a.points - b.points);
 
   return (
     <div className="overflow-x-auto">
@@ -76,7 +76,7 @@ export function PredictedPayJobTable({ jobs }: PredictedPayJobTableProps) {
                   {job.job_type}
                 </td>
                 <td className="px-3 py-2 text-xs text-center text-gray-900 border-r border-gray-300">
-                  {job.job_value_points}
+                  {job.points}
                 </td>
                 <td className="px-3 py-2 text-xs text-right text-gray-900 border-r border-gray-300">
                   {job.max_salary.toFixed(4)}
