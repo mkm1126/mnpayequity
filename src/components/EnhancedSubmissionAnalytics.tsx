@@ -19,6 +19,7 @@ import {
   BarChart3,
   Users
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import {
   supabase,
   type Jurisdiction,
@@ -280,6 +281,82 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
 
   const filteredJurisdictions = getFilteredJurisdictions();
 
+  function exportToExcel() {
+    const exportData = filteredJurisdictions.map(j => ({
+      'Jurisdiction': j.name,
+      'Jurisdiction ID': j.jurisdiction_id,
+      'Type': j.jurisdiction_type,
+      'Report Year': j.deadlineInfo.reportYear,
+      'Deadline': j.deadlineInfo.formattedDeadline,
+      'Days Until Due': j.deadlineInfo.daysUntilDue,
+      'Status': getStatusLabel(j.deadlineInfo.status),
+      'Is Overdue': j.deadlineInfo.isOverdue ? 'Yes' : 'No',
+      'Overdue Severity': j.deadlineInfo.isOverdue ? getSeverityLabel(j.deadlineInfo.overdueSeverity) : 'N/A',
+      'Compliance Status': j.latestReport?.compliance_status || 'Not Submitted',
+      'Last Reminder Sent': j.lastReminderSent ? new Date(j.lastReminderSent.sent_at).toLocaleDateString() : 'None',
+      'Reminder Type': j.lastReminderSent ? j.lastReminderSent.reminder_type.replace('_', ' ') : 'N/A',
+      'Address': j.address,
+      'City': j.city,
+      'State': j.state,
+      'Zip Code': j.zipcode,
+      'Phone': j.phone
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    const colWidths = [
+      { wch: 30 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 20 },
+      { wch: 12 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 30 },
+      { wch: 20 },
+      { wch: 8 },
+      { wch: 10 },
+      { wch: 15 }
+    ];
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Submission Analytics');
+
+    if (metrics) {
+      const summaryData = [
+        ['Submission Analytics Summary', ''],
+        ['Generated', new Date().toLocaleString()],
+        ['', ''],
+        ['Metric', 'Value'],
+        ['Total Jurisdictions', metrics.totalJurisdictions],
+        ['In Compliance', metrics.inCompliance],
+        ['Out of Compliance', metrics.outOfCompliance],
+        ['Pending Submissions', metrics.pendingSubmissions],
+        ['Overdue Submissions', metrics.overdueSubmissions],
+        ['Due Soon (60 days)', metrics.dueSoon],
+        ['Compliance Rate', `${metrics.complianceRate.toFixed(1)}%`],
+        ['', ''],
+        ['Overdue by Severity', ''],
+        ['Critical (90+ days)', metrics.overdueBySeverity.critical],
+        ['High (31-90 days)', metrics.overdueBySeverity.high],
+        ['Medium (1-30 days)', metrics.overdueBySeverity.medium]
+      ];
+
+      const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+      summaryWs['!cols'] = [{ wch: 30 }, { wch: 20 }];
+      XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+    }
+
+    const fileName = `Submission_Analytics_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -310,7 +387,7 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
             <RefreshCw size={20} className={refreshing ? 'animate-spin' : ''} />
           </button>
           <button
-            onClick={() => {/* Export functionality */}}
+            onClick={exportToExcel}
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors"
           >
             <Download size={18} />
