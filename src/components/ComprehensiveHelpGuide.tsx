@@ -157,7 +157,7 @@ const helpSections: HelpSection[] = [
     subsections: [
       {
         title: 'The Three Compliance Tests',
-        content: '1. Statistical Analysis Test: Compares percentage of male vs. female jobs below predicted pay. Underpayment ratio must be 80% or more.\n\n2. Salary Range Test: Compares average years to maximum salary. Ratio must be between 80% and 140%.\n\n3. Exceptional Service Pay Test: Compares percentage receiving exceptional service pay. Ratio must be 80% or more (if >20% of male classes receive ESP).'
+        content: '1. Statistical Analysis Test: Compares percentage of male vs. female jobs below predicted pay. Underpayment ratio must be 80% or more.\n\n2. Salary Range Test: Compares average years to maximum salary. Ratio must be 80% or more.\n\n3. Exceptional Service Pay Test: Compares percentage receiving exceptional service pay. Ratio must be 80% or more (if >20% of male classes receive ESP).'
       },
       {
         title: 'Understanding Your Results',
