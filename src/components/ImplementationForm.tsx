@@ -32,14 +32,23 @@ export function ImplementationForm({
   const [formData, setFormData] = useState<Partial<ImplementationReport>>({
     evaluation_system: '',
     evaluation_description: '',
+    evaluation_system_type: null,
+    system_measures_all_factors: false,
     health_benefits_evaluated: '',
     health_benefits_description: '',
+    health_benefits_status: null,
     notice_location: '',
+    notice_posting_locations: null,
+    notice_sent_to_representatives: false,
+    notice_sent_to_library: false,
     approved_by_body: '',
     chief_elected_official: '',
     official_title: '',
     approval_confirmed: false,
     total_payroll: null,
+    payroll_year: null,
+    certification_checkbox_confirmed: false,
+    date_submitted: null,
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -165,22 +174,42 @@ export function ImplementationForm({
           </h4>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select a system
+              The system was used
             </label>
             <select
-              value={formData.evaluation_system || ''}
-              onChange={(e) => updateField('evaluation_system', e.target.value)}
+              value={formData.evaluation_system_type || formData.evaluation_system || ''}
+              onChange={(e) => {
+                updateField('evaluation_system_type', e.target.value);
+                updateField('evaluation_system', e.target.value);
+              }}
               disabled={isSubmitted}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent disabled:bg-gray-100"
             >
               <option value="">-- Select a system --</option>
+              <option value="Designed Own">Designed Own</option>
+              <option value="Purchased System">Purchased System</option>
+              <option value="Consultant Developed">Consultant Developed</option>
+              <option value="Modified Existing">Modified Existing</option>
               <option value="Hay System">Hay System</option>
               <option value="Point Factor">Point Factor</option>
               <option value="Classification">Classification</option>
               <option value="Ranking">Ranking</option>
               <option value="Market Pricing">Market Pricing</option>
-              <option value="Other">Other</option>
             </select>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.system_measures_all_factors || false}
+                onChange={(e) => updateField('system_measures_all_factors', e.target.checked)}
+                disabled={isSubmitted}
+                className="mt-0.5 w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
+              />
+              <span className="text-sm text-blue-900">
+                Confirm that the same system was used for all classes of employees and measures skill, effort, responsibility, and working conditions
+              </span>
+            </label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -211,14 +240,19 @@ export function ImplementationForm({
               Select a description
             </label>
             <select
-              value={formData.health_benefits_evaluated || ''}
-              onChange={(e) => updateField('health_benefits_evaluated', e.target.value)}
+              value={formData.health_benefits_status || formData.health_benefits_evaluated || ''}
+              onChange={(e) => {
+                updateField('health_benefits_status', e.target.value);
+                updateField('health_benefits_evaluated', e.target.value);
+              }}
               disabled={isSubmitted}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent disabled:bg-gray-100"
             >
               <option value="">-- Select a description --</option>
+              <option value="There is no difference and female classes are not at a disadvantage">There is no difference and female classes are not at a disadvantage</option>
               <option value="All employees receive equal benefits">All employees receive equal benefits</option>
               <option value="Benefits evaluated and equalized">Benefits evaluated and equalized</option>
+              <option value="Differences exist, corrective action taken">Differences exist, corrective action taken</option>
               <option value="No health insurance offered">No health insurance offered</option>
               <option value="Other">Other</option>
             </select>
@@ -246,20 +280,52 @@ export function ImplementationForm({
           </h4>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Prominent location (max 60 characters)
+              Prominent location
             </label>
-            <input
-              type="text"
-              value={formData.notice_location || ''}
-              onChange={(e) => updateField('notice_location', e.target.value.slice(0, 60))}
+            <select
+              value={formData.notice_posting_locations || formData.notice_location || ''}
+              onChange={(e) => {
+                updateField('notice_posting_locations', e.target.value);
+                updateField('notice_location', e.target.value);
+              }}
               disabled={isSubmitted}
-              maxLength={60}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent disabled:bg-gray-100"
-              placeholder="e.g., City Hall Main Entrance"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              {(formData.notice_location || '').length}/60 characters
-            </p>
+            >
+              <option value="">-- Select location(s) --</option>
+              <option value="Bulletin Boards and Website">Bulletin Boards and Website</option>
+              <option value="Bulletin Boards">Bulletin Boards</option>
+              <option value="Website">Website</option>
+              <option value="City Hall">City Hall</option>
+              <option value="Main Office">Main Office</option>
+              <option value="Employee Break Room">Employee Break Room</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.notice_sent_to_representatives || false}
+                onChange={(e) => updateField('notice_sent_to_representatives', e.target.checked)}
+                disabled={isSubmitted}
+                className="w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
+              />
+              <span className="text-sm text-gray-700">
+                Notice sent to each exclusive representative
+              </span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.notice_sent_to_library || false}
+                onChange={(e) => updateField('notice_sent_to_library', e.target.checked)}
+                disabled={isSubmitted}
+                className="w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
+              />
+              <span className="text-sm text-gray-700">
+                Notice sent to public library
+              </span>
+            </label>
           </div>
 
           <p className="text-sm text-gray-700 mt-4">The report was approved by:</p>
@@ -318,23 +384,17 @@ export function ImplementationForm({
             />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <label className="flex items-start gap-3 cursor-pointer">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.approval_confirmed || false}
                 onChange={(e) => updateField('approval_confirmed', e.target.checked)}
                 disabled={isSubmitted}
-                className="mt-1 w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
+                className="w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
               />
-              <span className="text-sm text-blue-900">
-                Checking this box indicates the following:
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>Signature of chief elected official</li>
-                  <li>Approval by governing body</li>
-                  <li>All information is complete and accurate</li>
-                  <li>All employees over which the jurisdiction has final budgetary authority are included</li>
-                </ul>
+              <span className="text-sm text-gray-700">
+                Confirm approval by governing body and chief elected official
               </span>
             </label>
           </div>
@@ -363,6 +423,41 @@ export function ImplementationForm({
               placeholder="0.00"
             />
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Payroll Year
+          </label>
+          <input
+            type="number"
+            value={formData.payroll_year || report.report_year}
+            onChange={(e) => updateField('payroll_year', parseInt(e.target.value) || null)}
+            disabled={isSubmitted}
+            min="2000"
+            max="2100"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003865] focus:border-transparent disabled:bg-gray-100"
+            placeholder="e.g., 2023"
+          />
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData.certification_checkbox_confirmed || false}
+              onChange={(e) => updateField('certification_checkbox_confirmed', e.target.checked)}
+              disabled={isSubmitted}
+              className="mt-1 w-4 h-4 text-[#003865] border-gray-300 rounded focus:ring-[#003865] disabled:opacity-50"
+            />
+            <span className="text-sm text-blue-900">
+              Checking this box indicates the following:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Signature of chief elected official</li>
+                <li>Approval by governing body</li>
+                <li>All information is complete and accurate, and</li>
+                <li>All employees over which the jurisdiction has final budgetary authority are included</li>
+              </ul>
+            </span>
+          </label>
         </div>
       </div>
 
