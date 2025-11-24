@@ -335,7 +335,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
                 )}
               </div>
               <button
-                onClick={() => setFilterType('overdue')}
+                onClick={() => {
+                  setFilterType('overdue');
+                  setSelectedTab('jurisdictions');
+                }}
                 className="mt-3 text-sm font-medium text-red-700 hover:text-red-800 underline"
               >
                 View overdue submissions →
@@ -382,7 +385,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
                 {metrics.complianceRate.toFixed(1)}% compliance rate
               </p>
               <button
-                onClick={() => setFilterType('in_compliance')}
+                onClick={() => {
+                  setFilterType('in_compliance');
+                  setSelectedTab('jurisdictions');
+                }}
                 className="mt-3 text-xs text-green-700 hover:text-green-800 font-medium underline"
               >
                 View details
@@ -399,7 +405,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
                 Requires attention
               </p>
               <button
-                onClick={() => setFilterType('out_of_compliance')}
+                onClick={() => {
+                  setFilterType('out_of_compliance');
+                  setSelectedTab('jurisdictions');
+                }}
                 className="mt-3 text-xs text-orange-700 hover:text-orange-800 font-medium underline"
               >
                 View details
@@ -416,7 +425,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
                 {metrics.dueSoon} due within 60 days
               </p>
               <button
-                onClick={() => setFilterType('due_soon')}
+                onClick={() => {
+                  setFilterType('due_soon');
+                  setSelectedTab('jurisdictions');
+                }}
                 className="mt-3 text-xs text-yellow-700 hover:text-yellow-800 font-medium underline"
               >
                 View due soon
@@ -433,7 +445,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
                 Immediate action required
               </p>
               <button
-                onClick={() => setFilterType('overdue')}
+                onClick={() => {
+                  setFilterType('overdue');
+                  setSelectedTab('jurisdictions');
+                }}
                 className="mt-3 text-xs text-red-700 hover:text-red-800 font-medium underline"
               >
                 View overdue
