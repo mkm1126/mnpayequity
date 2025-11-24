@@ -33,6 +33,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { FollowUpCalendar } from './FollowUpCalendar';
 import { NoteDetailView } from './NoteDetailView';
 import AdminSubmissionReview from './AdminSubmissionReview';
+import { EnhancedSubmissionAnalytics } from './EnhancedSubmissionAnalytics';
 import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport, type AdminCaseNote } from '../lib/supabase';
 import { analyzeCompliance, type ComplianceResult } from '../lib/complianceAnalysis';
 
@@ -510,7 +511,7 @@ export function MainApp() {
         ) : currentView === 'caseNotes' ? (
           <AdminCaseNotes onBack={() => isAdmin ? setCurrentView('adminDashboard') : setCurrentView('dashboard')} />
         ) : currentView === 'submissionReview' ? (
-          <AdminSubmissionReview />
+          <EnhancedSubmissionAnalytics onNavigate={handleNavigate} />
         ) : currentView === 'approvalDashboard' ? (
           <ApprovalDashboard
             onReviewCase={(report) => {

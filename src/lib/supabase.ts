@@ -236,6 +236,40 @@ export type NoteCategory = 'general' | 'compliance' | 'follow-up' | 'issue' | 'd
 export type NotePriority = 'low' | 'medium' | 'high' | 'urgent';
 export type NoteType = 'jurisdiction' | 'case';
 
+export type SubmissionReminder = {
+  id: string;
+  jurisdiction_id: string;
+  report_year: number;
+  reminder_type: 'approaching_90d' | 'approaching_60d' | 'approaching_30d' | 'approaching_7d' | 'overdue_1d' | 'overdue_30d' | 'manual';
+  sent_at: string;
+  email_sent_to: string;
+  email_subject: string;
+  email_delivered: boolean;
+  opened_at: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+
+export type ComplianceHistory = {
+  id: string;
+  jurisdiction_id: string;
+  report_id: string;
+  report_year: number;
+  submission_date: string;
+  compliance_status: string;
+  approval_status: string;
+  submitted_on_time: boolean;
+  days_before_deadline: number | null;
+  statistical_test_passed: boolean | null;
+  salary_range_test_passed: boolean | null;
+  exceptional_service_test_passed: boolean | null;
+  requires_manual_review: boolean;
+  total_jobs: number;
+  total_employees: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type AdminCaseNote = {
   id: string;
   note_type: NoteType;
