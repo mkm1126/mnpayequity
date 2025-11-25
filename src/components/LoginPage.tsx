@@ -25,19 +25,44 @@ export function LoginPage() {
 
   const loadJurisdictions = async () => {
     try {
-      console.log('Loading jurisdictions...');
-      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
-      console.log('Anon key exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+      console.log('Loading jurisdictions via proxy...');
 
-      const { data, error } = await supabase
-        .from('jurisdictions')
-        .select('*')
-        .order('name');
+      const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/supabase-proxy`;
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'apikey': ANON_KEY,
+        },
+        body: JSON.stringify({
+          table: 'jurisdictions',
+          operation: 'select',
+          payload: {
+            select: '*',
+            order: {
+              column: 'name',
+              ascending: true,
+            },
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Proxy error:', errorData);
+        throw new Error(errorData.error || 'Failed to load jurisdictions');
+      }
+
+      const { data, error } = await response.json();
 
       if (error) {
         console.error('Supabase error:', error);
-        throw error;
+        throw new Error(error);
       }
+
       console.log('Jurisdictions loaded:', data?.length);
       setJurisdictions(data || []);
     } catch (error) {
