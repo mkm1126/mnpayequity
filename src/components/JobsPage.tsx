@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { ArrowLeft, Edit, Trash2, Plus, Download, Eye, FileEdit, RotateCcw } from 'lucide-react';
-import { supabase, type Jurisdiction, type Report, type JobClassification } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Report, type JobClassification } from '../lib/db';
 import { EditCaseDescriptionModal } from './EditCaseDescriptionModal';
 import { AddJobModal } from './AddJobModal';
 import { JobEntryMethodModal } from './JobEntryMethodModal';

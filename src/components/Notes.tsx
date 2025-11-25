@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { ArrowLeft, Plus, Edit2, Trash2, Search } from 'lucide-react';
-import { supabase, type Jurisdiction, type Note } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Note } from '../lib/db';
 
 type NotesProps = {
   jurisdiction: Jurisdiction;

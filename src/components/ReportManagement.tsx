@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { ArrowLeft } from 'lucide-react';
-import { supabase, Report, JobClassification, Jurisdiction, ImplementationReport } from '../lib/supabase';
+import { db } from '../lib/db';
+import { Report, JobClassification, Jurisdiction, ImplementationReport } from '../lib/db';
 import { ReportList } from './ReportList';
 import { AddReportModal } from './AddReportModal';
 import { JobEntryOptions } from './JobEntryOptions';

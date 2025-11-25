@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Mail, CheckSquare, Square } from 'lucide-react';
-import { supabase, type Jurisdiction, type Contact } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Contact } from '../lib/db';
 import { EmailComposer } from './EmailComposer';
 
 type AnnouncementJurisdictionListProps = {

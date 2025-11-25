@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { proxyRequest } from '../lib/supabaseProxy';
 import type { User, Session } from '@supabase/supabase-js';
 
 export interface UserProfile {
@@ -35,11 +36,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+      const { data, error } = await proxyRequest({
+        table: 'user_profiles',
+        operation: 'select',
+        payload: {
+          select: '*',
+          eq: { user_id: userId },
+          single: true,
+        },
+      });
 
       if (error) throw error;
       setUserProfile(data);
@@ -107,11 +112,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) return { error };
 
       if (data.user) {
-        const { data: profile } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', data.user.id)
-          .maybeSingle();
+        const { data: profile } = await proxyRequest({
+          table: 'user_profiles',
+          operation: 'select',
+          payload: {
+            select: '*',
+            eq: { user_id: data.user.id },
+            single: true,
+          },
+        });
 
         if (profile && !profile.is_admin) {
           if (!jurisdictionId) {
@@ -125,10 +134,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (jurisdictionId) {
-          await supabase
-            .from('user_profiles')
-            .update({ jurisdiction_id: jurisdictionId, updated_at: new Date().toISOString() })
-            .eq('user_id', data.user.id);
+          await proxyRequest({
+            table: 'user_profiles',
+            operation: 'update',
+            payload: {
+              data: { jurisdiction_id: jurisdictionId, updated_at: new Date().toISOString() },
+              eq: { user_id: data.user.id },
+            },
+          });
         }
       }
 

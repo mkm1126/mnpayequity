@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import { supabase, type Jurisdiction } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction } from '../lib/db';
 import { calculateReportingYears, formatReportingYear } from '../lib/reportingYearCalculator';
 
 type JurisdictionWithLastReport = Jurisdiction & {

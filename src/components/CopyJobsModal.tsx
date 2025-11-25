@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { supabase, Report } from '../lib/supabase';
+import { db } from '../lib/db';
+import { Report } from '../lib/db';
 
 type CopyJobsModalProps = {
   isOpen: boolean;

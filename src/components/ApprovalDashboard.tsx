@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter, ArrowLeft, Download } from 'lucide-react';
-import { supabase, Report, Jurisdiction, ComplianceCertificate } from '../lib/supabase';
+import { db } from '../lib/db';
+import { Report, Jurisdiction, ComplianceCertificate } from '../lib/db';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
 type ReportWithJurisdiction = Report & {

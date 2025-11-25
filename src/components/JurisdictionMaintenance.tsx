@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Plus, Save, Download, AlertCircle } from 'lucide-react';
-import { supabase, type Jurisdiction, type Contact } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Contact } from '../lib/db';
 import { AddJurisdictionModal } from './AddJurisdictionModal';
 import { JurisdictionForm } from './JurisdictionForm';
 import { useScrollToTop } from '../hooks/useScrollToTop';

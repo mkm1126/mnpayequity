@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { ArrowLeft, Mail, AlertTriangle, Calendar } from 'lucide-react';
-import { supabase, type Jurisdiction, type Report } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Report } from '../lib/db';
 import { AnnouncementJurisdictionList } from './AnnouncementJurisdictionList';
 import { FailToReportJurisdictionList } from './FailToReportJurisdictionList';
 

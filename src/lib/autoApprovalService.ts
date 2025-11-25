@@ -1,10 +1,10 @@
-import { supabase } from './supabase';
+import { db } from './db';
 import { analyzeCompliance } from './complianceAnalysis';
 import { generateCertificatePDF } from './certificateGenerator';
 
 export async function processAutoApproval(reportId: string): Promise<boolean> {
   try {
-    const { data: report, error: reportError } = await supabase
+    const { data: report, error: reportError } = await db
       .from('reports')
       .select('*')
       .eq('id', reportId)
@@ -15,7 +15,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
       return false;
     }
 
-    const { data: jurisdiction, error: jurisdictionError } = await supabase
+    const { data: jurisdiction, error: jurisdictionError } = await db
       .from('jurisdictions')
       .select('*')
       .eq('id', report.jurisdiction_id)
@@ -26,7 +26,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
       return false;
     }
 
-    const { data: jobs, error: jobsError } = await supabase
+    const { data: jobs, error: jobsError } = await db
       .from('job_classifications')
       .select('*')
       .eq('report_id', reportId);
@@ -39,13 +39,13 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
     const submittedOnTime = checkSubmissionDeadline(report);
 
     if (!submittedOnTime) {
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'pending',
         requires_manual_review: true,
         submitted_on_time: false,
       }).eq('id', reportId);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: reportId,
         jurisdiction_id: report.jurisdiction_id,
         action_type: 'manual_review_required',
@@ -62,12 +62,12 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
     const complianceResult = analyzeCompliance(jobs);
 
     if (complianceResult.requiresManualReview) {
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'pending',
         requires_manual_review: true,
       }).eq('id', reportId);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: reportId,
         jurisdiction_id: report.jurisdiction_id,
         action_type: 'manual_review_required',
@@ -84,7 +84,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
     if (complianceResult.isCompliant) {
       const certificateData = await generateCertificatePDF(report, jurisdiction);
 
-      await supabase.from('compliance_certificates').insert({
+      await db.from('compliance_certificates').insert({
         report_id: reportId,
         jurisdiction_id: report.jurisdiction_id,
         report_year: report.report_year,
@@ -108,7 +108,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         exceptionalServiceReason: complianceResult.exceptionalServiceTest?.reason,
       };
 
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'auto_approved',
         approved_by: 'Auto-Approval System',
         approved_at: new Date().toISOString(),
@@ -122,7 +122,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         test_applicability: testApplicability,
       }).eq('id', reportId);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: reportId,
         jurisdiction_id: report.jurisdiction_id,
         action_type: 'auto_approved',
@@ -151,7 +151,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         exceptionalServiceReason: complianceResult.exceptionalServiceTest?.reason,
       };
 
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'pending',
         case_status: 'Out of Compliance',
         compliance_status: 'Out of Compliance',
@@ -161,7 +161,7 @@ export async function processAutoApproval(reportId: string): Promise<boolean> {
         test_applicability: testApplicability,
       }).eq('id', reportId);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: reportId,
         jurisdiction_id: report.jurisdiction_id,
         action_type: 'failed_tests',
@@ -198,7 +198,7 @@ async function sendApprovalNotificationEmail(report: any, certificateData: strin
     if (!contacts || contacts.length === 0) return;
 
     for (const contact of contacts) {
-      await supabase.from('email_log').insert({
+      await db.from('email_log').insert({
         email_type: 'approval_notification',
         report_year: report.report_year,
         jurisdiction_id: report.jurisdiction_id,
@@ -305,7 +305,7 @@ async function sendStaffNotificationEmail(report: any, reason: string) {
 
     if (!jurisdiction) return;
 
-    await supabase.from('email_log').insert({
+    await db.from('email_log').insert({
       email_type: 'staff_notification',
       report_year: report.report_year,
       jurisdiction_id: report.jurisdiction_id,

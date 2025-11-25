@@ -102,10 +102,10 @@ export function EnhancedSubmissionAnalytics({ onNavigate }: { onNavigate: (view:
         complianceHistoryData,
         remindersData
       ] = await Promise.all([
-        supabase.from('jurisdictions').select('*').order('name'),
-        supabase.from('reports').select('*').order('report_year', { ascending: false }),
-        supabase.from('compliance_history').select('*').order('report_year', { ascending: false }),
-        supabase.from('submission_reminders').select('*').order('sent_at', { ascending: false })
+        db.from('jurisdictions').select('*').order('name'),
+        db.from('reports').select('*').order('report_year', { ascending: false }),
+        db.from('compliance_history').select('*').order('report_year', { ascending: false }),
+        db.from('submission_reminders').select('*').order('sent_at', { ascending: false })
       ]);
 
       if (jurisdictionsData.error) throw jurisdictionsData.error;

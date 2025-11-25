@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, AlertCircle, Calendar, CheckCircle, Clock, Pin, Bell, BellOff } from 'lucide-react';
-import { supabase, type AdminCaseNote, type Jurisdiction, type Report, type DismissedNotification } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type AdminCaseNote, type Jurisdiction, type Report, type DismissedNotification } from '../lib/db';
 import { useAuth } from '../contexts/AuthContext';
 
 type NotificationPanelProps = {

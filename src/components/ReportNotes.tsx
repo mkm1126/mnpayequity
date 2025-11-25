@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { db } from '../lib/db';
 import { useAuth } from '../contexts/AuthContext';
 
 type ReportNote = {

@@ -51,6 +51,51 @@ Deno.serve(async (req: Request) => {
             query = query.eq(key, value);
           }
         }
+        if (payload?.neq) {
+          for (const [key, value] of Object.entries(payload.neq)) {
+            query = query.neq(key, value);
+          }
+        }
+        if (payload?.gt) {
+          for (const [key, value] of Object.entries(payload.gt)) {
+            query = query.gt(key, value);
+          }
+        }
+        if (payload?.gte) {
+          for (const [key, value] of Object.entries(payload.gte)) {
+            query = query.gte(key, value);
+          }
+        }
+        if (payload?.lt) {
+          for (const [key, value] of Object.entries(payload.lt)) {
+            query = query.lt(key, value);
+          }
+        }
+        if (payload?.lte) {
+          for (const [key, value] of Object.entries(payload.lte)) {
+            query = query.lte(key, value);
+          }
+        }
+        if (payload?.like) {
+          for (const [key, value] of Object.entries(payload.like)) {
+            query = query.like(key, value);
+          }
+        }
+        if (payload?.ilike) {
+          for (const [key, value] of Object.entries(payload.ilike)) {
+            query = query.ilike(key, value);
+          }
+        }
+        if (payload?.is) {
+          for (const [key, value] of Object.entries(payload.is)) {
+            query = query.is(key, value);
+          }
+        }
+        if (payload?.in) {
+          for (const [key, value] of Object.entries(payload.in)) {
+            query = query.in(key, value);
+          }
+        }
         if (payload?.order) {
           query = query.order(payload.order.column, { ascending: payload.order.ascending ?? true });
         }

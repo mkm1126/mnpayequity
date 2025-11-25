@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, FileDown, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { Report, JobClassification, Jurisdiction, Contact, ImplementationReport, supabase } from '../lib/supabase';
+import { Report, JobClassification, Jurisdiction, Contact, ImplementationReport, supabase } from '../lib/db';
 import { ComplianceResult } from '../lib/complianceAnalysis';
 import jsPDF from 'jspdf';
 import { addLogoToPDF, addPageNumbers } from '../lib/pdfGenerator';

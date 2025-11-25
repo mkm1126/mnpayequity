@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, CheckCircle, XCircle, FileText, Download } from 'lucide-react';
-import { supabase, Report, Jurisdiction, JobClassification, Contact, ComplianceCertificate } from '../lib/supabase';
+import { db } from '../lib/db';
+import { Report, Jurisdiction, JobClassification, Contact, ComplianceCertificate } from '../lib/db';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceResults } from './ComplianceResults';
 import { generateCertificatePDF } from '../lib/certificateGenerator';
@@ -85,14 +86,14 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
 
       const userEmail = (await supabase.auth.getUser()).data.user?.email || 'System';
 
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'approved',
         approved_by: userEmail,
         approved_at: new Date().toISOString(),
         case_status: 'In Compliance',
       }).eq('id', report.id);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: report.id,
         jurisdiction_id: jurisdiction.id,
         action_type: 'approved',
@@ -165,7 +166,7 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
 
       const userEmail = (await supabase.auth.getUser()).data.user?.email || 'System';
 
-      await supabase.from('reports').update({
+      await db.from('reports').update({
         approval_status: 'rejected',
         approved_by: userEmail,
         approved_at: new Date().toISOString(),
@@ -173,7 +174,7 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
         case_status: 'Out of Compliance',
       }).eq('id', report.id);
 
-      await supabase.from('approval_history').insert({
+      await db.from('approval_history').insert({
         report_id: report.id,
         jurisdiction_id: jurisdiction.id,
         action_type: 'rejected',

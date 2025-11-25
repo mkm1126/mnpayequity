@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase, type Report, type SubmissionHistory } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Report, type SubmissionHistory } from '../lib/db';
 import { Clock, CheckCircle, AlertCircle, FileText, RotateCcw, Send } from 'lucide-react';
 
 interface SubmissionWorkflowTrackerProps {

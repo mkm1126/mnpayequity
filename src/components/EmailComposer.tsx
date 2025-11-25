@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Send, Eye, Mail, AlertCircle, CheckCircle } from 'lucide-react';
-import { supabase, type Jurisdiction, type Contact, type EmailTemplate } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Jurisdiction, type Contact, type EmailTemplate } from '../lib/db';
 
 type JurisdictionWithContact = {
   jurisdiction: Jurisdiction;
@@ -125,7 +126,7 @@ export function EmailComposer({
         sent_at: new Date().toISOString(),
       }));
 
-      const { error } = await supabase.from('email_logs').insert(emailLogs);
+      const { error } = await db.from('email_logs').insert(emailLogs);
 
       if (error) throw error;
 

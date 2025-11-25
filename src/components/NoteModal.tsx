@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Pin, Tag, AlertCircle, Calendar } from 'lucide-react';
-import { supabase, type AdminCaseNote, type Jurisdiction, type Report, type NoteCategory, type NotePriority, type NoteType } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type AdminCaseNote, type Jurisdiction, type Report, type NoteCategory, type NotePriority, type NoteType } from '../lib/db';
 import { useAuth } from '../contexts/AuthContext';
 
 type NoteModalProps = {

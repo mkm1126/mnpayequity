@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase, type Report, type SubmissionHistory, type ReportRevision, type Jurisdiction } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Report, type SubmissionHistory, type ReportRevision, type Jurisdiction } from '../lib/db';
 import { FileText, Clock, AlertTriangle, CheckCircle, TrendingUp, Filter, Search } from 'lucide-react';
 
 interface SubmissionStats {

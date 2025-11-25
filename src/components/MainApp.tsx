@@ -34,7 +34,8 @@ import { FollowUpCalendar } from './FollowUpCalendar';
 import { NoteDetailView } from './NoteDetailView';
 import AdminSubmissionReview from './AdminSubmissionReview';
 import { EnhancedSubmissionAnalytics } from './EnhancedSubmissionAnalytics';
-import { supabase, type Jurisdiction, type Contact, type Report, type JobClassification, type ImplementationReport, type AdminCaseNote } from '../lib/supabase';
+import { db } from '../lib/db';
+import type { Jurisdiction, Contact, Report, JobClassification, ImplementationReport, AdminCaseNote } from '../lib/supabase';
 import { analyzeCompliance, type ComplianceResult } from '../lib/complianceAnalysis';
 
 export function MainApp() {
@@ -109,7 +110,7 @@ export function MainApp() {
 
   async function loadReports(jurisdictionId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('reports')
         .select('*')
         .eq('jurisdiction_id', jurisdictionId)
@@ -124,7 +125,7 @@ export function MainApp() {
 
   async function loadJobs(reportId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('job_classifications')
         .select('*')
         .eq('report_id', reportId)
@@ -139,7 +140,7 @@ export function MainApp() {
 
   async function loadImplementationData(reportId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('implementation_reports')
         .select('*')
         .eq('report_id', reportId)
@@ -154,7 +155,7 @@ export function MainApp() {
 
   async function loadJurisdictions() {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('jurisdictions')
         .select('*')
         .order('name');
@@ -185,7 +186,7 @@ export function MainApp() {
 
   async function loadContacts(jurisdictionId: string) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('contacts')
         .select('*')
         .eq('jurisdiction_id', jurisdictionId)
@@ -252,7 +253,7 @@ export function MainApp() {
 
   async function handleSaveJurisdiction(jurisdictionData: Partial<Jurisdiction>) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('jurisdictions')
         .insert([
           {

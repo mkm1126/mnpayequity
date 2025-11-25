@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, AlertCircle } from 'lucide-react';
-import { supabase, type AdminCaseNote, type Jurisdiction, type Report } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type AdminCaseNote, type Jurisdiction, type Report } from '../lib/db';
 
 type FollowUpCalendarProps = {
   onSelectNote: (note: AdminCaseNote) => void;
@@ -34,8 +35,8 @@ export function FollowUpCalendar({ onSelectNote }: FollowUpCalendarProps) {
           .is('completed_at', null)
           .not('due_date', 'is', null)
           .order('due_date', { ascending: true }),
-        supabase.from('jurisdictions').select('*'),
-        supabase.from('reports').select('*')
+        db.from('jurisdictions').select('*'),
+        db.from('reports').select('*')
       ]);
 
       if (notesData.error) throw notesData.error;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-import { supabase } from '../lib/supabase';
-import type { Jurisdiction } from '../lib/supabase';
+import { db } from '../lib/db';
+import type { Jurisdiction } from '../lib/db';
 import type { UserProfile } from '../contexts/AuthContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Plus, Edit2, Trash2, X, AlertCircle, CheckCircle } from 'lucide-react';

@@ -72,9 +72,9 @@ export function ReminderManagement() {
       setLoading(true);
 
       const [jurisdictionsData, contactsData, remindersData] = await Promise.all([
-        supabase.from('jurisdictions').select('*').order('name'),
-        supabase.from('contacts').select('*').eq('is_primary', true),
-        supabase.from('submission_reminders').select('*').order('sent_at', { ascending: false })
+        db.from('jurisdictions').select('*').order('name'),
+        db.from('contacts').select('*').eq('is_primary', true),
+        db.from('submission_reminders').select('*').order('sent_at', { ascending: false })
       ]);
 
       if (jurisdictionsData.error) throw jurisdictionsData.error;

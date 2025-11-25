@@ -4,17 +4,7 @@ const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 interface ProxyRequest {
   table: string;
   operation: 'select' | 'insert' | 'update' | 'delete' | 'upsert';
-  payload?: {
-    select?: string;
-    data?: any;
-    eq?: Record<string, any>;
-    order?: {
-      column: string;
-      ascending?: boolean;
-    };
-    limit?: number;
-    single?: boolean;
-  };
+  payload?: any;
 }
 
 interface ProxyResponse<T = any> {

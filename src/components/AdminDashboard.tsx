@@ -21,7 +21,8 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react';
-import { supabase, type Report, type Jurisdiction, type AdminCaseNote, type AdminActivityLog } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type Report, type Jurisdiction, type AdminCaseNote, type AdminActivityLog } from '../lib/db';
 import { NotificationPanel } from './NotificationPanel';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -108,9 +109,9 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
         jurisdictionsData,
         notesData
       ] = await Promise.all([
-        supabase.from('reports').select('*'),
-        supabase.from('jurisdictions').select('*'),
-        supabase.from('admin_case_notes').select('*')
+        db.from('reports').select('*'),
+        db.from('jurisdictions').select('*'),
+        db.from('admin_case_notes').select('*')
       ]);
 
       if (reportsData.error) throw reportsData.error;

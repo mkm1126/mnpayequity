@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { ArrowLeft, Play, FileText, Printer } from 'lucide-react';
-import { supabase, Jurisdiction, Report, JobClassification, Contact } from '../lib/supabase';
+import { db } from '../lib/db';
+import { Jurisdiction, Report, JobClassification, Contact } from '../lib/db';
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceResults } from './ComplianceResults';
 

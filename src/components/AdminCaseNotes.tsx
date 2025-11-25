@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Plus, Search, Filter, X, Pin, FileText, AlertCircle, Download, TrendingUp, Calendar } from 'lucide-react';
-import { supabase, type AdminCaseNote, type Jurisdiction, type Report, type NoteCategory, type NotePriority, type NoteType, type NoteFilter, type NoteSortOption, type NoteStats } from '../lib/supabase';
+import { db } from '../lib/db';
+import { type AdminCaseNote, type Jurisdiction, type Report, type NoteCategory, type NotePriority, type NoteType, type NoteFilter, type NoteSortOption, type NoteStats } from '../lib/db';
 import { NoteModal } from './NoteModal';
 import { NoteDetailView } from './NoteDetailView';
 import { useScrollToTop } from '../hooks/useScrollToTop';
