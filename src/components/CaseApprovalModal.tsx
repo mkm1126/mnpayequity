@@ -103,10 +103,18 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
         notes: approvalReason,
       });
 
+      console.log('Certificate generation check:', { hasCertificate: !!certificate, hasComplianceResult: !!complianceResult });
+
       if (!certificate && complianceResult) {
+        console.log('Generating certificates...');
         const issueDate = new Date();
         const officialCertificate = await generateOfficialComplianceCertificate(report, jurisdiction, issueDate);
         const testResults = await generateTestResultsDocument(report, jurisdiction, complianceResult, issueDate);
+
+        console.log('Certificates generated, lengths:', {
+          cert: officialCertificate?.length,
+          tests: testResults?.length
+        });
 
         const configResult = await supabase
           .from('system_config')
@@ -123,6 +131,9 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
           commissionerName,
           issueDate
         );
+        console.log('Certificates saved to database');
+      } else {
+        console.log('Skipping certificate generation - certificate already exists or no compliance result');
       }
 
       setSuccessMessage('Case approved successfully! Compliance certificate and test results have been generated.');

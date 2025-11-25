@@ -70,7 +70,9 @@ function addCheckbox(doc: jsPDF, x: number, y: number, checked: boolean, size: n
 }
 
 function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width: number = 180) {
-  if (logoBase64&& logoBase64.length > 0) {
+  console.log('addMMBLogo called with logo length:', logoBase64?.length);
+
+  if (logoBase64 && logoBase64.length > 0) {
     try {
       const height = width * 0.25;
 
@@ -82,11 +84,15 @@ function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width:
       const imageType = imageData.includes('data:image/png') ? 'PNG' :
                        imageData.includes('data:image/jpeg') || imageData.includes('data:image/jpg') ? 'JPEG' : 'PNG';
 
+      console.log('Adding image with type:', imageType, 'Data starts with:', imageData.substring(0, 50));
       doc.addImage(imageData, imageType, x, y, width, height, undefined, 'FAST');
+      console.log('Logo added successfully');
       return;
     } catch (error) {
       console.error('Error adding logo image:', error, 'Logo length:', logoBase64?.length);
     }
+  } else {
+    console.log('No logo data provided, using text fallback');
   }
 
   doc.setFontSize(14);
