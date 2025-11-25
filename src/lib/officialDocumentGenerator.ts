@@ -76,16 +76,18 @@ function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width:
     try {
       const height = width * 0.25;
 
-      let imageData = logoBase64;
-      if (!imageData.startsWith('data:')) {
-        imageData = `data:image/png;base64,${imageData}`;
+      let base64String = logoBase64;
+      let imageType = 'PNG';
+
+      if (base64String.startsWith('data:')) {
+        if (base64String.includes('data:image/jpeg') || base64String.includes('data:image/jpg')) {
+          imageType = 'JPEG';
+        }
+        base64String = base64String.split(',')[1];
       }
 
-      const imageType = imageData.includes('data:image/png') ? 'PNG' :
-                       imageData.includes('data:image/jpeg') || imageData.includes('data:image/jpg') ? 'JPEG' : 'PNG';
-
-      console.log('Adding image with type:', imageType, 'Data starts with:', imageData.substring(0, 50));
-      doc.addImage(imageData, imageType, x, y, width, height, undefined, 'FAST');
+      console.log('Adding image with type:', imageType, 'Base64 starts with:', base64String.substring(0, 50));
+      doc.addImage(base64String, imageType, x, y, width, height, undefined, 'FAST');
       console.log('Logo added successfully');
       return;
     } catch (error) {
