@@ -25,15 +25,24 @@ export function LoginPage() {
 
   const loadJurisdictions = async () => {
     try {
+      console.log('Loading jurisdictions...');
+      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('Anon key exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+
       const { data, error } = await supabase
         .from('jurisdictions')
         .select('*')
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      console.log('Jurisdictions loaded:', data?.length);
       setJurisdictions(data || []);
     } catch (error) {
       console.error('Error loading jurisdictions:', error);
+      setError('Unable to connect to the server. Please try again later or contact support.');
     } finally {
       setLoadingJurisdictions(false);
     }
