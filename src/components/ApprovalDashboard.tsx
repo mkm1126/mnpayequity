@@ -56,13 +56,13 @@ export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: Ap
         .order('submitted_at', { ascending: false });
 
       if (filter === 'pending') {
-        query = query.eq('case_status', 'Submitted').in('approval_status', ['pending', 'draft']);
+        query = query.or('case_status.eq.Submitted,case_status.eq.submitted').in('approval_status', ['pending', 'draft']);
       } else if (filter === 'approved') {
         query = query.in('approval_status', ['approved', 'auto_approved']);
       } else if (filter === 'rejected') {
         query = query.eq('approval_status', 'rejected');
       } else {
-        query = query.or('case_status.eq.Submitted,approval_status.in.(approved,auto_approved,rejected)');
+        query = query.or('case_status.eq.Submitted,case_status.eq.submitted,approval_status.in.(approved,auto_approved,rejected)');
       }
 
       const { data, error } = await query;

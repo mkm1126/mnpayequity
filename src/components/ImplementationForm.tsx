@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Send } from 'lucide-react';
+import { Save, Send, AlertCircle, CheckCircle, X } from 'lucide-react';
 import { ImplementationReport, Report, Jurisdiction, JobClassification } from '../lib/supabase';
 import { SubmissionChecklist } from './SubmissionChecklist';
 import { ContextualHelp } from './ContextualHelp';
@@ -56,6 +56,11 @@ export function ImplementationForm({
   const [showChecklist, setShowChecklist] = useState(false);
   const [showComplianceWarning, setShowComplianceWarning] = useState(false);
   const [showTroubleshooting, setShowTroubleshooting] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [showSaveError, setShowSaveError] = useState(false);
 
   useEffect(() => {
     if (implementationData) {
@@ -71,9 +76,9 @@ export function ImplementationForm({
     setIsSaving(true);
     try {
       await onSave(formData);
-      alert('Changes saved successfully');
+      setShowSaveSuccess(true);
     } catch (error) {
-      alert('Error saving changes. Please try again.');
+      setShowSaveError(true);
     } finally {
       setIsSaving(false);
     }
@@ -91,27 +96,22 @@ export function ImplementationForm({
       return;
     }
 
-    proceedWithFinalSubmission();
+    setShowConfirmModal(true);
   };
 
   const handleContinueWithSubmission = () => {
     setShowComplianceWarning(false);
-    proceedWithFinalSubmission();
+    setShowConfirmModal(true);
   };
 
   const proceedWithFinalSubmission = async () => {
-    const confirmed = confirm(
-      'Are you sure you want to submit this report? Once submitted, it cannot be edited.'
-    );
-
-    if (!confirmed) return;
-
+    setShowConfirmModal(false);
     setIsSubmitting(true);
     try {
       await onSubmit();
-      alert('Report submitted successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
-      alert('Error submitting report. Please try again.');
+      setShowErrorModal(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -519,6 +519,135 @@ export function ImplementationForm({
             complianceResult={complianceResult}
             onClose={() => setShowTroubleshooting(false)}
           />
+        )}
+
+        {showConfirmModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-amber-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Confirm Submission</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to submit this report? Once submitted, it cannot be edited.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={proceedWithFinalSubmission}
+                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+                >
+                  Submit Report
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSuccessModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Report Submitted Successfully</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Your pay equity compliance report has been submitted for review.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    window.location.reload();
+                  }}
+                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showErrorModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <X className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Submission Error</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                There was an error submitting your report. Please try again.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowErrorModal(false)}
+                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSaveSuccess && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Changes Saved</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Your changes have been saved successfully.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowSaveSuccess(false)}
+                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSaveError && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <X className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Save Error</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                There was an error saving your changes. Please try again.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowSaveError(false)}
+                  className="px-4 py-2 bg-[#003865] text-white rounded-lg hover:bg-[#004d7a] transition-colors font-medium"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
