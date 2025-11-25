@@ -4,6 +4,7 @@ import { supabase, Report, Jurisdiction, JobClassification, Contact, ComplianceC
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceResults } from './ComplianceResults';
 import { generateCertificatePDF } from '../lib/certificateGenerator';
+import { generateOfficialComplianceCertificate, generateTestResultsDocument, saveCertificatesToDatabase } from '../lib/officialDocumentGenerator';
 import { SuccessModal } from './SuccessModal';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -105,23 +106,29 @@ export function CaseReviewPage({ report, jurisdiction, onBack }: CaseReviewPageP
         notes: approvalReason,
       });
 
-      if (!certificate) {
-        const certificateData = await generateCertificatePDF(report, jurisdiction);
-        await supabase.from('compliance_certificates').insert({
-          report_id: report.id,
-          jurisdiction_id: jurisdiction.id,
-          report_year: report.report_year,
-          certificate_data: certificateData,
-          file_name: `${jurisdiction.name.replace(/\s+/g, '_')}_Certificate_${report.report_year}.pdf`,
-          generated_by: userEmail,
-        });
+      if (!certificate && complianceResult) {
+        const issueDate = new Date();
+        const officialCertificate = await generateOfficialComplianceCertificate(report, jurisdiction, issueDate);
+        const testResults = await generateTestResultsDocument(report, jurisdiction, complianceResult, issueDate);
 
-        await supabase.from('reports').update({
-          certificate_generated_at: new Date().toISOString(),
-        }).eq('id', report.id);
+        const configResult = await supabase
+          .from('system_config')
+          .select('config_value')
+          .eq('config_key', 'commissioner_name')
+          .maybeSingle();
+
+        const commissionerName = configResult?.data?.config_value || 'Commissioner';
+
+        await saveCertificatesToDatabase(
+          report.id,
+          officialCertificate,
+          testResults,
+          commissionerName,
+          issueDate
+        );
       }
 
-      setSuccessMessage('Case approved successfully! Certificate has been generated.');
+      setSuccessMessage('Case approved successfully! Compliance certificate and test results have been generated.');
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Error approving case:', error);
@@ -185,8 +192,26 @@ export function CaseReviewPage({ report, jurisdiction, onBack }: CaseReviewPageP
 
     const link = document.createElement('a');
     link.href = certificate.certificate_data;
-    link.download = certificate.file_name;
+    link.download = `${jurisdiction.name}_Compliance_Certificate_${report.report_year}.pdf`;
     link.click();
+  }
+
+  async function handleDownloadTestResults() {
+    if (!certificate?.test_results_document) return;
+
+    const link = document.createElement('a');
+    link.href = certificate.test_results_document;
+    link.download = `${jurisdiction.name}_Test_Results_${report.report_year}.pdf`;
+    link.click();
+  }
+
+  async function handleDownloadBoth() {
+    if (!certificate) return;
+
+    handleDownloadCertificate();
+    setTimeout(() => {
+      handleDownloadTestResults();
+    }, 500);
   }
 
   if (loading) {
@@ -258,24 +283,45 @@ export function CaseReviewPage({ report, jurisdiction, onBack }: CaseReviewPageP
             )}
 
             {certificate && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-6 h-6 text-emerald-600" />
-                    <div>
-                      <p className="font-semibold text-emerald-900">Certificate Generated</p>
-                      <p className="text-sm text-emerald-700">
-                        {new Date(certificate.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <FileText className="w-6 h-6 text-emerald-600" />
+                  <div>
+                    <p className="font-semibold text-emerald-900">Official Documents Generated</p>
+                    <p className="text-sm text-emerald-700">
+                      Issued on {new Date(certificate.document_issue_date || certificate.created_at).toLocaleDateString()}
+                    </p>
                   </div>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-3">
                   <button
                     onClick={handleDownloadCertificate}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors justify-center"
                   >
                     <Download className="w-4 h-4" />
-                    Download
+                    Compliance Certificate
                   </button>
+
+                  {certificate.test_results_document && (
+                    <button
+                      onClick={handleDownloadTestResults}
+                      className="flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors justify-center"
+                    >
+                      <Download className="w-4 h-4" />
+                      Test Results
+                    </button>
+                  )}
+
+                  {certificate.test_results_document && (
+                    <button
+                      onClick={handleDownloadBoth}
+                      className="flex items-center gap-2 px-4 py-3 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors justify-center"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Both
+                    </button>
+                  )}
                 </div>
               </div>
             )}
