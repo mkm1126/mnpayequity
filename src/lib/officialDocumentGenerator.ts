@@ -70,32 +70,23 @@ function addCheckbox(doc: jsPDF, x: number, y: number, checked: boolean, size: n
 }
 
 async function addMMBLogo(doc: jsPDF, logoPathOrBase64: string, x: number, y: number, width: number = 180) {
-  if (logoPathOrBase64 && logoPathOrBase64.length > 0) {
-    try {
-      const height = width * 0.25;
-      let imageData = logoPathOrBase64;
+  try {
+    const height = width * 0.25;
+    const logoPath = '/MMB_logo.jpg';
 
-      if (!imageData.startsWith('data:')) {
-        console.log('Fetching logo from path:', logoPathOrBase64);
-        const response = await fetch(logoPathOrBase64);
-        const blob = await response.blob();
-        imageData = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        });
-      }
+    const response = await fetch(logoPath);
+    const blob = await response.blob();
+    const imageData = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
 
-      const imageType = imageData.includes('data:image/png') ? 'PNG' :
-                       imageData.includes('data:image/jpeg') || imageData.includes('data:image/jpg') ? 'JPEG' : 'PNG';
-
-      console.log('Adding image with type:', imageType);
-      doc.addImage(imageData, imageType, x, y, width, height);
-      console.log('Logo added successfully');
-      return;
-    } catch (error) {
-      console.error('Error adding logo image:', error);
-    }
+    doc.addImage(imageData, 'JPEG', x, y, width, height);
+    console.log('Logo added successfully');
+    return;
+  } catch (error) {
+    console.error('Error adding logo image:', error);
   }
 
   doc.setFontSize(14);
