@@ -73,8 +73,9 @@ function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width:
   if (logoBase64 && logoBase64.length > 0) {
     try {
       const height = width * 0.25;
-      doc.addImage(logoBase64, 'JPEG', x, y, width, height);
+      doc.addImage(logoBase64, 'PNG', x, y, width, height);
     } catch (error) {
+      console.error('Error adding logo image:', error);
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(0, 56, 101);
