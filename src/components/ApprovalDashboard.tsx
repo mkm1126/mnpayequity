@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter, ArrowLeft } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, AlertCircle, Eye, FileText, Filter, ArrowLeft, Download } from 'lucide-react';
 import { supabase, Report, Jurisdiction, ComplianceCertificate } from '../lib/supabase';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -17,12 +17,32 @@ export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: Ap
   useScrollToTop();
 
   const [reports, setReports] = useState<ReportWithJurisdiction[]>([]);
+  const [certificates, setCertificates] = useState<Map<string, ComplianceCertificate>>(new Map());
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
 
   useEffect(() => {
     loadReports();
   }, [filter]);
+
+  async function loadCertificates(reportIds: string[]) {
+    try {
+      const { data, error } = await supabase
+        .from('compliance_certificates')
+        .select('*')
+        .in('report_id', reportIds);
+
+      if (error) throw error;
+
+      const certMap = new Map<string, ComplianceCertificate>();
+      data?.forEach(cert => {
+        certMap.set(cert.report_id, cert);
+      });
+      setCertificates(certMap);
+    } catch (error) {
+      console.error('Error loading certificates:', error);
+    }
+  }
 
   async function loadReports() {
     try {
@@ -55,6 +75,11 @@ export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: Ap
       }));
 
       setReports(formattedData);
+
+      if (formattedData.length > 0) {
+        const reportIds = formattedData.map(r => r.id);
+        await loadCertificates(reportIds);
+      }
     } catch (error) {
       console.error('Error loading reports:', error);
     } finally {
@@ -124,6 +149,24 @@ export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: Ap
     if (onReviewCase) {
       onReviewCase(report);
     }
+  }
+
+  function downloadCertificate(reportId: string, reportYear: number) {
+    const cert = certificates.get(reportId);
+    if (!cert?.certificate_data) return;
+    const link = document.createElement('a');
+    link.href = cert.certificate_data;
+    link.download = `Compliance_Certificate_${reportYear}.pdf`;
+    link.click();
+  }
+
+  function downloadTestResults(reportId: string, reportYear: number) {
+    const cert = certificates.get(reportId);
+    if (!cert?.test_results_document) return;
+    const link = document.createElement('a');
+    link.href = cert.test_results_document;
+    link.download = `Test_Results_${reportYear}.pdf`;
+    link.click();
   }
 
   if (loading) {
@@ -305,6 +348,30 @@ export function ApprovalDashboard({ onReviewCase, onBack, previousPageName }: Ap
                       <Eye className="w-4 h-4" />
                       Review Case
                     </button>
+                    {certificates.get(report.id) && (
+                      <>
+                        {certificates.get(report.id)?.certificate_data && (
+                          <button
+                            onClick={() => downloadCertificate(report.id, report.report_year)}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium whitespace-nowrap"
+                            title="Download Compliance Certificate"
+                          >
+                            <Download className="w-4 h-4" />
+                            Certificate
+                          </button>
+                        )}
+                        {certificates.get(report.id)?.test_results_document && (
+                          <button
+                            onClick={() => downloadTestResults(report.id, report.report_year)}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium whitespace-nowrap"
+                            title="Download Test Results"
+                          >
+                            <Download className="w-4 h-4" />
+                            Test Results
+                          </button>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
