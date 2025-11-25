@@ -4,6 +4,7 @@ import { supabase, Report, Jurisdiction, JobClassification, Contact, ComplianceC
 import { analyzeCompliance, ComplianceResult } from '../lib/complianceAnalysis';
 import { ComplianceResults } from './ComplianceResults';
 import { generateCertificatePDF } from '../lib/certificateGenerator';
+import { generateOfficialComplianceCertificate, generateTestResultsDocument, saveCertificatesToDatabase } from '../lib/officialDocumentGenerator';
 import { SuccessModal } from './SuccessModal';
 
 type CaseApprovalModalProps = {
@@ -102,23 +103,29 @@ export function CaseApprovalModal({ report, jurisdiction, onClose }: CaseApprova
         notes: approvalReason,
       });
 
-      if (!certificate) {
-        const certificateData = await generateCertificatePDF(report, jurisdiction);
-        await supabase.from('compliance_certificates').insert({
-          report_id: report.id,
-          jurisdiction_id: jurisdiction.id,
-          report_year: report.report_year,
-          certificate_data: certificateData,
-          file_name: `${jurisdiction.name.replace(/\s+/g, '_')}_Certificate_${report.report_year}.pdf`,
-          generated_by: userEmail,
-        });
+      if (!certificate && complianceResult) {
+        const issueDate = new Date();
+        const officialCertificate = await generateOfficialComplianceCertificate(report, jurisdiction, issueDate);
+        const testResults = await generateTestResultsDocument(report, jurisdiction, complianceResult, issueDate);
 
-        await supabase.from('reports').update({
-          certificate_generated_at: new Date().toISOString(),
-        }).eq('id', report.id);
+        const configResult = await supabase
+          .from('system_config')
+          .select('config_value')
+          .eq('config_key', 'commissioner_name')
+          .maybeSingle();
+
+        const commissionerName = configResult?.data?.config_value || 'Commissioner';
+
+        await saveCertificatesToDatabase(
+          report.id,
+          officialCertificate,
+          testResults,
+          commissionerName,
+          issueDate
+        );
       }
 
-      setSuccessMessage('Case approved successfully! Certificate has been generated.');
+      setSuccessMessage('Case approved successfully! Compliance certificate and test results have been generated.');
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Error approving case:', error);
