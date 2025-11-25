@@ -70,31 +70,33 @@ function addCheckbox(doc: jsPDF, x: number, y: number, checked: boolean, size: n
 }
 
 function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width: number = 180) {
-  if (logoBase64 && logoBase64.length > 0) {
+  if (logoBase64&& logoBase64.length > 0) {
     try {
       const height = width * 0.25;
-      doc.addImage(logoBase64, 'PNG', x, y, width, height);
+
+      let imageData = logoBase64;
+      if (!imageData.startsWith('data:')) {
+        imageData = `data:image/png;base64,${imageData}`;
+      }
+
+      const imageType = imageData.includes('data:image/png') ? 'PNG' :
+                       imageData.includes('data:image/jpeg') || imageData.includes('data:image/jpg') ? 'JPEG' : 'PNG';
+
+      doc.addImage(imageData, imageType, x, y, width, height, undefined, 'FAST');
+      return;
     } catch (error) {
-      console.error('Error adding logo image:', error);
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(0, 56, 101);
-      doc.text('MANAGEMENT', x, y + 15);
-      doc.setTextColor(76, 175, 80);
-      doc.text('AND BUDGET', x + 90, y + 15);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont('helvetica', 'normal');
+      console.error('Error adding logo image:', error, 'Logo length:', logoBase64?.length);
     }
-  } else {
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(0, 56, 101);
-    doc.text('MANAGEMENT', x, y + 15);
-    doc.setTextColor(76, 175, 80);
-    doc.text('AND BUDGET', x + 90, y + 15);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
   }
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(0, 56, 101);
+  doc.text('MANAGEMENT', x, y + 15);
+  doc.setTextColor(76, 175, 80);
+  doc.text('AND BUDGET', x + 90, y + 15);
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
 }
 
 export async function generateOfficialComplianceCertificate(
