@@ -69,32 +69,33 @@ function addCheckbox(doc: jsPDF, x: number, y: number, checked: boolean, size: n
   }
 }
 
-function addMMBLogo(doc: jsPDF, logoBase64: string, x: number, y: number, width: number = 180) {
-  console.log('addMMBLogo called with logo length:', logoBase64?.length);
-
-  if (logoBase64 && logoBase64.length > 0) {
+async function addMMBLogo(doc: jsPDF, logoPathOrBase64: string, x: number, y: number, width: number = 180) {
+  if (logoPathOrBase64 && logoPathOrBase64.length > 0) {
     try {
       const height = width * 0.25;
+      let imageData = logoPathOrBase64;
 
-      let base64String = logoBase64;
-      let imageType = 'PNG';
-
-      if (base64String.startsWith('data:')) {
-        if (base64String.includes('data:image/jpeg') || base64String.includes('data:image/jpg')) {
-          imageType = 'JPEG';
-        }
-        base64String = base64String.split(',')[1];
+      if (!imageData.startsWith('data:')) {
+        console.log('Fetching logo from path:', logoPathOrBase64);
+        const response = await fetch(logoPathOrBase64);
+        const blob = await response.blob();
+        imageData = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
       }
 
-      console.log('Adding image with type:', imageType, 'Base64 starts with:', base64String.substring(0, 50));
-      doc.addImage(base64String, imageType, x, y, width, height, undefined, 'FAST');
+      const imageType = imageData.includes('data:image/png') ? 'PNG' :
+                       imageData.includes('data:image/jpeg') || imageData.includes('data:image/jpg') ? 'JPEG' : 'PNG';
+
+      console.log('Adding image with type:', imageType);
+      doc.addImage(imageData, imageType, x, y, width, height);
       console.log('Logo added successfully');
       return;
     } catch (error) {
-      console.error('Error adding logo image:', error, 'Logo length:', logoBase64?.length);
+      console.error('Error adding logo image:', error);
     }
-  } else {
-    console.log('No logo data provided, using text fallback');
   }
 
   doc.setFontSize(14);
@@ -122,7 +123,7 @@ export async function generateOfficialComplianceCertificate(
   doc.setLineWidth(3);
   doc.rect(30, 30, pageWidth - 60, pageHeight - 60, 'S');
 
-  addMMBLogo(doc, config.mmb_logo_base64, 50, 50, 180);
+  await addMMBLogo(doc, config.mmb_logo_base64, 50, 50, 180);
 
   doc.setFontSize(28);
   doc.setFont('helvetica', 'bold');
@@ -207,7 +208,7 @@ export async function generateTestResultsDocument(
   const config = await getSystemConfig();
   const officialDate = issueDate || new Date();
 
-  addMMBLogo(doc, config.mmb_logo_base64, 50, 40, 180);
+  await addMMBLogo(doc, config.mmb_logo_base64, 50, 40, 180);
 
   doc.setDrawColor(150, 150, 150);
   doc.setLineWidth(1);
